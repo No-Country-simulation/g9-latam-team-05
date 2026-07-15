@@ -1,3 +1,6 @@
+# ==========================================
+# Backend (Java / Spring Boot / Maven / Gradle)
+# ==========================================
 # Compiled class file
 *.class
 
@@ -22,3 +25,32 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# ==========================================
+# Frontend (Node.js / React / Angular)
+# ==========================================
+**/node_modules/
+**/.pnp
+**/.pnp.js
+**/dist/
+**/build/
+.eslintcache
+
+# ==========================================
+# Data Science & Python (Virtual Environments)
+# ==========================================
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
+**/.ipynb_checkpoints/
+
+# ==========================================
+# Variables de Entorno (¡Seguridad!)
+# ==========================================
+**/.env
+**/.env.local
+**/.env.*.local
