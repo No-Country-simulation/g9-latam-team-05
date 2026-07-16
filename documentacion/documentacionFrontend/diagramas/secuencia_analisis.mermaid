@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    actor Usuario as 👤 Usuario Financiero
+    participant Front as 🅰️ Angular Frontend
+    participant Back as ☕ Spring Boot API
+    participant OCI as ☁️ OCI / ML Model
+
+    Usuario->>Front: Ingresa transacciones y datos financieros (manual/CSV)
+    Note over Front: Valida datos localmente<br/>(Formularios Reactivos)
+    Front->>Back: POST /analisis-financiero (payload JSON)
+    Note over Back: Valida datos y<br/>procesa transacciones
+    Back->>OCI: Invoca modelo de ML/Clasificación (categoría/perfil)
+    OCI-->>Back: Devuelve categorías, perfil (riesgo) y recomendaciones
+    Note over Back: Estructura respuesta JSON
+    Back-->>Front: Retorna JSON (perfil, recomendaciones, transacciones)
+    Note over Front: Actualiza Signals de Estado y<br/>actualiza dinámicamente Gráficos
+    Front-->>Usuario: Muestra Dashboard, diagnóstico de perfil y consejos de ahorro

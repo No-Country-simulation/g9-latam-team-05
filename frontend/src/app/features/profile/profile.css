@@ -1,0 +1,187 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .profile-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gauge-card, .stats-overview-card {
+  padding: 30px;
+  text-align: center;
+}
+
+.gauge-card h2 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+/* Radial Gauge ring representation */
+.radial-gauge {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 8px solid rgba(255, 255, 255, 0.05);
+  margin: 0 auto 24px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.gauge-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.percentage {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+.profile-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.profile-meta-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Thematic profile color overrides */
+.profile-healthy {
+  border-color: var(--color-success);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.05);
+}
+.profile-healthy .radial-gauge {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+}
+.profile-healthy .profile-name {
+  color: var(--color-success);
+}
+
+.profile-observation {
+  border-color: var(--color-warning);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.05);
+}
+.profile-observation .radial-gauge {
+  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+}
+.profile-observation .profile-name {
+  color: var(--color-warning);
+}
+
+.profile-risk {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.05);
+}
+.profile-risk .radial-gauge {
+  border-color: rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+.profile-risk .profile-name {
+  color: var(--color-danger);
+}
+
+/* Right statistics overview card */
+.stats-overview-card {
+  text-align: left;
+}
+
+.stats-overview-card h2 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 24px 0 30px 0;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 24px;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.details-row strong {
+  color: var(--text-primary);
+}
+
+/* Category breakdown bars list */
+.breakdown-title {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.category-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cat-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cat-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.cat-bar-header strong {
+  color: var(--text-primary);
+}
+
+.cat-progress-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cat-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--gradient-accent);
+}

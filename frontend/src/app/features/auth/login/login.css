@@ -1,0 +1,135 @@
+.auth-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-dark);
+}
+
+.brand-side {
+  flex: 1.2;
+  background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+              radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+  border-right: 1px solid var(--border-light);
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-symbol {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--gradient-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.logo-group h2 {
+  font-size: 1.6rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text h3 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+}
+
+.brand-text p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  max-width: 480px;
+}
+
+.form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 30px;
+  border-radius: var(--radius-lg);
+}
+
+.card-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.card-header h2 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.card-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.card-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.card-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .auth-wrapper {
+    flex-direction: column;
+  }
+  .brand-side {
+    padding: 40px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .brand-text {
+    margin-top: 40px;
+  }
+  .form-side {
+    padding: 60px 20px;
+  }
+}
