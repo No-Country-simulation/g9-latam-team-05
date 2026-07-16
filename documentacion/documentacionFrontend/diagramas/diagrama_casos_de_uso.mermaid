@@ -1,0 +1,43 @@
+%%{init: { 'theme': 'default', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Arial' } }}%%
+graph LR
+    %% Actores
+    Usuario["👤 Usuario Financiero"]
+    
+    %% Casos de Uso (Nodos circulares/elípticos simulados)
+    subgraph AppFrontend ["Finance AI — Casos de Uso del Frontend"]
+        UC1["Visualizar Dashboard General"]
+        UC2["Configurar Ingresos & Endeudamiento"]
+        UC3["Registrar Transacción Manual"]
+        UC4["Cargar Transacciones vía CSV"]
+        UC5["Consultar Perfil de Salud Financiera"]
+        UC6["Visualizar Recomendaciones de Ahorro"]
+        UC7["Monitorear Alertas de Gastos Excesivos"]
+    end
+
+    subgraph BackendREST ["Spring Boot API"]
+        UC_API["Clasificar & Analizar Transacciones"]
+    end
+
+    %% Relaciones de Casos de Uso
+    Usuario --> UC1
+    Usuario --> UC2
+    Usuario --> UC3
+    Usuario --> UC4
+    Usuario --> UC5
+    Usuario --> UC6
+    Usuario --> UC7
+
+    %% Conexiones con backend
+    UC3 -->|"POST /analisis-financiero"| UC_API
+    UC4 -->|"Procesamiento por lote"| UC_API
+    UC5 -->|"Obtención de perfil"| UC_API
+    UC6 -->|"Consulta recomendaciones"| UC_API
+
+    %% Estilos
+    classDef entrada fill:#FFF8E1,stroke:#F9A825,stroke-width:2px
+    classDef front fill:#E8EAF6,stroke:#283593,stroke-width:2px
+    classDef java fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    
+    class Usuario entrada
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7 front
+    class UC_API java

@@ -1,0 +1,34 @@
+<div class="settings-container flex-center">
+  <div class="glass-card settings-card animate-fade-in">
+    <div class="card-title-wrap">
+      <h2>Ajustes de Perfil Económico</h2>
+      <p class="subtitle">Modifica los valores base de tu cuenta</p>
+    </div>
+
+    <form [formGroup]="settingsForm" (ngSubmit)="onSave()" class="settings-form">
+      <div class="form-group">
+        <label for="income">Ingreso Fijo Mensual ($)</label>
+        <input type="number" id="income" formControlName="income">
+      </div>
+
+      <div class="form-group">
+        <label for="debtRatio">Límite de Endeudamiento Declarado (%)</label>
+        <div class="slider-val-display">{{ settingsForm.get('debtRatio')?.value }}%</div>
+        <input type="range" id="debtRatio" formControlName="debtRatio" min="0" max="100" class="range-slider">
+      </div>
+
+      <div class="form-group">
+        <label for="savingFrequency">Frecuencia de Ahorro</label>
+        <select id="savingFrequency" formControlName="savingFrequency">
+          <option value="Baja">Baja (Ahorro esporádico)</option>
+          <option value="Media">Media (Ahorro regular)</option>
+          <option value="Alta">Alta (Ahorro sistemático mensual)</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" [disabled]="settingsForm.invalid">
+        Guardar Configuración
+      </button>
+    </form>
+  </div>
+</div>

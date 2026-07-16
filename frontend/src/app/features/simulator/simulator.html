@@ -1,0 +1,152 @@
+<div class="simulator-layout">
+  
+  <!-- Left Side: Simulator controls -->
+  <div class="simulation-controls">
+    
+    <div class="glass-card controls-card">
+      <div class="card-title-wrap">
+        <h2>Ajuste de Parámetros</h2>
+        <p class="subtitle">Desliza para ver la proyección</p>
+      </div>
+
+      <!-- Simulated Income Slider -->
+      <div class="sim-slider-group">
+        <label>Ingresos Proyectados (${{ simulatedIncome() }})</label>
+        <input type="range" 
+               [value]="simulatedIncome()" 
+               (input)="simulatedIncome.set(+$any($event.target).value)" 
+               min="1000" 
+               max="15000" 
+               step="100" 
+               class="range-slider">
+      </div>
+
+      <!-- Simulated Debt Slider -->
+      <div class="sim-slider-group">
+        <label>Porcentaje de Endeudamiento ({{ simulatedDebt() }}%)</label>
+        <input type="range" 
+               [value]="simulatedDebt()" 
+               (input)="simulatedDebt.set(+$any($event.target).value)" 
+               min="0" 
+               max="100" 
+               class="range-slider">
+      </div>
+    </div>
+
+    <!-- Hypothetical Expenses List Form -->
+    <div class="glass-card simulated-expenses-card">
+      <div class="card-title-wrap">
+        <h2>Simular Gastos Extra</h2>
+        <p class="subtitle">Añade transacciones hipotéticas al escenario</p>
+      </div>
+
+      <form [formGroup]="simulatorForm" (ngSubmit)="addSimulatedExpense()" class="sim-expense-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <input type="text" formControlName="descripcion" placeholder="Descripción (Ej: Comprar Laptop)">
+          </div>
+          <div class="form-group width-sm">
+            <input type="number" formControlName="valor" placeholder="Monto ($)">
+          </div>
+          <div class="form-group width-sm">
+            <select formControlName="categoria">
+              <option value="Alimentación">Alimentación</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Vivienda">Vivienda</option>
+              <option value="Ocio">Ocio</option>
+              <option value="Salud">Salud</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Educación">Educación</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary add-sim-btn" [disabled]="simulatorForm.invalid">+</button>
+        </div>
+      </form>
+
+      <!-- List of simulated items -->
+      <div class="simulated-items">
+        @for (item of simulatedExpensesList(); track $index) {
+          <div class="sim-item-row animate-fade-in">
+            <div class="sim-item-left">
+              <span class="badge-dot"></span>
+              <span class="sim-desc">{{ item.descripcion }}</span>
+            </div>
+            <div class="sim-item-right">
+              <span class="sim-cat">{{ item.categoria }}</span>
+              <span class="sim-val">${{ item.valor | number:'1.2-2' }}</span>
+              <button class="remove-btn" (click)="removeSimulatedExpense($index)">×</button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-list">No hay gastos simulados añadidos.</div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Side: Projection results -->
+  <div class="simulation-results">
+    
+    <!-- Projection Health Semaphore -->
+    <div class="glass-card projection-badge-card"
+         [class.card-healthy]="projectedProfile() === 'Saludable'"
+         [class.card-observation]="projectedProfile() === 'En observación'"
+         [class.card-risk]="projectedProfile() === 'En riesgo'">
+      
+      <span class="proj-badge-label">Perfil Proyectado</span>
+      <h2 class="proj-profile-title">{{ projectedProfile() }}</h2>
+      <p class="proj-desc">
+        @if (projectedProfile() === 'Saludable') {
+          Tu escenario simulado muestra una estructura de ahorro y gasto equilibrada.
+        } @else if (projectedProfile() === 'En observación') {
+          Atención: Tus gastos proyectados reducen tu capacidad de ahorro preventivo.
+        } @else {
+          Alerta: Tu nivel de endeudamiento o gasto excede los límites seguros para tu presupuesto.
+        }
+      </p>
+    </div>
+
+    <!-- Projection Stats Grid -->
+    <div class="glass-card stats-card">
+      <div class="card-title-wrap">
+        <h2>Proyecciones Financieras</h2>
+        <p class="subtitle">Resultado estimado del escenario</p>
+      </div>
+
+      <div class="projection-stats">
+        <div class="stat-row">
+          <span>Ingreso Total:</span>
+          <strong>${{ simulatedIncome() | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="stat-row">
+          <span>Gastos Proyectados:</span>
+          <strong class="color-danger">${{ projectedExpensesTotal() | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="stat-row line-divider">
+          <span>Balance Proyectado:</span>
+          <strong [class.color-success]="projectedBalance() >= 0" [class.color-danger]="projectedBalance() < 0">
+            ${{ projectedBalance() | number:'1.2-2' }}
+          </strong>
+        </div>
+
+        <div class="stat-row">
+          <span>Tasa de Ahorro:</span>
+          <strong>{{ projectedSavingsRate() }}%</strong>
+        </div>
+      </div>
+
+      <!-- Action items -->
+      <div class="simulation-actions">
+        <button class="btn btn-secondary" (click)="resetSimulation()">Restaurar</button>
+        <button class="btn btn-primary" (click)="applySimulation()" [disabled]="simulatedExpensesList().length === 0 && simulatedIncome() === financeService.income() && simulatedDebt() === financeService.debtRatio()">
+          Aplicar Cambios
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,233 @@
+.simulator-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .simulator-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.simulation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.controls-card, .simulated-expenses-card, .projection-badge-card, .stats-card {
+  padding: 30px;
+}
+
+/* Sliders */
+.sim-slider-group {
+  margin-bottom: 24px;
+}
+
+.sim-slider-group label {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* Simulated Expenses Form */
+.sim-expense-form {
+  margin-bottom: 20px;
+}
+
+.width-sm {
+  max-width: 120px;
+}
+
+.add-sim-btn {
+  padding: 10px 16px;
+  font-size: 1.25rem;
+}
+
+/* Simulated items list */
+.simulated-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sim-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.sim-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+
+.sim-desc {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sim-item-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sim-cat {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.sim-val {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.35rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.remove-btn:hover {
+  color: var(--color-danger);
+}
+
+.empty-list {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 20px;
+}
+
+/* Projection Badge Cards styling */
+.projection-badge-card {
+  text-align: center;
+  border-radius: var(--radius-lg);
+  margin-bottom: 30px;
+  transition: all var(--transition-normal);
+}
+
+.proj-badge-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.proj-profile-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.proj-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Colors cards */
+.card-healthy {
+  border-color: var(--color-success);
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.08) 0%, rgba(7, 10, 19, 0.4) 100%);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.card-healthy .proj-profile-title {
+  color: var(--color-success);
+}
+
+.card-observation {
+  border-color: var(--color-warning);
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.08) 0%, rgba(7, 10, 19, 0.4) 100%);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+}
+
+.card-observation .proj-profile-title {
+  color: var(--color-warning);
+}
+
+.card-risk {
+  border-color: var(--color-danger);
+  background: radial-gradient(circle at center, rgba(239, 68, 68, 0.08) 0%, rgba(7, 10, 19, 0.4) 100%);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+.card-risk .proj-profile-title {
+  color: var(--color-danger);
+}
+
+/* Projection stats list */
+.projection-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.stat-row strong {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.line-divider {
+  border-top: 1px solid var(--border-light);
+  padding-top: 14px;
+}
+
+.color-success {
+  color: var(--color-success) !important;
+}
+
+.color-danger {
+  color: var(--color-danger) !important;
+}
+
+.simulation-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.simulation-actions button {
+  flex: 1;
+}

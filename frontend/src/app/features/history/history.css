@@ -1,0 +1,76 @@
+.history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.timeline-card, .mil-timeline-card {
+  padding: 30px;
+}
+
+.select-sm {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  width: auto;
+  cursor: pointer;
+}
+
+/* Timeline Milestones Trail */
+.timeline-trail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  margin-top: 30px;
+}
+
+.timeline-trail::before {
+  content: '';
+  position: absolute;
+  left: 55px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.timeline-milestone {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  z-index: 5;
+}
+
+.mil-badge {
+  width: 110px;
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.mil-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.mil-content h3 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.mil-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}

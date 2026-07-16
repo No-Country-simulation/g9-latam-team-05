@@ -1,0 +1,73 @@
+<div class="profile-container">
+  
+  <div class="profile-layout-grid">
+    
+    <!-- Left Panel: Profile Gauge Card -->
+    <div class="glass-card gauge-card animate-fade-in"
+         [class.profile-healthy]="financeService.riskProfile() === 'Saludable'"
+         [class.profile-observation]="financeService.riskProfile() === 'En observación'"
+         [class.profile-risk]="financeService.riskProfile() === 'En riesgo'">
+      
+      <h2>Diagnóstico de Perfil</h2>
+      
+      <div class="radial-gauge">
+        <div class="gauge-center">
+          <span class="percentage">{{ financeService.probability() | percent }}</span>
+          <span class="label">Seguridad</span>
+        </div>
+      </div>
+
+      <h3 class="profile-name">{{ financeService.riskProfile() }}</h3>
+      <p class="profile-meta-text">
+        El perfil financiero se calcula utilizando clasificadores inteligentes basados en tu capacidad de ahorro y nivel de endeudamiento declarado.
+      </p>
+    </div>
+
+    <!-- Right Panel: Overview statistics -->
+    <div class="glass-card stats-overview-card animate-fade-in">
+      <h2>Métricas Base Declaradas</h2>
+      <p class="subtitle">Datos principales de tu Onboarding</p>
+
+      <div class="details-list">
+        <div class="details-row">
+          <span>Ingreso Fijo Mensual:</span>
+          <strong>${{ financeService.income() | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="details-row">
+          <span>Tasa de Ahorro:</span>
+          <strong>{{ financeService.savingsRate() }}%</strong>
+        </div>
+
+        <div class="details-row">
+          <span>Límite de Endeudamiento:</span>
+          <strong>{{ financeService.debtRatio() }}%</strong>
+        </div>
+
+        <div class="details-row">
+          <span>Frecuencia de Ahorro:</span>
+          <strong>{{ financeService.savingFrequency() }}</strong>
+        </div>
+      </div>
+
+      <!-- Breakdown table of expenses by category -->
+      <h3 class="breakdown-title">Distribución por Categorías</h3>
+      <div class="category-breakdown-list">
+        @for (item of financeService.categoryExpenses() | keyvalue; track item.key) {
+          <div class="cat-bar-row">
+            <div class="cat-bar-header">
+              <span>{{ item.key }}</span>
+              <strong>${{ item.value | number:'1.2-2' }}</strong>
+            </div>
+            <div class="cat-progress-track">
+              <div class="cat-progress-bar" [style.width.%]="(item.value / financeService.income()) * 100"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

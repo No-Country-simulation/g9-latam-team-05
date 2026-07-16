@@ -1,0 +1,58 @@
+<div class="history-container">
+  
+  <div class="glass-card timeline-card animate-fade-in">
+    <div class="card-title-wrap flex-between">
+      <div>
+        <h2>Evolución de Comportamiento</h2>
+        <p class="subtitle">Evolución de tus ingresos vs gastos mensuales</p>
+      </div>
+      <div class="dropdown-filter">
+        <select class="select-sm">
+          <option>Últimos 6 meses</option>
+          <option>Año Completo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvas #historyCanvas></canvas>
+    </div>
+  </div>
+
+  <!-- Historical timeline milestones -->
+  <div class="glass-card mil-timeline-card animate-fade-in">
+    <div class="card-title-wrap">
+      <h2>Línea de Evolución del Perfil</h2>
+      <p class="subtitle">Historial de cambios calculados en tu diagnóstico financiero</p>
+    </div>
+
+    <div class="timeline-trail">
+      
+      <div class="timeline-milestone">
+        <div class="mil-badge profile-badge-healthy">Julio</div>
+        <div class="mil-content">
+          <h3>Perfil Actual: {{ financeService.riskProfile() }}</h3>
+          <p>Tasa de ahorro estable en {{ financeService.savingsRate() }}% con un balance total de ${{ financeService.balance() | number:'1.2-2' }}.</p>
+        </div>
+      </div>
+
+      <div class="timeline-milestone">
+        <div class="mil-badge profile-badge-observation">Junio</div>
+        <div class="mil-content">
+          <h3>Perfil: En observación</h3>
+          <p>Los gastos ascendieron a un 86% de los ingresos debido a sobrecostos puntuales en la categoría de Vivienda y Servicios.</p>
+        </div>
+      </div>
+
+      <div class="timeline-milestone">
+        <div class="mil-badge profile-badge-healthy">Mayo</div>
+        <div class="mil-content">
+          <h3>Perfil: Saludable</h3>
+          <p>Ahorro regular de un 24%. Los gastos en Ocio se mantuvieron controlados por debajo de los límites indicados por el motor de IA.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

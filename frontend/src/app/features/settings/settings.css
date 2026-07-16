@@ -1,0 +1,31 @@
+.settings-container {
+  padding: 30px;
+  min-height: calc(100vh - 120px);
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.slider-val-display {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  text-align: right;
+}
+
+.w-full {
+  width: 100%;
+}

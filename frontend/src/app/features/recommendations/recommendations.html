@@ -1,0 +1,63 @@
+<div class="recs-container">
+  
+  <div class="glass-card header-banner animate-fade-in">
+    <div class="banner-info">
+      <h1>Sugerencias de Inteligencia Artificial</h1>
+      <p>Nuestros modelos predictivos han analizado tus hábitos de gasto y ratios de ahorro para proponerte mejoras concretas.</p>
+    </div>
+    <div class="banner-rating-glow">
+      <span class="rating-val">{{ financeService.savingsRate() }}%</span>
+      <span class="rating-label">Tasa de Ahorro</span>
+    </div>
+  </div>
+
+  <div class="recs-grid">
+    
+    <!-- Left panel: AI Health summary -->
+    <div class="glass-card summary-card animate-fade-in">
+      <h2>Resumen de Diagnóstico</h2>
+      <p class="subtitle">Estado actual de salud financiera</p>
+
+      <div class="diag-score">
+        <span class="score-num">{{ financeService.probability() * 100 | number:'1.0-0' }}</span>
+        <span class="score-max">/100 Ptos</span>
+      </div>
+
+      <div class="diag-rules">
+        <div class="rule-item">
+          <span>Riesgo de Deuda:</span>
+          <strong [class.text-danger]="financeService.debtRatio() > 40" [class.text-warning]="financeService.debtRatio() > 20" [class.text-success]="financeService.debtRatio() <= 20">
+            {{ financeService.debtRatio() }}%
+          </strong>
+        </div>
+        <div class="rule-item">
+          <span>Relación Gasto/Ingreso:</span>
+          <strong>{{ (financeService.totalExpenses() / financeService.income()) | percent }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right list: recommendations cards -->
+    <div class="recs-list-area">
+      @for (rec of financeService.recommendations(); track rec) {
+        <div class="glass-card rec-detail-card animate-fade-in">
+          <div class="rec-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a3 3 0 00-3-3H9.75M12 18a.75.75 0 110-1.5.75.75 0 010 1.5zm0-9a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>
+          </div>
+          <div class="rec-content">
+            <span class="rec-badge">Sugerencia Recomendada</span>
+            <p class="rec-text">{{ rec }}</p>
+          </div>
+        </div>
+      } @empty {
+        <div class="glass-card empty-recs">
+          <p>No se encontraron recomendaciones críticas. ¡Tu salud financiera está en un nivel excelente!</p>
+        </div>
+      }
+    </div>
+
+  </div>
+
+</div>

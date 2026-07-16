@@ -1,0 +1,66 @@
+erDiagram
+    usuarios ||--|| perfiles_financieros : "tiene"
+    usuarios ||--o{ transacciones : "registra"
+    usuarios ||--o{ presupuestos : "configura"
+    usuarios ||--o{ analisis_historial : "recibe"
+    categorias ||--o{ transacciones : "clasifica"
+    categorias ||--o{ presupuestos : "monitorea"
+    analisis_historial ||--o{ recomendaciones_historial : "genera"
+
+    usuarios {
+        uuid id PK
+        varchar nombre
+        varchar email UK
+        varchar password_hash
+        timestamp fecha_registro
+    }
+
+    perfiles_financieros {
+        uuid user_id PK, FK
+        numeric ingreso_mensual
+        integer nivel_endeudamiento
+        varchar frecuencia_ahorro
+        timestamp fecha_actualizacion
+    }
+
+    categorias {
+        integer id PK
+        varchar nombre UK
+        varchar icono
+        varchar color
+    }
+
+    presupuestos {
+        uuid id PK
+        uuid user_id FK
+        integer categoria_id FK
+        numeric monto_limite
+        varchar periodo
+    }
+
+    transacciones {
+        uuid id PK
+        uuid user_id FK
+        varchar descripcion
+        numeric monto
+        varchar tipo
+        integer categoria_id FK
+        date fecha
+    }
+
+    analisis_historial {
+        uuid id PK
+        uuid user_id FK
+        numeric ingreso_mensual
+        integer nivel_endeudamiento
+        varchar frecuencia_ahorro
+        varchar perfil_resultado
+        numeric probabilidad
+        timestamp fecha_analisis
+    }
+
+    recomendaciones_historial {
+        bigint id PK
+        uuid analisis_id FK
+        text recomendacion_texto
+    }

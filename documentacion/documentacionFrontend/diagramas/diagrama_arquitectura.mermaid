@@ -1,0 +1,65 @@
+%%{init: { 'theme': 'default', 'themeVariables': { 'fontSize': '15px', 'fontFamily': 'Arial' } }}%%
+graph TD
+    %% Componentes
+    subgraph Browser ["Navegador Cliente"]
+        subgraph Angular ["🅰️ Angular v17+ App"]
+            direction TB
+            App[AppComponent]
+            Routes[AppRoutes]
+            
+            subgraph Core ["Capa Core (Singletons)"]
+                State[State Manager / Signals]
+                API[FinanceService / HttpClient]
+            end
+            
+            subgraph Features ["Capa Features (Modulos)"]
+                Dash[DashboardComponent]
+                Trans[TransactionsComponent]
+                Profile[ProfileComponent]
+            end
+            
+            subgraph Shared ["Capa Shared (Reutilizable)"]
+                Card[KPICardComponent]
+                ChartComp[FinanceChartComponent]
+                Upload[CSVUploadComponent]
+            end
+        end
+    end
+
+    subgraph BackendSystem ["Servicios Backend & Nube"]
+        Spring["☕ API REST (Spring Boot)"]
+        OCI["☁️ Oracle Cloud Infrastructure (OCI)"]
+        DB[(Persistencia OCI DB)]
+    end
+
+    %% Relaciones
+    App --> Routes
+    Routes --> Dash
+    Routes --> Trans
+    Routes --> Profile
+    
+    %% Inyección de Estado & Servicios
+    State -.-> Dash
+    State -.-> Trans
+    State -.-> Profile
+    API -.-> State
+    
+    %% Consumo Shared
+    Dash --> Card
+    Dash --> ChartComp
+    Trans --> Upload
+    
+    %% API Requests
+    API <-->|"① HTTPS / JSON"| Spring
+    Spring <-->|"② Procesamiento"| OCI
+    Spring <-->|"③ Almacenamiento"| DB
+
+    %% Estilos
+    classDef front fill:#E8EAF6,stroke:#283593,stroke-width:2px
+    classDef java fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    classDef dbase fill:#FFF3E0,stroke:#E65100,stroke-width:2px
+    classDef ext fill:#FCE4EC,stroke:#C62828,stroke-width:2px
+
+    class App,Routes,State,API,Dash,Trans,Profile,Card,ChartComp,Upload front
+    class Spring java
+    class OCI,DB dbase
