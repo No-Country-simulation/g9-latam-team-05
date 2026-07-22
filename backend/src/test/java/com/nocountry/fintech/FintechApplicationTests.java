@@ -1,10 +1,10 @@
-package com.team05.FinanceAi;
+package com.nocountry.fintech;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FinanceAiApplicationTests {
+class FintechApplicationTests {
 
 	@Test
 	void contextLoads() {
