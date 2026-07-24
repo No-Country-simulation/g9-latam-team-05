@@ -42,7 +42,9 @@ public class SchemaInspector {
 
     public void verificarConexionOracle() {
         try (Connection connection = dataSource.getConnection()) {
-            System.out.println("Conexion con oracle database establecida");
+            String dbName = connection.getMetaData().getDatabaseProductName();
+            String dbVersion = connection.getMetaData().getDatabaseProductVersion();
+            System.out.println("Conexion con oracle database establecida (" + dbName + " " + dbVersion + ")");
         } catch (Exception e) {
             System.err.println("No se pudo conectar a la base de datos: " + e.getMessage());
         }

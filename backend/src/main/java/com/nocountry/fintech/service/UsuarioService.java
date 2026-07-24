@@ -37,6 +37,7 @@ public class UsuarioService {
             usuario.setNombre(nombre);
             usuario.setEmail(email);
             usuario.setPasswordHash(passwordHash);
+            usuario.setFechaCreacion(LocalDateTime.now());
             usuario.setFechaRegistro(LocalDateTime.now());
             usuario.setEstado(estado != null ? estado : "ACTIVO");
             

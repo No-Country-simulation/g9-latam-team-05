@@ -32,7 +32,7 @@ public class DatabaseTest implements CommandLineRunner {
         schemaInspector.listarTablasDelEsquema();
 
         // ---- VER TODAS LAS COLUMNAS DE LAS TABLAS EN EL ESQUEMA ----
-        //schemaInspector.listarColumnasDeTodasLasTablas();
+        schemaInspector.listarColumnasDeTodasLasTablas();
 
         // --------------- VER ESQUEMA TABLA---------------
         //schemaInspector.listarColumnasDeTabla("USUARIOS");
