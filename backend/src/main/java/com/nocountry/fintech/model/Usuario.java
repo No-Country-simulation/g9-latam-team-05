@@ -26,9 +26,6 @@ public class Usuario {
     @Column(name = "PASSWORD_HASH", nullable = false)
     private String passwordHash;
 
-    @Column(name = "FECHA_CREACION", nullable = false)
-    private LocalDateTime fechaCreacion;
-
     @Column(name = "FECHA_REGISTRO")
     private LocalDateTime fechaRegistro;
 

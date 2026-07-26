@@ -1,16 +1,15 @@
 package com.nocountry.fintech.dto;
 
 import lombok.Data;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class TransaccionResponseDto {
     private Long id;
-    private BigDecimal monto;
-    private LocalDate fecha;
+    private Double monto;
+    private LocalDateTime fecha;
     private String descripcion;
     private String tipo;
     private Long usuarioId;
-    
+    private Long categoriaId;
 }

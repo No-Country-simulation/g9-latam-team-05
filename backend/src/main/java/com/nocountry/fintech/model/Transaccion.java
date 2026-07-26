@@ -16,11 +16,16 @@ public class Transaccion {
     @SequenceGenerator(name = "transaccion_seq", sequenceName = "TRANSACCIONES_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    // -------- Para consultas: transaccion.getUsuario().getEmail()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private Usuario usuario;
 
-    @Column(name = "CATEGORIA_ID", nullable = false)
-    private Long categoriaId;
+    // -------- Para consultas: transaccion.getCategoria().getNombre()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORIA_ID", nullable = false)
+    private Categoria categoria;
+
 
     @Column(name = "DESCRIPCION", nullable = false)
     private String descripcion;

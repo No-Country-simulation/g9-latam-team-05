@@ -164,6 +164,28 @@ public class SchemaInspector {
         }
     }
 
+    // Obtener el conteo exacto de registros de una tabla
+    public long contarRegistros(String nombreTabla) {
+        String sql = "SELECT COUNT(*) FROM " + nombreTabla.toUpperCase();
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al contar registros de " + nombreTabla + ": " + e.getMessage());
+        }
+        return 0;
+    }
+
+    // Verificar si una tabla existe en el esquema
+    public boolean existeTabla(String nombreTabla) {
+        List<String> tablas = obtenerNombresDeTablas();
+        return tablas.contains(nombreTabla.toUpperCase());
+    }
+
+
     public void reiniciarTablaConSecuencia(String nombreTabla, String nombreSecuencia) {
         String sqlDelete = "DELETE FROM " + nombreTabla.toUpperCase();
         String sqlResetSeq = "ALTER SEQUENCE " + nombreSecuencia.toUpperCase() + " RESTART START WITH 1";

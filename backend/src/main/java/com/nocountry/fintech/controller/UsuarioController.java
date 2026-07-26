@@ -1,8 +1,11 @@
 package com.nocountry.fintech.controller;
 
+import com.nocountry.fintech.dto.UsuarioRequestDto;
+import com.nocountry.fintech.dto.UsuarioResponseDto;
 import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +19,30 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public List<Usuario> obtenerTodos() {
-        return usuarioService.listarUsuarios();
+    public ResponseEntity<List<UsuarioResponseDto>> obtenerTodos() {
+        List<UsuarioResponseDto> usuarios = usuarioService.listarUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
-    public Optional<Usuario> obtenerPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id);
+    public ResponseEntity<UsuarioResponseDto> obtenerPorId(@PathVariable Long id) {
+        Optional<UsuarioResponseDto> usuario = usuarioService.buscarPorId(id);
+        return usuario.map(ResponseEntity::ok)
+                      .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Usuario crear(@RequestBody Usuario usuario) {
-        return usuarioService.registrarUsuario(
-            usuario.getNombre(),
-            usuario.getEmail(),
-            usuario.getPasswordHash(),
-            usuario.getEstado()
-        );
+    public ResponseEntity<UsuarioResponseDto> crear(@RequestBody UsuarioRequestDto usuarioDto) {
+        UsuarioResponseDto nuevoUsuario = usuarioService.registrarUsuario(usuarioDto);
+        if (nuevoUsuario != null) {
+            return ResponseEntity.ok(nuevoUsuario);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 }
