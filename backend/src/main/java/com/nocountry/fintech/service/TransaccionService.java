@@ -1,7 +1,7 @@
 package com.nocountry.fintech.service;
 
-import com.nocountry.fintech.dto.TransaccionRequestDto;
-import com.nocountry.fintech.dto.TransaccionResponseDto;
+import com.nocountry.fintech.dto.request.TransaccionRequestDto;
+import com.nocountry.fintech.dto.response.TransaccionResponseDto;
 import com.nocountry.fintech.model.Categoria;
 import com.nocountry.fintech.model.Transaccion;
 import com.nocountry.fintech.model.Usuario;

@@ -1,7 +1,7 @@
 package com.nocountry.fintech.controller;
 
-import com.nocountry.fintech.dto.PresupuestoRequestDto;
-import com.nocountry.fintech.dto.PresupuestoResponseDto;
+import com.nocountry.fintech.dto.request.PresupuestoRequestDto;
+import com.nocountry.fintech.dto.response.PresupuestoResponseDto;
 import com.nocountry.fintech.service.PresupuestoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

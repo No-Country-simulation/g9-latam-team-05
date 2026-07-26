@@ -1,8 +1,7 @@
 package com.nocountry.fintech.controller;
 
-import com.nocountry.fintech.dto.UsuarioRequestDto;
-import com.nocountry.fintech.dto.UsuarioResponseDto;
-import com.nocountry.fintech.model.Usuario;
+import com.nocountry.fintech.dto.request.UsuarioRequestDto;
+import com.nocountry.fintech.dto.response.UsuarioResponseDto;
 import com.nocountry.fintech.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

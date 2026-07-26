@@ -1,14 +1,17 @@
 package com.nocountry.fintech.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "USUARIOS")
-@Data
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
@@ -20,7 +23,7 @@ public class Usuario {
     @Column(name = "NOMBRE", nullable = false)
     private String nombre;
 
-    @Column(name = "EMAIL", nullable = false, length = 100)
+    @Column(name = "EMAIL", nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(name = "PASSWORD_HASH", nullable = false)
@@ -31,4 +34,18 @@ public class Usuario {
 
     @Column(name = "ESTADO", length = 20)
     private String estado;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnalisisHistorial> historiales = new ArrayList<>();
+
+    //metodo helper para mantener sincornizacion bidireccional
+    public void agregarAnalisis(AnalisisHistorial analisis){
+        historiales.add(analisis);
+        analisis.setUsuario(this);
+    }
+
+    public void removerAnalisis(AnalisisHistorial analisis) {
+        historiales.remove(analisis);
+        analisis.setUsuario(null);
+    }
 }

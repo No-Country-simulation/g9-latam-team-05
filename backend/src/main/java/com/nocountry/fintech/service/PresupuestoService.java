@@ -1,7 +1,7 @@
 package com.nocountry.fintech.service;
 
-import com.nocountry.fintech.dto.PresupuestoRequestDto;
-import com.nocountry.fintech.dto.PresupuestoResponseDto;
+import com.nocountry.fintech.dto.request.PresupuestoRequestDto;
+import com.nocountry.fintech.dto.response.PresupuestoResponseDto;
 import com.nocountry.fintech.model.Categoria;
 import com.nocountry.fintech.model.Presupuesto;
 import com.nocountry.fintech.model.Usuario;

@@ -1,4 +1,4 @@
-package com.nocountry.fintech.dto;
+package com.nocountry.fintech.dto.response;
 
 import lombok.Data;
 import java.math.BigDecimal;

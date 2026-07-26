@@ -1,7 +1,7 @@
 package com.nocountry.fintech.service;
 
-import com.nocountry.fintech.dto.CategoriaRequestDto;
-import com.nocountry.fintech.dto.CategoriaResponseDto;
+import com.nocountry.fintech.dto.request.CategoriaRequestDto;
+import com.nocountry.fintech.dto.response.CategoriaResponseDto;
 import com.nocountry.fintech.model.Categoria;
 import com.nocountry.fintech.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;

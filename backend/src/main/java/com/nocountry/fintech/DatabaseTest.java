@@ -45,17 +45,17 @@ public class DatabaseTest implements CommandLineRunner {
         schemaInspector.limpiarTabla("TRANSACCIONES");
         schemaInspector.limpiarTabla("USUARIOS");
         */
-        
-        
-        
+
+
+
         /*
         // --------------- REGISTRAR USUARIO PRUEBA ---------------
         System.out.println("--- INICIANDO PRUEBA DE INTEGRIDAD Y ELIMINACIÓN ---");
 
         Usuario usuario = usuarioService.registrarUsuario(
-            "Carlos Test", 
-            "carlos.test@nocountry.com", 
-            "password123", 
+            "Carlos Test",
+            "carlos.test@nocountry.com",
+            "password123",
             "ACTIVO"
         );
 
@@ -65,8 +65,8 @@ public class DatabaseTest implements CommandLineRunner {
         }
         // Ver el usuario creado
         schemaInspector.listarDatosDeTabla("USUARIOS");
-        
-        
+
+
         // --------------- CREAR Y ASOCIAR TRANSACCIÓN ---------------
         Transaccion t = new Transaccion();
         t.setUserId(usuario.getId());
@@ -99,5 +99,5 @@ public class DatabaseTest implements CommandLineRunner {
 
 
         System.out.println("--- FIN DE LA PRUEBA DE INTEGRIDAD ---");
-    }   
+    }
 }
