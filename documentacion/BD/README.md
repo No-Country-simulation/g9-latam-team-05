@@ -19,13 +19,13 @@ Para asegurar la integridad de los datos, evitar anomalías de inserción/actual
 ### 2. Segunda Forma Normal (2NF)
 *   **Requisito:** Cumplir con la 1NF y garantizar que todos los atributos que no forman parte de la clave primaria dependan por completo de la clave primaria (sin dependencias parciales).
 *   **Aplicación:**
-    *   Dado que todas nuestras tablas utilizan identificadores únicos surrogate simples (`id` auto-incremental o UUID) como clave primaria, no existen claves primarias compuestas. Por lo tanto, no hay dependencias parciales y el esquema cumple de forma natural con la 2NF.
+    *   Todas las tablas utilizan identificadores de secuencia (`BIGINT` autoincremental / `sequence` de JPA) como clave primaria surrogate simple, sin claves compuestas parciales.
 
 ### 3. Tercera Forma Normal (3NF)
 *   **Requisito:** Cumplir con la 2NF y eliminar cualquier dependencia transitiva (ningún atributo que no sea clave debe depender de otro atributo no clave).
 *   **Aplicación:**
-    *   **Categorías de Gastos:** Si guardamos el nombre de la categoría, su icono y su color dentro de la tabla `transacciones`, el icono y el color dependerían del nombre de la categoría (que no es clave primaria). Para evitar esto, creamos la tabla independiente `categorias` y colocamos una clave foránea (`categoria_id`) en `transacciones`.
-    *   **Límites de Presupuesto:** La regla de negocio exige evaluar límites mensuales configurados por el usuario para cada categoría. Guardar estos límites directamente en la tabla de categorías violaría la 3NF ya que los límites dependen del usuario que los define, no de la categoría de forma genérica. Por lo tanto, se separa en una tabla intermedia `presupuestos`.
+    *   **Categorías de Gastos:** Si guardamos el nombre de la categoría, su icono y su color dentro de la tabla `transacciones`, el icono y el color dependerían del nombre de la categoría. Para evitar esto, creamos la tabla independiente `categorias` y colocamos una clave foránea (`categoria_id`) en `transacciones`.
+    *   **Límites de Presupuesto:** La regla de negocio exige evaluar límites mensuales configurados por el usuario para cada categoría. Se descompone la periodicidad en campos enteros `mes` y `anio` dentro de la tabla `presupuestos`.
 
 ---
 
@@ -37,65 +37,68 @@ Por ello, la tabla `analisis_historial` actúa como un **Snapshot** que guarda l
 
 ## 📊 Descripción del Diccionario de Datos
 
-El sistema consta de las siguientes tablas:
+El sistema consta de las siguientes 7 tablas:
 
 ### 1. Tabla: `usuarios`
 Almacena los datos de registro y credenciales del usuario.
-*   `id` (UUID, Primary Key): Identificador único del usuario.
-*   `nombre` (VARCHAR): Nombre completo.
+*   `id` (BIGINT, Primary Key): Identificador único del usuario por secuencia.
+*   `nombre` (VARCHAR): Nombre completo del usuario.
 *   `email` (VARCHAR, UNIQUE): Correo electrónico (índice único para login).
 *   `password_hash` (VARCHAR): Contraseña encriptada.
+*   `estado` (VARCHAR): Estado de la cuenta (ej: 'ACTIVO').
 *   `fecha_registro` (TIMESTAMP): Fecha y hora del registro.
 
 ### 2. Tabla: `perfiles_financieros`
 Almacena las variables de contexto económico declaradas durante el Onboarding o actualizadas en los Ajustes.
-*   `user_id` (UUID, Primary Key, Foreign Key ➔ `usuarios.id`): Enlace 1:1 con el usuario.
-*   `ingreso_mensual` (NUMERIC): Ingreso neto actual del usuario.
-*   `nivel_endeudamiento` (INTEGER): Porcentaje de ingresos destinado a deudas (0-100).
-*   `frecuencia_ahorro` (VARCHAR): Frecuencia declarada (Baja, Media, Alta).
-*   `fecha_actualizacion` (TIMESTAMP): Última vez que se modificó.
+*   `user_id` (BIGINT, Primary Key, Foreign Key ➔ `usuarios.id`): Enlace 1:1 con el usuario.
+*   `ingreso_mensual` (NUMERIC(12,2)): Ingreso neto actual del usuario.
+*   `nivel_endeudamiento` (NUMERIC(5,2)): Porcentaje de ingresos destinado a deudas.
+*   `frecuencia_ahorro` (VARCHAR): Frecuencia declarada ('BAJA', 'MEDIA', 'ALTA').
+*   `fecha_actualizacion` (TIMESTAMP): Última actualización del perfil.
 
 ### 3. Tabla: `categorias`
-Catálogo de categorías disponibles para clasificar gastos.
-*   `id` (INTEGER, Primary Key): Identificador de la categoría.
-*   `nombre` (VARCHAR, UNIQUE): Ej: Alimentación, Transporte, Ocio, Servicios, Vivienda, Salud, Educación.
-*   `icono` (VARCHAR): Representación visual (icono CSS o SVG).
-*   `color` (VARCHAR): Código hexadecimal del tema visual.
+Catálogo de categorías disponibles para clasificar gastos e ingresos.
+*   `id` (BIGINT, Primary Key): Identificador de la categoría.
+*   `nombre` (VARCHAR): Nombre de la categoría (ej: Alimentación, Transporte, Ocio).
+*   `tipo` (VARCHAR): Tipo de movimiento ('INGRESO' o 'GASTO').
+*   `icono` (VARCHAR): Identificador de icono.
+*   `color` (VARCHAR): Código hexadecimal del color asignado.
 
 ### 4. Tabla: `presupuestos`
-Límites de gastos configurados por el usuario para alertas del 80% y 100%.
-*   `id` (UUID, Primary Key): Identificador único del presupuesto.
-*   `user_id` (UUID, Foreign Key ➔ `usuarios.id`): Usuario que define el presupuesto.
-*   `categoria_id` (INTEGER, Foreign Key ➔ `categorias.id`): Categoría del límite.
-*   `monto_limite` (NUMERIC): Límite mensual (ej: $500).
-*   `periodo` (VARCHAR): Período mensual (ej: "2026-07").
+Límites de gastos configurados por el usuario.
+*   `id` (BIGINT, Primary Key): Identificador único del presupuesto.
+*   `user_id` (BIGINT, Foreign Key ➔ `usuarios.id`): Usuario que define el presupuesto.
+*   `categoria_id` (BIGINT, Foreign Key ➔ `categorias.id`): Categoría del límite.
+*   `monto_limite` (NUMERIC(12,2)): Límite mensual configurado.
+*   `mes` (INTEGER): Mes correspondiente (1 al 12).
+*   `anio` (INTEGER): Año correspondiente (ej: 2026).
 
 ### 5. Tabla: `transacciones`
-Registra los egresos e ingresos del usuario clasificados automáticamente.
-*   `id` (UUID, Primary Key): Identificador de la transacción.
-*   `user_id` (UUID, Foreign Key ➔ `usuarios.id`): Usuario dueño de la transacción.
-*   `descripcion` (VARCHAR): Detalle textual (ej: "Supermercado").
-*   `monto` (NUMERIC): Valor monetario de la transacción.
-*   `tipo` (VARCHAR): Tipo de movimiento ('Ingreso' o 'Egreso').
-*   `categoria_id` (INTEGER, Foreign Key ➔ `categorias.id`): Categoría asignada.
-*   `fecha` (DATE): Fecha de realización de la transacción.
+Registra los egresos e ingresos del usuario.
+*   `id` (BIGINT, Primary Key): Identificador de la transacción.
+*   `user_id` (BIGINT, Foreign Key ➔ `usuarios.id`): Usuario dueño de la transacción.
+*   `categoria_id` (BIGINT, Foreign Key ➔ `categorias.id`): Categoría asignada.
+*   `descripcion` (VARCHAR): Detalle textual.
+*   `monto` (DOUBLE PRECISION): Valor monetario del movimiento.
+*   `tipo` (VARCHAR): Tipo de movimiento ('INGRESO' o 'GASTO').
+*   `fecha` (TIMESTAMP): Fecha y hora del movimiento.
 
 ### 6. Tabla: `analisis_historial`
-Almacena el registro histórico del perfil de salud financiera generado por el motor de IA para graficar la evolución.
-*   `id` (UUID, Primary Key): Identificador del reporte.
-*   `user_id` (UUID, Foreign Key ➔ `usuarios.id`): Enlace al usuario.
-*   `ingreso_mensual` (NUMERIC): Histórico de ingresos al momento del análisis.
-*   `nivel_endeudamiento` (INTEGER): Histórico de deuda al momento del análisis.
-*   `frecuencia_ahorro` (VARCHAR): Histórica frecuencia al momento del análisis.
+Almacena el registro histórico del perfil de salud financiera generado por el motor de IA.
+*   `analisis_historial_id` (BIGINT, Primary Key): Identificador del reporte.
+*   `user_id` (BIGINT, Foreign Key ➔ `usuarios.id`): Enlace al usuario.
+*   `ingreso_mensual` (NUMERIC(12,2)): Ingreso al momento del análisis.
+*   `nivel_endeudamiento` (NUMERIC(5,2)): Nivel de deuda al momento del análisis.
+*   `frecuencia_ahorro` (VARCHAR): Frecuencia de ahorro al momento del análisis.
 *   `perfil_resultado` (VARCHAR): Diagnóstico ('Saludable', 'En observación', 'En riesgo').
-*   `probabilidad` (NUMERIC): Nivel de precisión del modelo ML.
-*   `fecha_analisis` (TIMESTAMP): Fecha en que se corrió el análisis.
+*   `probabilidad` (DOUBLE PRECISION): Nivel de precisión del modelo ML.
+*   `fecha_analisis` (TIMESTAMP): Fecha de generación del reporte.
 
 ### 7. Tabla: `recomendaciones_historial`
-Desglosa los consejos y planes de acción específicos vinculados a un reporte de análisis.
-*   `id` (BIGINT, Primary Key): Autoincremental.
-*   `analisis_id` (UUID, Foreign Key ➔ `analisis_historial.id` ON DELETE CASCADE): Enlace al reporte padre.
-*   `recomendacion_texto` (TEXT): El consejo específico de IA.
+Desglosa los consejos específicos vinculados a un reporte de análisis de IA.
+*   `recomendacion_id` (BIGINT, Primary Key): Autoincremental.
+*   `analisis_historial_id` (BIGINT, Foreign Key ➔ `analisis_historial.analisis_historial_id` ON DELETE CASCADE): Enlace al reporte padre.
+*   `recomendacion_texto` (VARCHAR(500)): Consejo generado por la IA.
 
 ---
 
@@ -112,60 +115,63 @@ erDiagram
     analisis_historial ||--o{ recomendaciones_historial : "genera"
 
     usuarios {
-        uuid id PK
+        bigint id PK
         varchar nombre
         varchar email UK
         varchar password_hash
+        varchar estado
         timestamp fecha_registro
     }
 
     perfiles_financieros {
-        uuid user_id PK, FK
+        bigint user_id PK, FK
         numeric ingreso_mensual
-        integer nivel_endeudamiento
+        numeric nivel_endeudamiento
         varchar frecuencia_ahorro
         timestamp fecha_actualizacion
     }
 
     categorias {
-        integer id PK
-        varchar nombre UK
+        bigint id PK
+        varchar nombre
+        varchar tipo
         varchar icono
         varchar color
     }
 
     presupuestos {
-        uuid id PK
-        uuid user_id FK
-        integer categoria_id FK
+        bigint id PK
+        bigint user_id FK
+        bigint categoria_id FK
         numeric monto_limite
-        varchar periodo
+        integer mes
+        integer anio
     }
 
     transacciones {
-        uuid id PK
-        uuid user_id FK
+        bigint id PK
+        bigint user_id FK
+        bigint categoria_id FK
         varchar descripcion
-        numeric monto
+        double monto
         varchar tipo
-        integer categoria_id FK
-        date fecha
+        timestamp fecha
     }
 
     analisis_historial {
-        uuid id PK
-        uuid user_id FK
+        bigint id PK
+        bigint user_id FK
         numeric ingreso_mensual
-        integer nivel_endeudamiento
+        numeric nivel_endeudamiento
         varchar frecuencia_ahorro
         varchar perfil_resultado
-        numeric probabilidad
+        double probabilidad
         timestamp fecha_analisis
     }
 
     recomendaciones_historial {
-        bigint id PK
-        uuid analisis_id FK
-        text recomendacion_texto
+        bigint recomendacion_id PK
+        bigint analisis_historial_id FK
+        varchar recomendacion_texto
     }
 ```

@@ -10,7 +10,26 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
-@Component
+// ====================================================================================================
+// NOTA DE ARQUITECTURA Y METODOLOGÍA (SDLC / ISO-IEC 12207):
+// 
+// SE DESACTIVÓ ESTA CLASE (@Component) PORQUE VIOLA EL CICLO DE VIDA DE DESARROLLO DE SOFTWARE (SDLC).
+// INTENTABA EJECUTAR PRUEBAS DE INFRAESTRUCTURA DE NUBE (ORACLE CLOUD "USER_TABLES") EN LA FASE DE CODIFICACIÓN LOCAL.
+// 
+// FASES DEL CICLO DE VIDA DE DESARROLLO DE SOFTWARE (SDLC - IEEE / ISO-IEC 12207):
+//   1. ANÁLISIS DE REQUISITOS (Casos de uso y especificación de la API)
+//   2. DISEÑO DE ARQUITECTURA (MVC + Capas / Modelo Relacional 3NF)
+//   3. DESARROLLO Y CODIFICACIÓN LOCAL (PostgreSQL Local) <--- [FASE ACTUAL - SEMANA 1]
+//   4. PRUEBAS Y TESTING (Pruebas unitarias e integración aisladas en src/test/java)
+//   5. DESPLIEGUE Y DESPLIEGUE EN LA NUBE (Oracle Cloud OCI / Autonomous DB)
+//   6. MANTENIMIENTO Y MONITOREO
+//
+// CITA DE REFERENCIA METODOLÓGICA:
+// "La contaminación del código fuente principal con scripts de inspección o dependencias de infraestructura 
+// de despliegue prematuras viola el principio de Separación de Incumbencias (Separation of Concerns, IEEE 1471) 
+// y corrompe la ejecución del entorno de desarrollo local." — ISO/IEC/IEEE 12207:2017 Systems and Software Engineering.
+// ====================================================================================================
+// @Component
 public class DatabaseTest implements CommandLineRunner {
 
     @Autowired
@@ -26,13 +45,13 @@ public class DatabaseTest implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         // --------------- VERIFICAR CONEXIÓN ---------------
-        schemaInspector.verificarConexionOracle();
+        // schemaInspector.verificarConexionOracle();
 
         // --------------- VER ESQUEMA DB---------------
-        schemaInspector.listarTablasDelEsquema();
+        // schemaInspector.listarTablasDelEsquema();
 
         // ---- VER TODAS LAS COLUMNAS DE LAS TABLAS EN EL ESQUEMA ----
-        schemaInspector.listarColumnasDeTodasLasTablas();
+        // schemaInspector.listarColumnasDeTodasLasTablas();
 
         // --------------- VER ESQUEMA TABLA---------------
         //schemaInspector.listarColumnasDeTabla("USUARIOS");
