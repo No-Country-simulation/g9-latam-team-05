@@ -8,59 +8,62 @@ erDiagram
     analisis_historial ||--o{ recomendaciones_historial : "genera"
 
     usuarios {
-        uuid id PK
+        bigint id PK
         varchar nombre
         varchar email UK
         varchar password_hash
+        varchar estado
         timestamp fecha_registro
     }
 
     perfiles_financieros {
-        uuid user_id PK, FK
+        bigint user_id PK, FK
         numeric ingreso_mensual
-        integer nivel_endeudamiento
+        numeric nivel_endeudamiento
         varchar frecuencia_ahorro
         timestamp fecha_actualizacion
     }
 
     categorias {
-        integer id PK
-        varchar nombre UK
+        bigint id PK
+        varchar nombre
+        varchar tipo
         varchar icono
         varchar color
     }
 
     presupuestos {
-        uuid id PK
-        uuid user_id FK
-        integer categoria_id FK
+        bigint id PK
+        bigint user_id FK
+        bigint categoria_id FK
         numeric monto_limite
-        varchar periodo
+        integer mes
+        integer anio
     }
 
     transacciones {
-        uuid id PK
-        uuid user_id FK
+        bigint id PK
+        bigint user_id FK
+        bigint categoria_id FK
         varchar descripcion
-        numeric monto
+        double monto
         varchar tipo
-        integer categoria_id FK
-        date fecha
+        timestamp fecha
     }
 
     analisis_historial {
-        uuid id PK
-        uuid user_id FK
+        bigint id PK
+        bigint user_id FK
         numeric ingreso_mensual
-        integer nivel_endeudamiento
+        numeric nivel_endeudamiento
         varchar frecuencia_ahorro
         varchar perfil_resultado
-        numeric probabilidad
+        double probabilidad
         timestamp fecha_analisis
     }
 
     recomendaciones_historial {
-        bigint id PK
-        uuid analisis_id FK
-        text recomendacion_texto
+        bigint recomendacion_id PK
+        bigint analisis_historial_id FK
+        varchar recomendacion_texto
     }
