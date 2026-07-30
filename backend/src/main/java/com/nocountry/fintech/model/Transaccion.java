@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "TRANSACCIONES")
@@ -31,7 +32,7 @@ public class Transaccion {
     private String descripcion;
 
     @Column(name = "MONTO", nullable = false)
-    private Double monto;
+    private BigDecimal monto;
 
     @Column(name = "TIPO", nullable = false)
     private String tipo;

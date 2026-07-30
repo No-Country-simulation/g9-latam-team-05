@@ -6,6 +6,7 @@ import com.nocountry.fintech.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,10 +34,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioResponseDto> crear(@RequestBody UsuarioRequestDto usuarioDto) {
         UsuarioResponseDto nuevoUsuario = usuarioService.registrarUsuario(usuarioDto);
-        if (nuevoUsuario != null) {
-            return ResponseEntity.ok(nuevoUsuario);
-        }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @DeleteMapping("/{id}")

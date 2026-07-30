@@ -10,7 +10,7 @@ import com.nocountry.fintech.repository.TransaccionRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +27,10 @@ public class TransaccionService {
     private CategoriaRepository categoriaRepository;
 
     public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
-        // Validaciones básicas
+        // Validaciones obligatorias
         if (dto.getUsuarioId() == null || dto.getCategoriaId() == null || 
             dto.getMonto() == null || dto.getDescripcion() == null) {
-            System.err.println("Error: Faltan datos obligatorios para registrar la transacción.");
-            return null;
+            throw new IllegalArgumentException("Faltan datos obligatorios para registrar la transacción.");
         }
 
         // Obtener referencias por ID (Evita SELECTs extra a la BD)
@@ -59,6 +58,8 @@ public class TransaccionService {
     public void eliminar(Long id) {
         if (transaccionRepository.existsById(id)) {
             transaccionRepository.deleteById(id);
+        }else {
+            throw new ResourceNotFoundException("No se pudo eliminar. Transacción no encontrada con ID: " + id);
         }
     }
     
