@@ -4,21 +4,32 @@ import com.nocountry.fintech.dto.request.UsuarioRequestDto;
 import com.nocountry.fintech.dto.response.UsuarioResponseDto;
 import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.nocountry.fintech.dto.request.LoginRequestDto;
+import com.nocountry.fintech.dto.response.LoginResponseDto;
+import com.nocountry.fintech.security.JwtService;
 
 @Service
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    // Registrar usuario nuevo (validaciones y control de duplicadoss)
+    public UsuarioService(UsuarioRepository usuarioRepository, 
+                          PasswordEncoder passwordEncoder, 
+                          JwtService jwtService) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
     public UsuarioResponseDto registrarUsuario(UsuarioRequestDto dto) {
         
         // Validaciones obligatorias
@@ -37,7 +48,7 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
-        usuario.setPasswordHash(dto.getPassword()); 
+        usuario.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setEstado("ACTIVO");
             
@@ -69,12 +80,40 @@ public class UsuarioService {
         }
     }
 
-    // Transformar Entidad a Response DTO para evitar exponer passwordHash
+    public LoginResponseDto autenticar(LoginRequestDto dto) {
+        if (dto.getEmail() == null || dto.getPassword() == null) {
+            throw new IllegalArgumentException("Email y contraseña son obligatorios.");
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas."));
+
+        if (!passwordEncoder.matches(dto.getPassword(), usuario.getPasswordHash())) {
+            throw new IllegalArgumentException("Credenciales inválidas.");
+        }
+
+        String token = jwtService.generateToken(usuario.getEmail());
+
+        LoginResponseDto response = new LoginResponseDto();
+        response.setToken(token);
+        response.setTokenType("Bearer");
+
+        LoginResponseDto.UsuarioSimpleDto userDto = new LoginResponseDto.UsuarioSimpleDto();
+        userDto.setId(usuario.getId());
+        userDto.setNombre(usuario.getNombre());
+        userDto.setEmail(usuario.getEmail());
+        response.setUsuario(userDto);
+
+        return response;
+    }
+
+    // Transformar Entidad a Response DTO
     private UsuarioResponseDto mapearAResponseDto(Usuario usuario) {
         UsuarioResponseDto responseDto = new UsuarioResponseDto();
         responseDto.setId(usuario.getId());
         responseDto.setNombre(usuario.getNombre());
         responseDto.setEmail(usuario.getEmail());
+        responseDto.setEstado(usuario.getEstado());
         responseDto.setFechaRegistro(usuario.getFechaRegistro());
         return responseDto;
     }
