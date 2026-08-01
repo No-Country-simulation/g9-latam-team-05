@@ -10,7 +10,7 @@ import com.nocountry.fintech.repository.PresupuestoRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,8 +30,7 @@ public class PresupuestoService {
     public PresupuestoResponseDto guardar(PresupuestoRequestDto dto) {
         if (dto.getUsuarioId() == null || dto.getCategoriaId() == null || 
             dto.getMontoLimite() == null || dto.getMes() == null || dto.getAnio() == null) {
-            System.err.println("Error: Faltan datos obligatorios para registrar el presupuesto.");
-            return null;
+            throw new IllegalArgumentException("Faltan datos obligatorios para registrar el presupuesto.");
         }
 
         Usuario usuario = usuarioRepository.getReferenceById(dto.getUsuarioId());
@@ -67,6 +66,8 @@ public class PresupuestoService {
     public void eliminar(Long id) {
         if (presupuestoRepository.existsById(id)) {
             presupuestoRepository.deleteById(id);
+        }else {
+            throw new ResourceNotFoundException("No se pudo eliminar. Presupuesto no encontrado con ID: " + id);
         }
     }
 

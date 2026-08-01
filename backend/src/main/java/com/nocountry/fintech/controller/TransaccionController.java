@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/transacciones")
@@ -23,10 +24,7 @@ public class TransaccionController {
     @PostMapping
     public ResponseEntity<TransaccionResponseDto> crear(@RequestBody TransaccionRequestDto tDto) {
         TransaccionResponseDto nueva = service.guardar(tDto);
-        if (nueva != null) {
-            return ResponseEntity.ok(nueva);
-        }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
     @DeleteMapping("/{id}")
