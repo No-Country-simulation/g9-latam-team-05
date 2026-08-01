@@ -4,6 +4,7 @@ import com.nocountry.fintech.dto.request.TransaccionRequestDto;
 import com.nocountry.fintech.dto.response.TransaccionResponseDto;
 import com.nocountry.fintech.service.TransaccionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,9 +17,11 @@ public class TransaccionController {
     @Autowired
     private TransaccionService service;
 
-    @GetMapping
-    public ResponseEntity<List<TransaccionResponseDto>> obtenerTodas() {
-        return ResponseEntity.ok(service.listarTodo());
+    @GetMapping("/usuario/{usuarioId}/recientes")
+    public ResponseEntity<Page<TransaccionResponseDto>> obtenerRecientes(@PathVariable Long usuarioId,
+                                                                               @RequestParam(defaultValue = "5") int limit) {
+
+        return ResponseEntity.ok(service.transaccionesRecientes(usuarioId, limit));
     }
 
     @PostMapping
@@ -27,10 +30,6 @@ public class TransaccionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+
 
 }

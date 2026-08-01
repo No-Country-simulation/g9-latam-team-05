@@ -8,6 +8,7 @@ import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.repository.CategoriaRepository;
 import com.nocountry.fintech.repository.PresupuestoRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.util.List;
@@ -17,17 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class PresupuestoService {
 
-    private final PresupuestoRepository presupuestoRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final CategoriaRepository categoriaRepository;
+    @Autowired
+    private PresupuestoRepository presupuestoRepository;
 
-    public PresupuestoService(PresupuestoRepository presupuestoRepository,
-                              UsuarioRepository usuarioRepository,
-                              CategoriaRepository categoriaRepository) {
-        this.presupuestoRepository = presupuestoRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.categoriaRepository = categoriaRepository;
-    }
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     public PresupuestoResponseDto guardar(PresupuestoRequestDto dto) {
         if (dto.getUsuarioId() == null || dto.getCategoriaId() == null || 
