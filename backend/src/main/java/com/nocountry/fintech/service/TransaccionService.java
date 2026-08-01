@@ -8,7 +8,6 @@ import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.repository.CategoriaRepository;
 import com.nocountry.fintech.repository.TransaccionRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
@@ -17,14 +16,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class TransaccionService {
-    @Autowired
-    private TransaccionRepository transaccionRepository;
+    
+    private final TransaccionRepository transaccionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    public TransaccionService(TransaccionRepository transaccionRepository,
+                              UsuarioRepository usuarioRepository,
+                              CategoriaRepository categoriaRepository) {
+        this.transaccionRepository = transaccionRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.categoriaRepository = categoriaRepository;
+    }
 
     public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
         // Validaciones obligatorias
