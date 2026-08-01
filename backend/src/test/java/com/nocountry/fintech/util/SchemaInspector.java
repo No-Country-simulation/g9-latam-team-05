@@ -13,24 +13,14 @@ import java.util.List;
 import java.sql.Statement;
 
 // ====================================================================================================
-// NOTA DE ARQUITECTURA Y BUENAS PRÁCTICAS JPA:
-// 
-// SE DESACTIVÓ ESTE COMPONENTE PORQUE UTILIZA CONSULTAS NATIVAS ESPECÍFICAS DE ORACLE ("USER_TABLES").
-// 
-// 1. VIOLACIÓN DE LA ABSTRACCIÓN JPA:
-//    EL PROPÓSITO PRINCIPAL DE JPA (JAVA PERSISTENCE API) Y SPRING DATA JPA ES DESACOPLAR EL CÓDIGO
-//    DEL MOTOR DE BASE DE DATOS MEDIANTE ENTIDADES (@Entity), JPQL Y MÉTODOS DERIVADOS EN REPOSITORIOS.
-// 
-// 2. ROMPE LA PORTABILIDAD:
-//    LAS CONSULTAS NATIVAS ("createNativeQuery") SE SALTAN LA CAPA DE ABSTRACCIÓN DE JPA. 
-//    AL USAR NOMBRES DE VISTAS ESPECÍFICAS COMO "USER_TABLES" (EXCLUSIVAS DE ORACLE), EL CÓDIGO FALLA 
-//    IMMEDIATAMENTE EN POSTGRESQL O CUALQUIER OTRO MOTOR RELACIONAL.
-// 
-// 3. ALTERNATIVA PORTÁTIL ESTÁNDAR:
-//    SI SE REQUIEREN METADATOS DE TABLAS DE FORMA MULTIPLATAFORMA, DEBE USARSE LA API DE METADATOS
-//    DE JDBC ESTÁNDAR: connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+// NOTA DE ARQUITECTURA: 
+// Se añadió la anotación @Component para habilitar este inspector dentro del entorno de pruebas (src/test/java).
+// Se conservan los métodos específicos de Oracle comentados para cuando se requiera migrar o probar 
+// directamente contra la base de datos en la nube Oracle Cloud (OCI).
 // ====================================================================================================
-// @Component
+
+
+@Component
 public class SchemaInspector {
 
     @Autowired
@@ -39,8 +29,13 @@ public class SchemaInspector {
     @Autowired
     private DataSource dataSource;
 
+    /*
+     * -------------------------------------------------------------
+     * MÉTODOS NATIVOS DE ORACLE
+     * -------------------------------------------------------------
+    */
+
     /* 
-    // MÉTODO DESACTIVADO: ACOPLADO A ORACLE ("USER_TABLES")
     @SuppressWarnings("unchecked")
     public void listarTablasDelEsquema() {
         try {
@@ -60,7 +55,6 @@ public class SchemaInspector {
         }
     }
 
-    // MÉTODO DESACTIVADO: ESPECÍFICO DE CONEXIÓN A ORACLE NUBE
     public void verificarConexionOracle() {
         try (Connection connection = dataSource.getConnection()) {
             String dbName = connection.getMetaData().getDatabaseProductName();
@@ -70,15 +64,63 @@ public class SchemaInspector {
             System.err.println("No se pudo conectar a la base de datos: " + e.getMessage());
         }
     }
+
+    @SuppressWarnings("unchecked")
+    private List<String> obtenerNombresDeTablas() {
+        try {
+            return entityManager.createNativeQuery(
+                "SELECT TABLE_NAME FROM USER_TABLES ORDER BY TABLE_NAME ASC"
+            ).getResultList();
+        } catch (Exception e) {
+            System.err.println("Error al consultar las tablas: " + e.getMessage());
+            return List.of();
+        }
+    }
+    
+    public void listarColumnasDeTodasLasTablas() {
+        List<String> tablas = obtenerNombresDeTablas();
+
+        for (String tabla : tablas) {
+            listarColumnasDeTabla(tabla);
+        }
+    }
+    
+    // Verificar si una tabla existe en el esquema
+    public boolean existeTabla(String nombreTabla) {
+        List<String> tablas = obtenerNombresDeTablas();
+        return tablas.contains(nombreTabla.toUpperCase());
+    }
+    
+    public void reiniciarTablaConSecuencia(String nombreTabla, String nombreSecuencia) {
+        String sqlDelete = "DELETE FROM " + nombreTabla.toUpperCase();
+        String sqlResetSeq = "ALTER SEQUENCE " + nombreSecuencia.toUpperCase() + " RESTART START WITH 1";
+
+        try (Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement()) {
+
+            // 1. Borrar los registros
+            int filasAfectadas = statement.executeUpdate(sqlDelete);
+            System.out.println("--- Se han eliminado " + filasAfectadas + " registros de la tabla: " + nombreTabla.toUpperCase() + " ---");
+
+            // 2. Reiniciar la secuencia
+            statement.execute(sqlResetSeq);
+            System.out.println("--- Secuencia " + nombreSecuencia.toUpperCase() + " reiniciada a 1 ---");
+
+        } catch (Exception e) {
+            System.err.println("Error al limpiar la tabla o reiniciar la secuencia " + nombreTabla + ": " + e.getMessage());
+        }
+    }
     */
 
-    
+    // ------------------------------------------------------
+    // JDBC Estándar
+    // ------------------------------------------------------
+
     //Lista las columnas de una tabla específica
     public void listarColumnasDeTabla(String nombreTabla) {
 
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData metaData = connection.getMetaData();
-            
             String tablaBusqueda = nombreTabla.toUpperCase();
             
             try (ResultSet rs = metaData.getColumns(null, null, tablaBusqueda, null)) {
@@ -105,31 +147,6 @@ public class SchemaInspector {
             System.err.println("Error al obtener los metadatos de la tabla " + nombreTabla + ": " + e.getMessage());
         }
     }
-
-    /*
-    // MÉTODO DESACTIVADO: ACOPLADO A ORACLE ("USER_TABLES")
-    @SuppressWarnings("unchecked")
-    private List<String> obtenerNombresDeTablas() {
-        try {
-            return entityManager.createNativeQuery(
-                "SELECT TABLE_NAME FROM USER_TABLES ORDER BY TABLE_NAME ASC"
-            ).getResultList();
-        } catch (Exception e) {
-            System.err.println("Error al consultar las tablas: " + e.getMessage());
-            return List.of();
-        }
-    }
-    */
-
-    /*
-    public void listarColumnasDeTodasLasTablas() {
-        List<String> tablas = obtenerNombresDeTablas();
-
-        for (String tabla : tablas) {
-            listarColumnasDeTabla(tabla);
-        }
-    }
-    */
     
     // Mostrar datos de tabla
     public void listarDatosDeTabla(String nombreTabla) {
@@ -205,36 +222,4 @@ public class SchemaInspector {
         }
         return 0;
     }
-
-    /*
-    // Verificar si una tabla existe en el esquema
-    public boolean existeTabla(String nombreTabla) {
-        List<String> tablas = obtenerNombresDeTablas();
-        return tablas.contains(nombreTabla.toUpperCase());
-    }
-    */
-
-
-    public void reiniciarTablaConSecuencia(String nombreTabla, String nombreSecuencia) {
-        String sqlDelete = "DELETE FROM " + nombreTabla.toUpperCase();
-        String sqlResetSeq = "ALTER SEQUENCE " + nombreSecuencia.toUpperCase() + " RESTART START WITH 1";
-
-        try (Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement()) {
-
-            // 1. Borrar los registros
-            int filasAfectadas = statement.executeUpdate(sqlDelete);
-            System.out.println("--- Se han eliminado " + filasAfectadas + " registros de la tabla: " + nombreTabla.toUpperCase() + " ---");
-
-            // 2. Reiniciar la secuencia
-            statement.execute(sqlResetSeq);
-            System.out.println("--- Secuencia " + nombreSecuencia.toUpperCase() + " reiniciada a 1 ---");
-
-        } catch (Exception e) {
-            System.err.println("Error al limpiar la tabla o reiniciar la secuencia " + nombreTabla + ": " + e.getMessage());
-        }
-    }
-
-
-
 }
