@@ -61,7 +61,7 @@ mapeo_categorias = {
     'Health & Fitness': 'salud',
     'Rent': 'vivienda',
     'Utilities': 'servicios',
-    'Entertainment': 'ocio',
+    'Entertainment': 'entretenimiento',
     'Shopping': 'otros',
     'Other': 'otros',
     'Salary': 'otros',

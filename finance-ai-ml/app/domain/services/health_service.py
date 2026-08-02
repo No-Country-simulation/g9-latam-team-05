@@ -67,7 +67,7 @@ class FinancialHealthService:
             recomendaciones=recomendaciones
         )
 
-    def _procesar_resumen_gastos(self, transacciones: List[Any]) -> ResumenGastosDTO:
+    def _procesar_resumen_gastos(self, transacciones: List[Any]) -> dict:
         # Inicializar el desglose con las 8 categorías oficiales
         gastos_dict = {
             "alimentacion": 0.0,
@@ -75,7 +75,7 @@ class FinancialHealthService:
             "salud": 0.0,
             "vivienda": 0.0,
             "educacion": 0.0,
-            "ocio": 0.0,
+            "entretenimiento": 0.0,
             "servicios": 0.0,
             "otros": 0.0
         }
@@ -99,7 +99,7 @@ class FinancialHealthService:
                 elif "restaurante" in cat_limpia:
                     cat_limpia = "alimentacion"
                 elif "ocio" in cat_limpia or "entretenimiento" in cat_limpia:
-                    cat_limpia = "ocio"
+                    cat_limpia = "entretenimiento"
 
                 if cat_limpia in gastos_dict:
                     gastos_dict[cat_limpia] += t.valor
@@ -109,7 +109,8 @@ class FinancialHealthService:
                 logger.error(f"Error clasificando transaccion '{t.descripcion}': {exc}")
                 gastos_dict["otros"] += t.valor
 
-        return ResumenGastosDTO(**gastos_dict)
+        # Retornar únicamente las categorías que tienen montos mayores a cero (caso de negocio)
+        return {k: v for k, v in gastos_dict.items() if v > 0.0}
 
     def _ejecutar_inferencia(self, ingreso_mensual: float, nivel_endeudamiento: float) -> tuple[str, float]:
         if self.model:
@@ -124,9 +125,9 @@ class FinancialHealthService:
         # Fallback determinista cuando no hay modelo serializado en disco o ante fallo
         return "En observación", 0.82
 
-    def _generar_recomendaciones(self, resumen: ResumenGastosDTO, nivel_endeudamiento: float) -> List[str]:
+    def _generar_recomendaciones(self, resumen: dict, nivel_endeudamiento: float) -> List[str]:
         recomendaciones = []
-        if resumen.ocio > 0:
+        if resumen.get("entretenimiento", 0.0) > 0:
             recomendaciones.append("Monitorear los gastos recurrentes de ocio y entretenimiento")
         if nivel_endeudamiento > 20:
             recomendaciones.append("Aumentar la reserva financiera mensual")

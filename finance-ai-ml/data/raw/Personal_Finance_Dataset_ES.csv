@@ -7,7 +7,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-01-14,Artículos de casa Sodimac,otros,448.68,Expense
 2020-01-18,Compra Plaza Vea,alimentacion,1520.03,Expense
 2020-01-19,Fotocopias e impresiones,otros,3287.0,Income
-2020-01-21,Suscripción Netflix mensual,ocio,1914.85,Expense
+2020-01-21,Suscripción Netflix mensual,entretenimiento,1914.85,Expense
 2020-01-25,Alquiler de local comercial,vivienda,766.06,Expense
 2020-01-25,Consulta clínica San Felipe,salud,1211.41,Expense
 2020-01-26,Pago de haberes sueldo,otros,1077.09,Expense
@@ -21,10 +21,10 @@ fecha,Transaction Description,categoria,monto,Type
 2020-02-05,Alquiler de local comercial,vivienda,1222.17,Expense
 2020-02-05,Inversión fondo mutuo,otros,1838.0,Income
 2020-02-07,Servicio Taxi Uber,transporte,1979.15,Expense
-2020-02-07,Suscripción HBO Max,ocio,1372.38,Expense
+2020-02-07,Suscripción HBO Max,entretenimiento,1372.38,Expense
 2020-02-08,Supermercado Tottus,alimentacion,465.81,Expense
 2020-02-08,Comisión bancaria mensual,otros,3786.0,Income
-2020-02-09,Entradas Cineplanet,ocio,1827.14,Expense
+2020-02-09,Entradas Cineplanet,entretenimiento,1827.14,Expense
 2020-02-11,Medicinas Mifarma,salud,433.13,Expense
 2020-02-13,Depósito nómina mensual,otros,294.31,Expense
 2020-02-15,Comisión bancaria mensual,otros,4009.0,Income
@@ -39,7 +39,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-02-28,Compra útiles escolares,educacion,1795.0,Income
 2020-02-29,Peaje vía evitamiento,transporte,1944.06,Expense
 2020-03-03,Renta mensual de vivienda,vivienda,1742.33,Expense
-2020-03-04,Compra juego de PlayStation,ocio,314.15,Expense
+2020-03-04,Compra juego de PlayStation,entretenimiento,314.15,Expense
 2020-03-04,Compra Plaza Vea,alimentacion,1201.9,Expense
 2020-03-09,Pago alquiler departamento,vivienda,1858.91,Expense
 2020-03-09,Pasaje de bus interprovincial,transporte,486.51,Expense
@@ -48,12 +48,12 @@ fecha,Transaction Description,categoria,monto,Type
 2020-03-12,Pago de agua Sedapal,servicios,265.5,Expense
 2020-03-12,Recibo de luz Enel,servicios,537.46,Expense
 2020-03-14,Compra de zapatillas Adidas,otros,1929.08,Expense
-2020-03-15,Compra juego de PlayStation,ocio,1428.77,Expense
+2020-03-15,Compra juego de PlayStation,entretenimiento,1428.77,Expense
 2020-03-18,Análisis de laboratorio,salud,881.82,Expense
 2020-03-21,Renta mensual de vivienda,vivienda,503.33,Expense
 2020-03-23,Inversión fondo mutuo,otros,2385.0,Income
 2020-03-23,Almuerzo menú criollo,alimentacion,151.28,Expense
-2020-03-24,Suscripción Spotify familiar,ocio,144.13,Expense
+2020-03-24,Suscripción Spotify familiar,entretenimiento,144.13,Expense
 2020-03-28,Envío de encomienda,otros,1080.0,Income
 2020-04-01,Combustible estación Repsol,transporte,1341.27,Expense
 2020-04-05,Recibo de gas Calidda,servicios,1449.47,Expense
@@ -65,11 +65,11 @@ fecha,Transaction Description,categoria,monto,Type
 2020-04-18,Análisis de laboratorio,salud,1603.18,Expense
 2020-04-22,Depósito plazo fijo,otros,2058.0,Income
 2020-04-23,Pago de agua Sedapal,servicios,849.54,Expense
-2020-04-25,Suscripción HBO Max,ocio,1750.23,Expense
+2020-04-25,Suscripción HBO Max,entretenimiento,1750.23,Expense
 2020-04-26,Depósito plazo fijo,otros,914.0,Income
 2020-04-26,Almuerzo menú criollo,alimentacion,1938.3,Expense
-2020-04-27,Suscripción Disney Plus,ocio,340.96,Expense
-2020-04-27,Entradas Cineplanet,ocio,1730.65,Expense
+2020-04-27,Suscripción Disney Plus,entretenimiento,340.96,Expense
+2020-04-27,Entradas Cineplanet,entretenimiento,1730.65,Expense
 2020-04-29,Recibo de luz Enel,servicios,764.16,Expense
 2020-04-30,Pasaje de bus interprovincial,transporte,1853.77,Expense
 2020-05-01,Peaje vía evitamiento,transporte,851.78,Expense
@@ -104,17 +104,17 @@ fecha,Transaction Description,categoria,monto,Type
 2020-06-08,Recibo de internet Movistar,servicios,1095.72,Expense
 2020-06-09,Recibo de gas Calidda,servicios,865.28,Expense
 2020-06-09,Otros gastos varios,otros,826.0,Income
-2020-06-10,Compra juego de PlayStation,ocio,1367.31,Expense
+2020-06-10,Compra juego de PlayStation,entretenimiento,1367.31,Expense
 2020-06-10,Compra medicamentos Inkafarma,salud,1562.43,Expense
 2020-06-11,Compra de laptop Wilson,otros,1947.94,Expense
-2020-06-11,Suscripción HBO Max,ocio,1730.57,Expense
+2020-06-11,Suscripción HBO Max,entretenimiento,1730.57,Expense
 2020-06-12,Recibo de internet Movistar,servicios,1764.02,Expense
 2020-06-14,Comisión bancaria mensual,otros,3872.0,Income
-2020-06-15,Suscripción Netflix mensual,ocio,540.94,Expense
+2020-06-15,Suscripción Netflix mensual,entretenimiento,540.94,Expense
 2020-06-18,Pago mensual de habitación,vivienda,771.26,Expense
 2020-06-18,Trámite notarial,otros,2322.0,Income
 2020-06-18,Compra de libros de texto,educacion,3364.0,Income
-2020-06-19,Compra juego de PlayStation,ocio,453.62,Expense
+2020-06-19,Compra juego de PlayStation,entretenimiento,453.62,Expense
 2020-06-19,Compra de laptop Wilson,otros,663.24,Expense
 2020-06-21,Estación de servicio Primax,transporte,708.78,Expense
 2020-06-21,Compra medicamentos Inkafarma,salud,1879.08,Expense
@@ -123,7 +123,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-06-24,Membresía Gimnasio Smartfit,salud,1459.8,Expense
 2020-06-30,Renta mensual de vivienda,vivienda,776.54,Expense
 2020-06-30,Peaje vía evitamiento,transporte,98.33,Expense
-2020-07-02,Suscripción HBO Max,ocio,734.8,Expense
+2020-07-02,Suscripción HBO Max,entretenimiento,734.8,Expense
 2020-07-03,Fotocopias e impresiones,otros,3071.0,Income
 2020-07-04,Pago alquiler departamento,vivienda,1442.31,Expense
 2020-07-05,Peaje vía evitamiento,transporte,1337.12,Expense
@@ -132,13 +132,13 @@ fecha,Transaction Description,categoria,monto,Type
 2020-07-08,Recarga tarjeta Metropolitano,transporte,818.09,Expense
 2020-07-11,Pasaje de bus interprovincial,transporte,580.96,Expense
 2020-07-12,Consulta clínica San Felipe,salud,935.33,Expense
-2020-07-12,Suscripción Spotify familiar,ocio,1027.24,Expense
+2020-07-12,Suscripción Spotify familiar,entretenimiento,1027.24,Expense
 2020-07-13,Recibo de gas Calidda,servicios,1321.11,Expense
 2020-07-17,Compra medicamentos Inkafarma,salud,195.84,Expense
-2020-07-20,Suscripción Netflix mensual,ocio,1348.86,Expense
-2020-07-21,Compra juego de PlayStation,ocio,303.23,Expense
+2020-07-20,Suscripción Netflix mensual,entretenimiento,1348.86,Expense
+2020-07-21,Compra juego de PlayStation,entretenimiento,303.23,Expense
 2020-07-21,Otros gastos varios,otros,1096.0,Income
-2020-07-22,Suscripción HBO Max,ocio,1439.51,Expense
+2020-07-22,Suscripción HBO Max,entretenimiento,1439.51,Expense
 2020-07-22,Compra online Amazon,otros,495.53,Expense
 2020-07-22,Supermercado Tottus,alimentacion,1786.39,Expense
 2020-07-23,Alquiler de local comercial,vivienda,1559.06,Expense
@@ -149,7 +149,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-07-30,Pago de tv cable DirecTV,servicios,1489.87,Expense
 2020-07-31,Pasaje de bus interprovincial,transporte,1506.04,Expense
 2020-08-01,Recarga tarjeta Metropolitano,transporte,1533.97,Expense
-2020-08-01,Suscripción Disney Plus,ocio,556.45,Expense
+2020-08-01,Suscripción Disney Plus,entretenimiento,556.45,Expense
 2020-08-01,Envío de encomienda,otros,2420.0,Income
 2020-08-02,Análisis de laboratorio,salud,1787.12,Expense
 2020-08-03,Aporte voluntario AFP,otros,2394.0,Income
@@ -161,7 +161,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-08-06,Tienda de ropa Saga Falabella,otros,959.19,Expense
 2020-08-08,Combustible estación Repsol,transporte,1509.42,Expense
 2020-08-08,Tienda de ropa Saga Falabella,otros,1081.06,Expense
-2020-08-09,Suscripción Spotify familiar,ocio,981.58,Expense
+2020-08-09,Suscripción Spotify familiar,entretenimiento,981.58,Expense
 2020-08-13,Pago de haberes sueldo,otros,67.76,Expense
 2020-08-14,Tienda por departamento Ripley,otros,1451.12,Expense
 2020-08-16,Recibo de luz Enel,servicios,1961.64,Expense
@@ -177,14 +177,14 @@ fecha,Transaction Description,categoria,monto,Type
 2020-08-27,Compra Plaza Vea,alimentacion,1899.73,Expense
 2020-08-27,Depósito plazo fijo,otros,1748.0,Income
 2020-08-29,Pago por consultoría externa,otros,1342.22,Expense
-2020-08-30,Entradas Cineplanet,ocio,935.42,Expense
+2020-08-30,Entradas Cineplanet,entretenimiento,935.42,Expense
 2020-08-31,Consulta pediatra,salud,343.9,Expense
 2020-09-01,Alquiler de local comercial,vivienda,1557.81,Expense
 2020-09-05,Envío de encomienda,otros,1385.0,Income
 2020-09-05,Servicio Taxi Uber,transporte,1155.84,Expense
 2020-09-06,Artículos de casa Sodimac,otros,799.34,Expense
 2020-09-07,Pago alquiler departamento,vivienda,1188.27,Expense
-2020-09-08,Suscripción Netflix mensual,ocio,212.78,Expense
+2020-09-08,Suscripción Netflix mensual,entretenimiento,212.78,Expense
 2020-09-11,Alquiler de local comercial,vivienda,1594.49,Expense
 2020-09-11,Pizza Hut familiar,alimentacion,700.94,Expense
 2020-09-11,Análisis de laboratorio,salud,147.22,Expense
@@ -200,11 +200,11 @@ fecha,Transaction Description,categoria,monto,Type
 2020-09-23,Pago de telefonía Claro,servicios,980.22,Expense
 2020-09-25,Pasaje de bus interprovincial,transporte,687.27,Expense
 2020-09-27,Combustible estación Repsol,transporte,1116.02,Expense
-2020-09-27,Suscripción Disney Plus,ocio,180.37,Expense
+2020-09-27,Suscripción Disney Plus,entretenimiento,180.37,Expense
 2020-09-27,Pago de haberes sueldo,otros,1114.8,Expense
 2020-09-29,Pago de haberes sueldo,otros,1295.35,Expense
 2020-09-30,Compra de víveres minimarket,alimentacion,195.18,Expense
-2020-10-01,Entrada concierto,ocio,619.35,Expense
+2020-10-01,Entrada concierto,entretenimiento,619.35,Expense
 2020-10-03,Pago de haberes sueldo,otros,1111.41,Expense
 2020-10-04,Compra medicamentos Inkafarma,salud,710.1,Expense
 2020-10-07,Pasaje de bus interprovincial,transporte,510.29,Expense
@@ -224,17 +224,17 @@ fecha,Transaction Description,categoria,monto,Type
 2020-10-18,Recibo de internet Movistar,servicios,306.9,Expense
 2020-10-19,Servicio Taxi Cabify,transporte,179.51,Expense
 2020-10-23,Artículos de casa Sodimac,otros,1216.57,Expense
-2020-10-24,Suscripción HBO Max,ocio,1553.63,Expense
+2020-10-24,Suscripción HBO Max,entretenimiento,1553.63,Expense
 2020-10-26,Pago por consultoría externa,otros,601.73,Expense
 2020-10-27,Tienda por departamento Ripley,otros,617.71,Expense
 2020-10-27,Renta mensual de vivienda,vivienda,1895.7,Expense
-2020-10-27,Suscripción Netflix mensual,ocio,536.65,Expense
+2020-10-27,Suscripción Netflix mensual,entretenimiento,536.65,Expense
 2020-10-28,Depósito plazo fijo,otros,1923.0,Income
 2020-10-29,Pago de tv cable DirecTV,servicios,15.32,Expense
 2020-10-30,Honorarios profesionales,otros,589.61,Expense
 2020-10-31,Servicio Taxi Uber,transporte,1408.95,Expense
-2020-11-01,Suscripción Netflix mensual,ocio,1848.58,Expense
-2020-11-01,Entrada concierto,ocio,856.03,Expense
+2020-11-01,Suscripción Netflix mensual,entretenimiento,1848.58,Expense
+2020-11-01,Entrada concierto,entretenimiento,856.03,Expense
 2020-11-02,Pago de telefonía Claro,servicios,1817.74,Expense
 2020-11-04,Renta mensual de vivienda,vivienda,128.68,Expense
 2020-11-06,Servicio Taxi Uber,transporte,883.92,Expense
@@ -255,10 +255,10 @@ fecha,Transaction Description,categoria,monto,Type
 2020-11-17,Cena en restaurante rústica,alimentacion,1318.74,Expense
 2020-11-20,Artículos de casa Sodimac,otros,117.87,Expense
 2020-11-22,Honorarios profesionales,otros,1254.56,Expense
-2020-11-23,Suscripción Spotify familiar,ocio,541.44,Expense
+2020-11-23,Suscripción Spotify familiar,entretenimiento,541.44,Expense
 2020-11-25,Retiro de efectivo cajero,otros,4089.0,Income
 2020-11-25,Honorarios profesionales,otros,251.64,Expense
-2020-11-26,Suscripción Disney Plus,ocio,1422.47,Expense
+2020-11-26,Suscripción Disney Plus,entretenimiento,1422.47,Expense
 2020-11-27,Almuerzo menú criollo,alimentacion,1108.98,Expense
 2020-11-27,Depósito plazo fijo,otros,4280.0,Income
 2020-11-29,Recibo de luz Enel,servicios,1001.77,Expense
@@ -272,7 +272,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-12-12,Honorarios profesionales,otros,1731.87,Expense
 2020-12-13,Honorarios profesionales,otros,696.8,Expense
 2020-12-14,Compra de laptop Wilson,otros,916.14,Expense
-2020-12-14,Compra juego de PlayStation,ocio,1961.74,Expense
+2020-12-14,Compra juego de PlayStation,entretenimiento,1961.74,Expense
 2020-12-16,Artículos de casa Sodimac,otros,474.79,Expense
 2020-12-16,McDonald's combo familiar,alimentacion,643.17,Expense
 2020-12-16,Mensualidad instituto de idiomas,educacion,778.3,Expense
@@ -291,7 +291,7 @@ fecha,Transaction Description,categoria,monto,Type
 2020-12-31,Alquiler de local comercial,vivienda,892.92,Expense
 2021-01-01,Cena en restaurante rústica,alimentacion,101.52,Expense
 2021-01-06,Servicio Taxi Uber,transporte,723.34,Expense
-2021-01-06,Suscripción Netflix mensual,ocio,1067.02,Expense
+2021-01-06,Suscripción Netflix mensual,entretenimiento,1067.02,Expense
 2021-01-08,Pago de tv cable DirecTV,servicios,348.27,Expense
 2021-01-10,Comisión bancaria mensual,otros,2472.0,Income
 2021-01-10,Recibo de luz Enel,servicios,472.06,Expense
@@ -333,20 +333,20 @@ fecha,Transaction Description,categoria,monto,Type
 2021-02-24,Artículos de casa Sodimac,otros,1313.29,Expense
 2021-02-27,Pensión mensual colegio,educacion,1878.72,Expense
 2021-02-28,Compra de vitaminas,salud,442.37,Expense
-2021-03-02,Suscripción Spotify familiar,ocio,1712.35,Expense
+2021-03-02,Suscripción Spotify familiar,entretenimiento,1712.35,Expense
 2021-03-02,Trámite notarial,otros,4960.0,Income
 2021-03-02,Análisis de laboratorio,salud,130.49,Expense
 2021-03-04,Pago mensual de habitación,vivienda,1898.53,Expense
 2021-03-05,Renta mensual de vivienda,vivienda,1328.91,Expense
 2021-03-05,Compra en Wong,alimentacion,110.65,Expense
 2021-03-07,Recibo de luz Enel,servicios,1576.09,Expense
-2021-03-07,Compra juego de PlayStation,ocio,1176.9,Expense
-2021-03-08,Suscripción Spotify familiar,ocio,663.83,Expense
+2021-03-07,Compra juego de PlayStation,entretenimiento,1176.9,Expense
+2021-03-08,Suscripción Spotify familiar,entretenimiento,663.83,Expense
 2021-03-09,Aporte voluntario AFP,otros,2771.0,Income
 2021-03-09,Recibo de internet Movistar,servicios,1975.18,Expense
 2021-03-10,Recibo de internet Movistar,servicios,228.75,Expense
 2021-03-12,Recibo de luz Enel,servicios,39.57,Expense
-2021-03-15,Suscripción HBO Max,ocio,1181.82,Expense
+2021-03-15,Suscripción HBO Max,entretenimiento,1181.82,Expense
 2021-03-15,Envío de encomienda,otros,929.0,Income
 2021-03-16,Envío de encomienda,otros,4809.0,Income
 2021-03-16,Inversión fondo mutuo,otros,4401.0,Income
@@ -361,7 +361,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-03-22,Peaje vía evitamiento,transporte,912.89,Expense
 2021-03-23,Alquiler de local comercial,vivienda,1588.26,Expense
 2021-03-23,Depósito plazo fijo,otros,4023.0,Income
-2021-03-24,Suscripción Disney Plus,ocio,833.49,Expense
+2021-03-24,Suscripción Disney Plus,entretenimiento,833.49,Expense
 2021-03-25,Compra online Amazon,otros,837.82,Expense
 2021-03-26,Envío de encomienda,otros,3060.0,Income
 2021-03-27,Consulta pediatra,salud,1907.65,Expense
@@ -371,7 +371,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-04-01,Consulta pediatra,salud,1343.33,Expense
 2021-04-02,Compra de libros de texto,educacion,1737.5,Expense
 2021-04-03,Peaje vía evitamiento,transporte,1204.82,Expense
-2021-04-03,Entrada concierto,ocio,317.91,Expense
+2021-04-03,Entrada concierto,entretenimiento,317.91,Expense
 2021-04-03,Pago mensual de habitación,vivienda,706.73,Expense
 2021-04-08,Pago alquiler departamento,vivienda,1527.59,Expense
 2021-04-08,Tienda por departamento Ripley,otros,1691.86,Expense
@@ -389,12 +389,12 @@ fecha,Transaction Description,categoria,monto,Type
 2021-04-23,Recarga tarjeta Metropolitano,transporte,438.98,Expense
 2021-04-23,Consulta odontológica,salud,865.53,Expense
 2021-04-24,Depósito nómina mensual,otros,1058.6,Expense
-2021-04-27,Suscripción Disney Plus,ocio,796.57,Expense
+2021-04-27,Suscripción Disney Plus,entretenimiento,796.57,Expense
 2021-04-27,KFC almuerzo,alimentacion,416.8,Expense
 2021-04-27,Recibo de gas Calidda,servicios,1530.68,Expense
 2021-04-30,Pago mensual de habitación,vivienda,25.38,Expense
 2021-05-02,Pago de telefonía Claro,servicios,267.08,Expense
-2021-05-04,Suscripción Disney Plus,ocio,1005.52,Expense
+2021-05-04,Suscripción Disney Plus,entretenimiento,1005.52,Expense
 2021-05-04,Compra de vitaminas,salud,153.43,Expense
 2021-05-06,Compra de víveres minimarket,alimentacion,878.08,Expense
 2021-05-07,Renta mensual de vivienda,vivienda,1725.6,Expense
@@ -402,7 +402,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-05-07,Renta mensual de vivienda,vivienda,816.01,Expense
 2021-05-10,Pago de tv cable DirecTV,servicios,1604.63,Expense
 2021-05-11,Compra medicamentos Inkafarma,salud,185.38,Expense
-2021-05-11,Entradas Cineplanet,ocio,877.0,Expense
+2021-05-11,Entradas Cineplanet,entretenimiento,877.0,Expense
 2021-05-12,Pago mensual de habitación,vivienda,797.58,Expense
 2021-05-14,Compra medicamentos Inkafarma,salud,450.93,Expense
 2021-05-14,Renta mensual de vivienda,vivienda,1025.86,Expense
@@ -421,7 +421,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-05-29,Alquiler de local comercial,vivienda,1233.87,Expense
 2021-05-30,Pago por consultoría externa,otros,1164.86,Expense
 2021-05-31,Cafetería Starbucks,alimentacion,904.97,Expense
-2021-05-31,Suscripción Spotify familiar,ocio,649.84,Expense
+2021-05-31,Suscripción Spotify familiar,entretenimiento,649.84,Expense
 2021-06-02,Pago de agua Sedapal,servicios,1915.87,Expense
 2021-06-02,Consulta clínica San Felipe,salud,1964.95,Expense
 2021-06-03,Depósito plazo fijo,otros,820.0,Income
@@ -438,15 +438,15 @@ fecha,Transaction Description,categoria,monto,Type
 2021-06-20,Compra de vitaminas,salud,1628.24,Expense
 2021-06-22,Alquiler de local comercial,vivienda,1295.59,Expense
 2021-06-23,Compra de vitaminas,salud,46.28,Expense
-2021-06-24,Suscripción Spotify familiar,ocio,690.05,Expense
-2021-06-26,Compra juego de PlayStation,ocio,460.82,Expense
+2021-06-24,Suscripción Spotify familiar,entretenimiento,690.05,Expense
+2021-06-26,Compra juego de PlayStation,entretenimiento,460.82,Expense
 2021-06-27,Aporte voluntario AFP,otros,2923.0,Income
 2021-06-28,Alquiler de local comercial,vivienda,1020.3,Expense
 2021-06-28,Cena en restaurante rústica,alimentacion,1327.24,Expense
 2021-06-28,Pago de agua Sedapal,servicios,1198.52,Expense
 2021-06-28,Inversión fondo mutuo,otros,1856.0,Income
 2021-06-29,McDonald's combo familiar,alimentacion,827.61,Expense
-2021-07-04,Suscripción Disney Plus,ocio,1939.48,Expense
+2021-07-04,Suscripción Disney Plus,entretenimiento,1939.48,Expense
 2021-07-04,Depósito nómina mensual,otros,475.67,Expense
 2021-07-04,Honorarios profesionales,otros,1808.91,Expense
 2021-07-06,Envío de encomienda,otros,4282.0,Income
@@ -460,7 +460,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-07-11,Compra online Amazon,otros,192.51,Expense
 2021-07-12,Depósito nómina mensual,otros,1770.41,Expense
 2021-07-13,Curso online Udemy,educacion,115.98,Expense
-2021-07-14,Entradas Cineplanet,ocio,778.47,Expense
+2021-07-14,Entradas Cineplanet,entretenimiento,778.47,Expense
 2021-07-15,Aporte voluntario AFP,otros,730.0,Income
 2021-07-19,Alquiler de local comercial,vivienda,1679.96,Expense
 2021-07-19,Recibo de luz Enel,servicios,283.82,Expense
@@ -485,10 +485,10 @@ fecha,Transaction Description,categoria,monto,Type
 2021-08-21,Trámite notarial,otros,4420.0,Income
 2021-08-21,Pago de tv cable DirecTV,servicios,135.57,Expense
 2021-08-22,Depósito nómina mensual,otros,83.6,Expense
-2021-08-23,Suscripción HBO Max,ocio,1772.72,Expense
+2021-08-23,Suscripción HBO Max,entretenimiento,1772.72,Expense
 2021-08-24,Pasaje aéreo Latam,transporte,1035.61,Expense
 2021-08-25,Depósito nómina mensual,otros,514.09,Expense
-2021-08-27,Entrada concierto,ocio,579.36,Expense
+2021-08-27,Entrada concierto,entretenimiento,579.36,Expense
 2021-08-29,McDonald's combo familiar,alimentacion,1732.94,Expense
 2021-09-05,Pago alquiler departamento,vivienda,1600.69,Expense
 2021-09-06,Compra de laptop Wilson,otros,1489.18,Expense
@@ -520,7 +520,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-10-13,Servicio Taxi Uber,transporte,1783.75,Expense
 2021-10-16,Recibo de gas Calidda,servicios,1589.46,Expense
 2021-10-20,Renta mensual de vivienda,vivienda,1970.41,Expense
-2021-10-21,Suscripción Spotify familiar,ocio,1582.84,Expense
+2021-10-21,Suscripción Spotify familiar,entretenimiento,1582.84,Expense
 2021-10-22,Compra de libros de texto,educacion,4328.0,Income
 2021-10-24,Recibo de luz Enel,servicios,1227.78,Expense
 2021-10-24,Retiro de efectivo cajero,otros,3761.0,Income
@@ -531,7 +531,7 @@ fecha,Transaction Description,categoria,monto,Type
 2021-11-04,Recibo de gas Calidda,servicios,1537.89,Expense
 2021-11-05,Depósito plazo fijo,otros,1517.0,Income
 2021-11-05,Estación de servicio Primax,transporte,337.67,Expense
-2021-11-06,Entradas Cineplanet,ocio,698.59,Expense
+2021-11-06,Entradas Cineplanet,entretenimiento,698.59,Expense
 2021-11-07,Combustible estación Repsol,transporte,1693.41,Expense
 2021-11-10,Servicio Taxi Uber,transporte,259.09,Expense
 2021-11-15,Pago mensual de habitación,vivienda,1010.12,Expense
@@ -577,11 +577,11 @@ fecha,Transaction Description,categoria,monto,Type
 2022-01-05,Desayuno panadería,alimentacion,743.03,Expense
 2022-01-06,Tienda por departamento Ripley,otros,1171.57,Expense
 2022-01-08,Almuerzo menú criollo,alimentacion,1197.85,Expense
-2022-01-09,Entradas Cineplanet,ocio,1445.59,Expense
+2022-01-09,Entradas Cineplanet,entretenimiento,1445.59,Expense
 2022-01-13,Recibo de gas Calidda,servicios,1053.22,Expense
 2022-01-13,Tienda por departamento Ripley,otros,304.07,Expense
 2022-01-14,McDonald's combo familiar,alimentacion,1149.41,Expense
-2022-01-16,Suscripción Netflix mensual,ocio,47.69,Expense
+2022-01-16,Suscripción Netflix mensual,entretenimiento,47.69,Expense
 2022-01-16,Recibo de gas Calidda,servicios,831.79,Expense
 2022-01-18,Depósito nómina mensual,otros,1746.91,Expense
 2022-01-18,Compra Plaza Vea,alimentacion,1414.49,Expense
@@ -590,7 +590,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-01-22,Retiro de efectivo cajero,otros,4975.0,Income
 2022-01-23,Pasaje aéreo Latam,transporte,1224.05,Expense
 2022-01-24,Aporte voluntario AFP,otros,2785.0,Income
-2022-01-28,Suscripción Disney Plus,ocio,1883.56,Expense
+2022-01-28,Suscripción Disney Plus,entretenimiento,1883.56,Expense
 2022-02-01,Servicio Taxi Uber,transporte,1412.75,Expense
 2022-02-02,Pago de haberes sueldo,otros,640.91,Expense
 2022-02-05,Recarga tarjeta Metropolitano,transporte,582.7,Expense
@@ -601,8 +601,8 @@ fecha,Transaction Description,categoria,monto,Type
 2022-02-09,Pasaje aéreo Latam,transporte,1497.2,Expense
 2022-02-10,Recarga de gasolina,transporte,1866.72,Expense
 2022-02-10,Recibo de gas Calidda,servicios,227.36,Expense
-2022-02-10,Entradas Cineplanet,ocio,492.49,Expense
-2022-02-10,Suscripción Disney Plus,ocio,1279.51,Expense
+2022-02-10,Entradas Cineplanet,entretenimiento,492.49,Expense
+2022-02-10,Suscripción Disney Plus,entretenimiento,1279.51,Expense
 2022-02-11,Fotocopias e impresiones,otros,3205.0,Income
 2022-02-14,Pago mensual de habitación,vivienda,1365.57,Expense
 2022-02-17,Inversión fondo mutuo,otros,3833.0,Income
@@ -620,11 +620,11 @@ fecha,Transaction Description,categoria,monto,Type
 2022-03-04,Inversión fondo mutuo,otros,3208.0,Income
 2022-03-05,Fotocopias e impresiones,otros,2607.0,Income
 2022-03-07,KFC almuerzo,alimentacion,1475.87,Expense
-2022-03-07,Entradas Cineplanet,ocio,359.23,Expense
+2022-03-07,Entradas Cineplanet,entretenimiento,359.23,Expense
 2022-03-12,Compra online Amazon,otros,1655.71,Expense
 2022-03-14,Pago mensual de habitación,vivienda,807.66,Expense
 2022-03-17,Compra de acciones bolsa de valores,otros,4411.0,Income
-2022-03-17,Entradas Cineplanet,ocio,23.59,Expense
+2022-03-17,Entradas Cineplanet,entretenimiento,23.59,Expense
 2022-03-18,Depósito nómina mensual,otros,1509.98,Expense
 2022-03-18,Recarga tarjeta Metropolitano,transporte,1169.1,Expense
 2022-03-18,Servicio Taxi Uber,transporte,1310.83,Expense
@@ -635,13 +635,13 @@ fecha,Transaction Description,categoria,monto,Type
 2022-03-23,Recibo de luz Enel,servicios,961.58,Expense
 2022-03-24,Consulta clínica San Felipe,salud,837.53,Expense
 2022-03-25,Honorarios profesionales,otros,1517.13,Expense
-2022-03-26,Compra juego de PlayStation,ocio,1526.1,Expense
+2022-03-26,Compra juego de PlayStation,entretenimiento,1526.1,Expense
 2022-03-27,Renta mensual de vivienda,vivienda,1055.76,Expense
 2022-03-28,Compra de vitaminas,salud,165.42,Expense
 2022-03-28,Compra Plaza Vea,alimentacion,1659.26,Expense
-2022-03-28,Suscripción HBO Max,ocio,1149.68,Expense
+2022-03-28,Suscripción HBO Max,entretenimiento,1149.68,Expense
 2022-03-28,Compra útiles escolares,educacion,4762.0,Income
-2022-03-29,Suscripción Disney Plus,ocio,1436.67,Expense
+2022-03-29,Suscripción Disney Plus,entretenimiento,1436.67,Expense
 2022-03-29,Pago por consultoría externa,otros,1619.3,Expense
 2022-03-31,Compra online Amazon,otros,919.03,Expense
 2022-03-31,Comisión bancaria mensual,otros,3024.0,Income
@@ -668,16 +668,16 @@ fecha,Transaction Description,categoria,monto,Type
 2022-04-22,KFC almuerzo,alimentacion,497.02,Expense
 2022-04-22,Fotocopias e impresiones,otros,2419.0,Income
 2022-04-24,Pizza Hut familiar,alimentacion,288.87,Expense
-2022-04-24,Suscripción Netflix mensual,ocio,1633.41,Expense
+2022-04-24,Suscripción Netflix mensual,entretenimiento,1633.41,Expense
 2022-04-29,Membresía Gimnasio Smartfit,salud,1159.17,Expense
 2022-04-30,Membresía Gimnasio Smartfit,salud,481.44,Expense
-2022-05-02,Entradas Cineplanet,ocio,832.98,Expense
+2022-05-02,Entradas Cineplanet,entretenimiento,832.98,Expense
 2022-05-02,Pago de tv cable DirecTV,servicios,1255.73,Expense
 2022-05-03,Pago de haberes sueldo,otros,103.3,Expense
 2022-05-05,Compra online Amazon,otros,1573.75,Expense
 2022-05-05,Compra online Amazon,otros,822.44,Expense
 2022-05-06,Recibo de luz Enel,servicios,1511.29,Expense
-2022-05-07,Suscripción Disney Plus,ocio,608.47,Expense
+2022-05-07,Suscripción Disney Plus,entretenimiento,608.47,Expense
 2022-05-07,Pago por consultoría externa,otros,1830.33,Expense
 2022-05-07,Compra de zapatillas Adidas,otros,1119.0,Expense
 2022-05-08,Inversión fondo mutuo,otros,2588.0,Income
@@ -687,19 +687,19 @@ fecha,Transaction Description,categoria,monto,Type
 2022-05-11,Pizza Hut familiar,alimentacion,1748.5,Expense
 2022-05-13,Inversión fondo mutuo,otros,4427.0,Income
 2022-05-13,Compra de vitaminas,salud,613.34,Expense
-2022-05-14,Suscripción Netflix mensual,ocio,1874.95,Expense
+2022-05-14,Suscripción Netflix mensual,entretenimiento,1874.95,Expense
 2022-05-19,Renta mensual de vivienda,vivienda,1496.29,Expense
-2022-05-19,Entradas Cineplanet,ocio,1394.3,Expense
+2022-05-19,Entradas Cineplanet,entretenimiento,1394.3,Expense
 2022-05-20,Artículos de casa Sodimac,otros,1831.1,Expense
 2022-05-20,Pasaje de bus interprovincial,transporte,767.52,Expense
 2022-05-22,Consulta pediatra,salud,623.76,Expense
 2022-05-23,Pago de haberes sueldo,otros,937.35,Expense
 2022-05-24,Depósito nómina mensual,otros,1525.64,Expense
-2022-05-24,Compra juego de PlayStation,ocio,747.7,Expense
-2022-05-25,Suscripción Spotify familiar,ocio,1485.09,Expense
+2022-05-24,Compra juego de PlayStation,entretenimiento,747.7,Expense
+2022-05-25,Suscripción Spotify familiar,entretenimiento,1485.09,Expense
 2022-05-27,Retiro de efectivo cajero,otros,2918.0,Income
 2022-05-28,Matrícula Universidad,educacion,2384.0,Income
-2022-05-29,Suscripción HBO Max,ocio,1003.61,Expense
+2022-05-29,Suscripción HBO Max,entretenimiento,1003.61,Expense
 2022-05-29,Consulta odontológica,salud,522.08,Expense
 2022-05-30,Honorarios profesionales,otros,927.05,Expense
 2022-05-30,Compra de vitaminas,salud,346.84,Expense
@@ -707,7 +707,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-06-01,Desayuno panadería,alimentacion,1052.65,Expense
 2022-06-01,Pago mensual de habitación,vivienda,1890.92,Expense
 2022-06-04,Pizza Hut familiar,alimentacion,830.66,Expense
-2022-06-04,Suscripción Disney Plus,ocio,145.26,Expense
+2022-06-04,Suscripción Disney Plus,entretenimiento,145.26,Expense
 2022-06-06,Inversión fondo mutuo,otros,4642.0,Income
 2022-06-07,McDonald's combo familiar,alimentacion,1239.49,Expense
 2022-06-07,Pago por consultoría externa,otros,1321.98,Expense
@@ -716,33 +716,33 @@ fecha,Transaction Description,categoria,monto,Type
 2022-06-12,Pizza Hut familiar,alimentacion,1009.41,Expense
 2022-06-12,Tienda por departamento Ripley,otros,1614.27,Expense
 2022-06-12,Pago alquiler departamento,vivienda,1836.92,Expense
-2022-06-13,Suscripción Netflix mensual,ocio,391.94,Expense
+2022-06-13,Suscripción Netflix mensual,entretenimiento,391.94,Expense
 2022-06-17,Membresía Gimnasio Smartfit,salud,541.98,Expense
 2022-06-17,Consulta clínica San Felipe,salud,1919.0,Expense
-2022-06-18,Suscripción HBO Max,ocio,1980.56,Expense
+2022-06-18,Suscripción HBO Max,entretenimiento,1980.56,Expense
 2022-06-19,Pago mensual de habitación,vivienda,1310.93,Expense
 2022-06-20,KFC almuerzo,alimentacion,196.07,Expense
 2022-06-21,Pago de haberes sueldo,otros,121.67,Expense
 2022-06-21,Compra de acciones bolsa de valores,otros,1177.0,Income
 2022-06-23,Artículos de casa Sodimac,otros,1293.37,Expense
 2022-06-23,Alquiler de local comercial,vivienda,1790.63,Expense
-2022-06-25,Entradas Cineplanet,ocio,430.72,Expense
+2022-06-25,Entradas Cineplanet,entretenimiento,430.72,Expense
 2022-06-25,Depósito nómina mensual,otros,549.48,Expense
 2022-06-26,Servicio Taxi Cabify,transporte,1799.63,Expense
 2022-06-26,Compra de víveres minimarket,alimentacion,366.92,Expense
 2022-06-30,Desayuno panadería,alimentacion,1923.32,Expense
 2022-07-01,Compra de zapatillas Adidas,otros,1858.46,Expense
-2022-07-02,Entradas Cineplanet,ocio,1137.72,Expense
+2022-07-02,Entradas Cineplanet,entretenimiento,1137.72,Expense
 2022-07-04,Consulta pediatra,salud,773.85,Expense
 2022-07-04,Pago mensual de habitación,vivienda,1006.58,Expense
 2022-07-04,Almuerzo menú criollo,alimentacion,204.39,Expense
 2022-07-05,Pago alquiler departamento,vivienda,687.78,Expense
 2022-07-06,Tienda por departamento Ripley,otros,1938.15,Expense
 2022-07-13,Servicio Taxi Cabify,transporte,1569.26,Expense
-2022-07-17,Compra juego de PlayStation,ocio,718.06,Expense
+2022-07-17,Compra juego de PlayStation,entretenimiento,718.06,Expense
 2022-07-17,Artículos de casa Sodimac,otros,379.62,Expense
 2022-07-17,Compra de laptop Wilson,otros,180.53,Expense
-2022-07-18,Suscripción Netflix mensual,ocio,1429.09,Expense
+2022-07-18,Suscripción Netflix mensual,entretenimiento,1429.09,Expense
 2022-07-18,Aporte voluntario AFP,otros,3612.0,Income
 2022-07-19,Recibo de luz Enel,servicios,1481.91,Expense
 2022-07-20,Pago mensual de habitación,vivienda,192.13,Expense
@@ -752,7 +752,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-07-27,Depósito plazo fijo,otros,3157.0,Income
 2022-07-27,Compra de víveres minimarket,alimentacion,590.78,Expense
 2022-07-27,Alquiler de local comercial,vivienda,1452.44,Expense
-2022-07-28,Suscripción Disney Plus,ocio,1148.2,Expense
+2022-07-28,Suscripción Disney Plus,entretenimiento,1148.2,Expense
 2022-07-28,Mensualidad instituto de idiomas,educacion,1888.0,Income
 2022-07-29,Trámite notarial,otros,2698.0,Income
 2022-07-30,Alquiler de local comercial,vivienda,342.74,Expense
@@ -763,14 +763,14 @@ fecha,Transaction Description,categoria,monto,Type
 2022-08-04,Artículos de casa Sodimac,otros,671.11,Expense
 2022-08-06,Compra de vitaminas,salud,886.04,Expense
 2022-08-07,Recibo de luz Enel,servicios,607.87,Expense
-2022-08-12,Suscripción Netflix mensual,ocio,963.23,Expense
+2022-08-12,Suscripción Netflix mensual,entretenimiento,963.23,Expense
 2022-08-13,Fotocopias e impresiones,otros,3114.0,Income
 2022-08-15,Depósito nómina mensual,otros,1935.85,Expense
 2022-08-15,Medicinas Mifarma,salud,758.35,Expense
 2022-08-16,Tienda de ropa Saga Falabella,otros,736.38,Expense
-2022-08-16,Entrada concierto,ocio,1188.53,Expense
+2022-08-16,Entrada concierto,entretenimiento,1188.53,Expense
 2022-08-17,Cafetería Starbucks,alimentacion,1906.48,Expense
-2022-08-18,Suscripción Netflix mensual,ocio,882.53,Expense
+2022-08-18,Suscripción Netflix mensual,entretenimiento,882.53,Expense
 2022-08-19,Renta mensual de vivienda,vivienda,1639.74,Expense
 2022-08-21,Tienda de ropa Saga Falabella,otros,1349.23,Expense
 2022-08-21,Otros gastos varios,otros,2482.0,Income
@@ -784,12 +784,12 @@ fecha,Transaction Description,categoria,monto,Type
 2022-08-29,Compra online Amazon,otros,1933.95,Expense
 2022-08-30,Compra online Amazon,otros,220.83,Expense
 2022-08-31,Aporte voluntario AFP,otros,4683.0,Income
-2022-08-31,Suscripción Spotify familiar,ocio,897.1,Expense
+2022-08-31,Suscripción Spotify familiar,entretenimiento,897.1,Expense
 2022-09-01,Recibo de gas Calidda,servicios,696.49,Expense
 2022-09-02,Compra de acciones bolsa de valores,otros,2920.0,Income
 2022-09-03,Pago alquiler departamento,vivienda,240.98,Expense
 2022-09-03,Recibo de internet Movistar,servicios,703.17,Expense
-2022-09-03,Suscripción HBO Max,ocio,1047.02,Expense
+2022-09-03,Suscripción HBO Max,entretenimiento,1047.02,Expense
 2022-09-04,Alquiler de local comercial,vivienda,881.95,Expense
 2022-09-04,Análisis de laboratorio,salud,143.68,Expense
 2022-09-05,Inversión fondo mutuo,otros,685.0,Income
@@ -799,7 +799,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-09-10,Pago por consultoría externa,otros,471.39,Expense
 2022-09-11,Pago de agua Sedapal,servicios,380.91,Expense
 2022-09-11,Compra de zapatillas Adidas,otros,68.09,Expense
-2022-09-12,Entradas Cineplanet,ocio,904.65,Expense
+2022-09-12,Entradas Cineplanet,entretenimiento,904.65,Expense
 2022-09-14,Almuerzo menú criollo,alimentacion,1412.42,Expense
 2022-09-15,Alquiler de local comercial,vivienda,1158.92,Expense
 2022-09-15,Pago de telefonía Claro,servicios,737.93,Expense
@@ -827,10 +827,10 @@ fecha,Transaction Description,categoria,monto,Type
 2022-10-12,Compra medicamentos Inkafarma,salud,1088.67,Expense
 2022-10-13,Pago por consultoría externa,otros,1097.24,Expense
 2022-10-19,Pago alquiler departamento,vivienda,1474.62,Expense
-2022-10-19,Compra juego de PlayStation,ocio,602.44,Expense
+2022-10-19,Compra juego de PlayStation,entretenimiento,602.44,Expense
 2022-10-20,Depósito nómina mensual,otros,533.0,Expense
 2022-10-21,Alquiler de local comercial,vivienda,883.75,Expense
-2022-10-22,Suscripción HBO Max,ocio,427.66,Expense
+2022-10-22,Suscripción HBO Max,entretenimiento,427.66,Expense
 2022-10-23,Medicinas Mifarma,salud,1723.49,Expense
 2022-10-25,Compra útiles escolares,educacion,340.3,Expense
 2022-10-28,Inversión fondo mutuo,otros,2195.0,Income
@@ -850,7 +850,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-11-17,Pago mensual de habitación,vivienda,1464.55,Expense
 2022-11-17,Membresía Gimnasio Smartfit,salud,1701.71,Expense
 2022-11-18,Compra de zapatillas Adidas,otros,443.48,Expense
-2022-11-19,Suscripción Netflix mensual,ocio,994.48,Expense
+2022-11-19,Suscripción Netflix mensual,entretenimiento,994.48,Expense
 2022-11-21,Combustible estación Repsol,transporte,682.13,Expense
 2022-11-22,Pago por consultoría externa,otros,1578.72,Expense
 2022-11-26,Supermercado Tottus,alimentacion,101.43,Expense
@@ -861,7 +861,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-12-03,Peaje vía evitamiento,transporte,195.75,Expense
 2022-12-04,Pago mensual de habitación,vivienda,749.97,Expense
 2022-12-05,Pago de telefonía Claro,servicios,113.06,Expense
-2022-12-05,Suscripción Spotify familiar,ocio,864.17,Expense
+2022-12-05,Suscripción Spotify familiar,entretenimiento,864.17,Expense
 2022-12-07,Compra de acciones bolsa de valores,otros,508.0,Income
 2022-12-12,Alquiler de local comercial,vivienda,274.07,Expense
 2022-12-13,Depósito nómina mensual,otros,28.48,Expense
@@ -873,7 +873,7 @@ fecha,Transaction Description,categoria,monto,Type
 2022-12-30,Pago de tv cable DirecTV,servicios,1286.74,Expense
 2022-12-31,Renta mensual de vivienda,vivienda,1065.71,Expense
 2023-01-03,Aporte voluntario AFP,otros,4105.0,Income
-2023-01-04,Entrada concierto,ocio,1259.88,Expense
+2023-01-04,Entrada concierto,entretenimiento,1259.88,Expense
 2023-01-04,Curso online Udemy,educacion,4124.0,Income
 2023-01-06,Pago mensual de habitación,vivienda,1794.22,Expense
 2023-01-09,Aporte voluntario AFP,otros,3645.0,Income
@@ -881,9 +881,9 @@ fecha,Transaction Description,categoria,monto,Type
 2023-01-11,Trámite notarial,otros,1190.0,Income
 2023-01-13,Recarga tarjeta Metropolitano,transporte,1560.15,Expense
 2023-01-15,Recarga de gasolina,transporte,418.84,Expense
-2023-01-16,Suscripción Spotify familiar,ocio,1498.21,Expense
+2023-01-16,Suscripción Spotify familiar,entretenimiento,1498.21,Expense
 2023-01-17,Compra Plaza Vea,alimentacion,1569.77,Expense
-2023-01-18,Suscripción Disney Plus,ocio,994.83,Expense
+2023-01-18,Suscripción Disney Plus,entretenimiento,994.83,Expense
 2023-01-19,Fotocopias e impresiones,otros,1081.0,Income
 2023-01-19,Cena en restaurante rústica,alimentacion,1973.9,Expense
 2023-01-19,Pago de tv cable DirecTV,servicios,779.81,Expense
@@ -894,10 +894,10 @@ fecha,Transaction Description,categoria,monto,Type
 2023-01-21,Compra de zapatillas Adidas,otros,1018.16,Expense
 2023-01-22,Tienda de ropa Saga Falabella,otros,852.91,Expense
 2023-01-23,Pago de agua Sedapal,servicios,562.16,Expense
-2023-01-23,Suscripción Disney Plus,ocio,1948.88,Expense
+2023-01-23,Suscripción Disney Plus,entretenimiento,1948.88,Expense
 2023-01-23,Fotocopias e impresiones,otros,3700.0,Income
 2023-01-24,Pago mensual de habitación,vivienda,627.24,Expense
-2023-01-24,Compra juego de PlayStation,ocio,125.23,Expense
+2023-01-24,Compra juego de PlayStation,entretenimiento,125.23,Expense
 2023-01-24,Envío de encomienda,otros,1450.0,Income
 2023-01-24,Cafetería Starbucks,alimentacion,625.49,Expense
 2023-01-24,Recibo de internet Movistar,servicios,247.69,Expense
@@ -924,8 +924,8 @@ fecha,Transaction Description,categoria,monto,Type
 2023-02-12,KFC almuerzo,alimentacion,744.15,Expense
 2023-02-13,Peaje vía evitamiento,transporte,1481.76,Expense
 2023-02-15,Medicinas Mifarma,salud,1187.46,Expense
-2023-02-16,Suscripción Netflix mensual,ocio,1467.6,Expense
-2023-02-18,Entradas Cineplanet,ocio,309.63,Expense
+2023-02-16,Suscripción Netflix mensual,entretenimiento,1467.6,Expense
+2023-02-18,Entradas Cineplanet,entretenimiento,309.63,Expense
 2023-02-20,Almuerzo menú criollo,alimentacion,473.67,Expense
 2023-02-20,Pizza Hut familiar,alimentacion,1902.47,Expense
 2023-02-22,Retiro de efectivo cajero,otros,3019.0,Income
@@ -940,7 +940,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-03-05,Comisión bancaria mensual,otros,2638.0,Income
 2023-03-05,Compra de zapatillas Adidas,otros,1404.44,Expense
 2023-03-05,Compra medicamentos Inkafarma,salud,910.99,Expense
-2023-03-07,Suscripción Spotify familiar,ocio,280.86,Expense
+2023-03-07,Suscripción Spotify familiar,entretenimiento,280.86,Expense
 2023-03-08,Renta mensual de vivienda,vivienda,319.27,Expense
 2023-03-08,Envío de encomienda,otros,3072.0,Income
 2023-03-08,Consulta pediatra,salud,1929.62,Expense
@@ -968,7 +968,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-03-30,Depósito plazo fijo,otros,2917.0,Income
 2023-03-31,Depósito nómina mensual,otros,131.35,Expense
 2023-03-31,Recibo de luz Enel,servicios,844.28,Expense
-2023-04-01,Suscripción Netflix mensual,ocio,1265.2,Expense
+2023-04-01,Suscripción Netflix mensual,entretenimiento,1265.2,Expense
 2023-04-01,Cena en restaurante rústica,alimentacion,1978.91,Expense
 2023-04-04,Compra de vitaminas,salud,964.57,Expense
 2023-04-07,Compra medicamentos Inkafarma,salud,1826.23,Expense
@@ -983,7 +983,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-04-20,Pago de agua Sedapal,servicios,360.44,Expense
 2023-04-21,Consulta pediatra,salud,1828.82,Expense
 2023-04-22,Trámite notarial,otros,1664.0,Income
-2023-04-22,Entrada concierto,ocio,1675.03,Expense
+2023-04-22,Entrada concierto,entretenimiento,1675.03,Expense
 2023-04-23,Pago por consultoría externa,otros,1088.83,Expense
 2023-04-24,Inversión fondo mutuo,otros,1239.0,Income
 2023-04-25,Depósito plazo fijo,otros,663.0,Income
@@ -1001,17 +1001,17 @@ fecha,Transaction Description,categoria,monto,Type
 2023-05-15,Recarga tarjeta Metropolitano,transporte,263.42,Expense
 2023-05-15,Tienda de ropa Saga Falabella,otros,1703.01,Expense
 2023-05-16,Desayuno panadería,alimentacion,372.34,Expense
-2023-05-17,Suscripción Netflix mensual,ocio,1282.9,Expense
+2023-05-17,Suscripción Netflix mensual,entretenimiento,1282.9,Expense
 2023-05-18,Envío de encomienda,otros,1652.0,Income
 2023-05-19,Pago alquiler departamento,vivienda,483.61,Expense
 2023-05-20,Recibo de luz Enel,servicios,1276.01,Expense
 2023-05-20,Análisis de laboratorio,salud,898.79,Expense
-2023-05-20,Suscripción Spotify familiar,ocio,1389.42,Expense
+2023-05-20,Suscripción Spotify familiar,entretenimiento,1389.42,Expense
 2023-05-22,Renta mensual de vivienda,vivienda,1443.62,Expense
 2023-05-22,Retiro de efectivo cajero,otros,3937.0,Income
 2023-05-22,Mensualidad instituto de idiomas,educacion,991.23,Expense
 2023-05-25,Compra online Amazon,otros,211.84,Expense
-2023-05-28,Suscripción HBO Max,ocio,333.69,Expense
+2023-05-28,Suscripción HBO Max,entretenimiento,333.69,Expense
 2023-05-29,Compra de acciones bolsa de valores,otros,2915.0,Income
 2023-05-29,Retiro de efectivo cajero,otros,1357.0,Income
 2023-05-30,Depósito plazo fijo,otros,3575.0,Income
@@ -1020,7 +1020,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-06-04,Depósito nómina mensual,otros,1411.96,Expense
 2023-06-05,Recibo de gas Calidda,servicios,1218.56,Expense
 2023-06-08,Cena en restaurante rústica,alimentacion,211.5,Expense
-2023-06-08,Suscripción HBO Max,ocio,824.47,Expense
+2023-06-08,Suscripción HBO Max,entretenimiento,824.47,Expense
 2023-06-09,Estación de servicio Primax,transporte,1324.59,Expense
 2023-06-09,Pago alquiler departamento,vivienda,108.77,Expense
 2023-06-10,Pago de haberes sueldo,otros,315.64,Expense
@@ -1070,9 +1070,9 @@ fecha,Transaction Description,categoria,monto,Type
 2023-07-25,Pago de telefonía Claro,servicios,140.58,Expense
 2023-07-26,Compra online Amazon,otros,279.94,Expense
 2023-07-27,Cafetería Starbucks,alimentacion,355.74,Expense
-2023-07-27,Entradas Cineplanet,ocio,1675.58,Expense
+2023-07-27,Entradas Cineplanet,entretenimiento,1675.58,Expense
 2023-07-30,Pago por consultoría externa,otros,110.61,Expense
-2023-08-01,Suscripción Disney Plus,ocio,555.22,Expense
+2023-08-01,Suscripción Disney Plus,entretenimiento,555.22,Expense
 2023-08-04,Tienda de ropa Saga Falabella,otros,1274.47,Expense
 2023-08-05,Inversión fondo mutuo,otros,2481.0,Income
 2023-08-07,Pago por consultoría externa,otros,363.39,Expense
@@ -1080,7 +1080,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-08-09,Recarga tarjeta Metropolitano,transporte,1500.43,Expense
 2023-08-09,Peaje vía evitamiento,transporte,64.63,Expense
 2023-08-10,Compra de acciones bolsa de valores,otros,2313.0,Income
-2023-08-10,Compra juego de PlayStation,ocio,545.48,Expense
+2023-08-10,Compra juego de PlayStation,entretenimiento,545.48,Expense
 2023-08-11,Desayuno panadería,alimentacion,1730.61,Expense
 2023-08-16,Compra Plaza Vea,alimentacion,953.45,Expense
 2023-08-17,Depósito plazo fijo,otros,569.0,Income
@@ -1094,12 +1094,12 @@ fecha,Transaction Description,categoria,monto,Type
 2023-08-30,Recarga de gasolina,transporte,1284.78,Expense
 2023-08-30,Recarga de gasolina,transporte,1315.68,Expense
 2023-08-30,Peaje vía evitamiento,transporte,384.84,Expense
-2023-09-01,Compra juego de PlayStation,ocio,1800.38,Expense
+2023-09-01,Compra juego de PlayStation,entretenimiento,1800.38,Expense
 2023-09-01,Compra útiles escolares,educacion,1324.46,Expense
 2023-09-03,Compra de víveres minimarket,alimentacion,1314.25,Expense
 2023-09-04,Servicio Taxi Cabify,transporte,1814.75,Expense
 2023-09-04,Pizza Hut familiar,alimentacion,1170.22,Expense
-2023-09-04,Suscripción Netflix mensual,ocio,692.9,Expense
+2023-09-04,Suscripción Netflix mensual,entretenimiento,692.9,Expense
 2023-09-07,Honorarios profesionales,otros,1813.99,Expense
 2023-09-10,Recarga tarjeta Metropolitano,transporte,1692.38,Expense
 2023-09-11,Recibo de internet Movistar,servicios,594.63,Expense
@@ -1122,7 +1122,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-09-29,Artículos de casa Sodimac,otros,812.75,Expense
 2023-10-03,Tienda por departamento Ripley,otros,19.29,Expense
 2023-10-04,Consulta clínica San Felipe,salud,1900.64,Expense
-2023-10-04,Suscripción Spotify familiar,ocio,45.65,Expense
+2023-10-04,Suscripción Spotify familiar,entretenimiento,45.65,Expense
 2023-10-05,Inversión fondo mutuo,otros,2353.0,Income
 2023-10-06,Consulta odontológica,salud,631.06,Expense
 2023-10-08,Comisión bancaria mensual,otros,1868.0,Income
@@ -1146,10 +1146,10 @@ fecha,Transaction Description,categoria,monto,Type
 2023-10-30,Inversión fondo mutuo,otros,2815.0,Income
 2023-11-04,Depósito plazo fijo,otros,4577.0,Income
 2023-11-05,Depósito plazo fijo,otros,2654.0,Income
-2023-11-08,Suscripción Spotify familiar,ocio,722.26,Expense
+2023-11-08,Suscripción Spotify familiar,entretenimiento,722.26,Expense
 2023-11-08,Pago de agua Sedapal,servicios,88.42,Expense
-2023-11-08,Suscripción HBO Max,ocio,1379.53,Expense
-2023-11-09,Entrada concierto,ocio,15.45,Expense
+2023-11-08,Suscripción HBO Max,entretenimiento,1379.53,Expense
+2023-11-09,Entrada concierto,entretenimiento,15.45,Expense
 2023-11-09,Pago alquiler departamento,vivienda,1672.11,Expense
 2023-11-11,Pago de tv cable DirecTV,servicios,1899.4,Expense
 2023-11-11,Pago alquiler departamento,vivienda,1449.89,Expense
@@ -1173,7 +1173,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-11-28,Pago de agua Sedapal,servicios,971.33,Expense
 2023-11-28,Compra de laptop Wilson,otros,886.97,Expense
 2023-11-29,Matrícula Universidad,educacion,601.0,Income
-2023-12-05,Entradas Cineplanet,ocio,1956.01,Expense
+2023-12-05,Entradas Cineplanet,entretenimiento,1956.01,Expense
 2023-12-05,Membresía Gimnasio Smartfit,salud,1043.01,Expense
 2023-12-06,Renta mensual de vivienda,vivienda,871.37,Expense
 2023-12-08,Honorarios profesionales,otros,698.04,Expense
@@ -1183,7 +1183,7 @@ fecha,Transaction Description,categoria,monto,Type
 2023-12-11,Alquiler de local comercial,vivienda,1505.35,Expense
 2023-12-13,Medicinas Mifarma,salud,1940.59,Expense
 2023-12-14,Compra de acciones bolsa de valores,otros,3601.0,Income
-2023-12-14,Suscripción Disney Plus,ocio,166.87,Expense
+2023-12-14,Suscripción Disney Plus,entretenimiento,166.87,Expense
 2023-12-18,Depósito nómina mensual,otros,185.16,Expense
 2023-12-20,Análisis de laboratorio,salud,246.23,Expense
 2023-12-21,Compra Plaza Vea,alimentacion,214.26,Expense
@@ -1194,13 +1194,13 @@ fecha,Transaction Description,categoria,monto,Type
 2023-12-27,Compra de vitaminas,salud,1124.7,Expense
 2023-12-29,Pago de haberes sueldo,otros,1436.15,Expense
 2023-12-29,Honorarios profesionales,otros,236.91,Expense
-2023-12-29,Entrada concierto,ocio,14.37,Expense
+2023-12-29,Entrada concierto,entretenimiento,14.37,Expense
 2024-01-02,Servicio Taxi Cabify,transporte,1099.9,Expense
 2024-01-02,Alquiler de local comercial,vivienda,101.1,Expense
 2024-01-04,Aporte voluntario AFP,otros,3852.0,Income
 2024-01-04,Inversión fondo mutuo,otros,2036.0,Income
 2024-01-07,Pensión mensual colegio,educacion,2266.0,Income
-2024-01-09,Entradas Cineplanet,ocio,1436.41,Expense
+2024-01-09,Entradas Cineplanet,entretenimiento,1436.41,Expense
 2024-01-09,Fotocopias e impresiones,otros,880.0,Income
 2024-01-10,Alquiler de local comercial,vivienda,1546.57,Expense
 2024-01-11,Pago de tv cable DirecTV,servicios,1928.07,Expense
@@ -1209,11 +1209,11 @@ fecha,Transaction Description,categoria,monto,Type
 2024-01-12,Pago de telefonía Claro,servicios,1386.72,Expense
 2024-01-13,Depósito plazo fijo,otros,1348.0,Income
 2024-01-14,Membresía Gimnasio Smartfit,salud,1013.18,Expense
-2024-01-15,Suscripción Disney Plus,ocio,554.46,Expense
+2024-01-15,Suscripción Disney Plus,entretenimiento,554.46,Expense
 2024-01-16,Servicio Taxi Cabify,transporte,911.16,Expense
 2024-01-16,Trámite notarial,otros,4696.0,Income
 2024-01-16,Consulta odontológica,salud,1426.63,Expense
-2024-01-17,Compra juego de PlayStation,ocio,409.77,Expense
+2024-01-17,Compra juego de PlayStation,entretenimiento,409.77,Expense
 2024-01-19,Peaje vía evitamiento,transporte,1376.36,Expense
 2024-01-19,Pago de agua Sedapal,servicios,1962.86,Expense
 2024-01-19,Recibo de internet Movistar,servicios,1012.75,Expense
@@ -1223,19 +1223,19 @@ fecha,Transaction Description,categoria,monto,Type
 2024-01-23,Recarga de gasolina,transporte,1756.18,Expense
 2024-01-24,McDonald's combo familiar,alimentacion,1050.23,Expense
 2024-01-25,Compra de acciones bolsa de valores,otros,934.0,Income
-2024-01-26,Suscripción HBO Max,ocio,541.29,Expense
+2024-01-26,Suscripción HBO Max,entretenimiento,541.29,Expense
 2024-01-26,Peaje vía evitamiento,transporte,1369.95,Expense
 2024-01-26,Inversión fondo mutuo,otros,2917.0,Income
 2024-01-27,Pizza Hut familiar,alimentacion,723.78,Expense
-2024-01-28,Suscripción HBO Max,ocio,1487.4,Expense
-2024-01-30,Compra juego de PlayStation,ocio,1026.74,Expense
+2024-01-28,Suscripción HBO Max,entretenimiento,1487.4,Expense
+2024-01-30,Compra juego de PlayStation,entretenimiento,1026.74,Expense
 2024-02-01,Estación de servicio Primax,transporte,1388.94,Expense
 2024-02-06,Retiro de efectivo cajero,otros,3674.0,Income
 2024-02-07,Consulta odontológica,salud,1932.01,Expense
 2024-02-07,Fotocopias e impresiones,otros,2163.0,Income
 2024-02-10,Depósito nómina mensual,otros,1661.67,Expense
 2024-02-10,Compra medicamentos Inkafarma,salud,1512.66,Expense
-2024-02-10,Suscripción Spotify familiar,ocio,1554.53,Expense
+2024-02-10,Suscripción Spotify familiar,entretenimiento,1554.53,Expense
 2024-02-14,Pasaje aéreo Latam,transporte,903.14,Expense
 2024-02-14,Alquiler de local comercial,vivienda,382.08,Expense
 2024-02-15,Aporte voluntario AFP,otros,3590.0,Income
@@ -1245,29 +1245,29 @@ fecha,Transaction Description,categoria,monto,Type
 2024-02-21,Compra de víveres minimarket,alimentacion,1549.59,Expense
 2024-02-21,Peaje vía evitamiento,transporte,986.2,Expense
 2024-02-21,Medicinas Mifarma,salud,155.03,Expense
-2024-02-22,Suscripción Disney Plus,ocio,1914.41,Expense
+2024-02-22,Suscripción Disney Plus,entretenimiento,1914.41,Expense
 2024-02-23,Recibo de luz Enel,servicios,837.7,Expense
 2024-02-23,Alquiler de local comercial,vivienda,705.31,Expense
 2024-02-24,Compra de vitaminas,salud,668.82,Expense
 2024-02-24,Honorarios profesionales,otros,1993.3,Expense
 2024-02-25,Cena en restaurante rústica,alimentacion,238.3,Expense
-2024-02-27,Entrada concierto,ocio,1809.95,Expense
-2024-02-27,Suscripción Netflix mensual,ocio,1918.2,Expense
+2024-02-27,Entrada concierto,entretenimiento,1809.95,Expense
+2024-02-27,Suscripción Netflix mensual,entretenimiento,1918.2,Expense
 2024-02-27,Análisis de laboratorio,salud,768.93,Expense
 2024-02-28,Pago alquiler departamento,vivienda,777.89,Expense
 2024-02-29,Recarga tarjeta Metropolitano,transporte,59.16,Expense
 2024-03-02,Compra de vitaminas,salud,1033.48,Expense
 2024-03-03,Pago por consultoría externa,otros,97.26,Expense
-2024-03-05,Suscripción Netflix mensual,ocio,647.42,Expense
+2024-03-05,Suscripción Netflix mensual,entretenimiento,647.42,Expense
 2024-03-05,Depósito plazo fijo,otros,1871.0,Income
 2024-03-06,Almuerzo menú criollo,alimentacion,1257.6,Expense
-2024-03-06,Suscripción HBO Max,ocio,1731.25,Expense
+2024-03-06,Suscripción HBO Max,entretenimiento,1731.25,Expense
 2024-03-06,Pago mensual de habitación,vivienda,419.1,Expense
 2024-03-07,Pensión mensual colegio,educacion,1296.66,Expense
 2024-03-07,Recibo de gas Calidda,servicios,57.27,Expense
 2024-03-08,KFC almuerzo,alimentacion,184.17,Expense
 2024-03-11,Trámite notarial,otros,1077.0,Income
-2024-03-13,Entrada concierto,ocio,1822.86,Expense
+2024-03-13,Entrada concierto,entretenimiento,1822.86,Expense
 2024-03-15,Pago de haberes sueldo,otros,1264.13,Expense
 2024-03-16,Desayuno panadería,alimentacion,785.11,Expense
 2024-03-18,Compra de acciones bolsa de valores,otros,1018.0,Income
@@ -1289,12 +1289,12 @@ fecha,Transaction Description,categoria,monto,Type
 2024-04-11,Renta mensual de vivienda,vivienda,588.4,Expense
 2024-04-13,Inversión fondo mutuo,otros,2117.0,Income
 2024-04-16,Honorarios profesionales,otros,1903.56,Expense
-2024-04-17,Entradas Cineplanet,ocio,209.09,Expense
-2024-04-17,Suscripción Disney Plus,ocio,642.39,Expense
+2024-04-17,Entradas Cineplanet,entretenimiento,209.09,Expense
+2024-04-17,Suscripción Disney Plus,entretenimiento,642.39,Expense
 2024-04-17,Servicio Taxi Cabify,transporte,1389.98,Expense
 2024-04-18,Envío de encomienda,otros,3091.0,Income
 2024-04-20,Recibo de gas Calidda,servicios,19.62,Expense
-2024-04-21,Suscripción Netflix mensual,ocio,1427.28,Expense
+2024-04-21,Suscripción Netflix mensual,entretenimiento,1427.28,Expense
 2024-04-22,Peaje vía evitamiento,transporte,1681.82,Expense
 2024-04-23,Pensión mensual colegio,educacion,4431.0,Income
 2024-04-25,Consulta pediatra,salud,1551.79,Expense
@@ -1303,17 +1303,17 @@ fecha,Transaction Description,categoria,monto,Type
 2024-04-30,Compra de acciones bolsa de valores,otros,2656.0,Income
 2024-05-02,Pago mensual de habitación,vivienda,1457.58,Expense
 2024-05-03,Compra Plaza Vea,alimentacion,1627.16,Expense
-2024-05-04,Entrada concierto,ocio,1813.54,Expense
+2024-05-04,Entrada concierto,entretenimiento,1813.54,Expense
 2024-05-04,Depósito nómina mensual,otros,1311.28,Expense
 2024-05-05,Comisión bancaria mensual,otros,2329.0,Income
 2024-05-05,Servicio Taxi Cabify,transporte,276.42,Expense
 2024-05-14,Renta mensual de vivienda,vivienda,799.6,Expense
-2024-05-15,Entrada concierto,ocio,1697.48,Expense
+2024-05-15,Entrada concierto,entretenimiento,1697.48,Expense
 2024-05-17,Pago de tv cable DirecTV,servicios,1516.84,Expense
 2024-05-20,Depósito plazo fijo,otros,1967.0,Income
 2024-05-22,Recibo de internet Movistar,servicios,1474.48,Expense
 2024-05-23,Consulta pediatra,salud,90.44,Expense
-2024-05-25,Compra juego de PlayStation,ocio,135.09,Expense
+2024-05-25,Compra juego de PlayStation,entretenimiento,135.09,Expense
 2024-05-26,Almuerzo menú criollo,alimentacion,1340.49,Expense
 2024-05-27,Medicinas Mifarma,salud,782.31,Expense
 2024-05-27,Compra de víveres minimarket,alimentacion,89.41,Expense
@@ -1321,7 +1321,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-06-01,Servicio Taxi Cabify,transporte,1671.4,Expense
 2024-06-02,Recibo de gas Calidda,servicios,759.55,Expense
 2024-06-02,Pago mensual de habitación,vivienda,1038.16,Expense
-2024-06-03,Suscripción Netflix mensual,ocio,1037.58,Expense
+2024-06-03,Suscripción Netflix mensual,entretenimiento,1037.58,Expense
 2024-06-04,Análisis de laboratorio,salud,978.85,Expense
 2024-06-06,Cena en restaurante rústica,alimentacion,1008.66,Expense
 2024-06-07,Compra de acciones bolsa de valores,otros,2384.0,Income
@@ -1353,7 +1353,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-07-13,Desayuno panadería,alimentacion,1398.31,Expense
 2024-07-16,Depósito nómina mensual,otros,1581.22,Expense
 2024-07-20,Pago mensual de habitación,vivienda,856.72,Expense
-2024-07-21,Compra juego de PlayStation,ocio,1821.07,Expense
+2024-07-21,Compra juego de PlayStation,entretenimiento,1821.07,Expense
 2024-07-22,Trámite notarial,otros,2611.0,Income
 2024-07-23,Aporte voluntario AFP,otros,4780.0,Income
 2024-07-23,Inversión fondo mutuo,otros,3572.0,Income
@@ -1365,7 +1365,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-07-27,Pago de haberes sueldo,otros,515.02,Expense
 2024-07-27,Compra de vitaminas,salud,1550.65,Expense
 2024-07-27,Recibo de internet Movistar,servicios,1711.45,Expense
-2024-07-28,Entrada concierto,ocio,898.72,Expense
+2024-07-28,Entrada concierto,entretenimiento,898.72,Expense
 2024-07-28,Recibo de luz Enel,servicios,209.55,Expense
 2024-07-29,Compra medicamentos Inkafarma,salud,1603.7,Expense
 2024-07-29,Cena en restaurante rústica,alimentacion,329.87,Expense
@@ -1377,14 +1377,14 @@ fecha,Transaction Description,categoria,monto,Type
 2024-08-02,Cafetería Starbucks,alimentacion,1891.97,Expense
 2024-08-03,Pago de haberes sueldo,otros,883.55,Expense
 2024-08-03,Pasaje de bus interprovincial,transporte,397.55,Expense
-2024-08-08,Suscripción HBO Max,ocio,1234.23,Expense
+2024-08-08,Suscripción HBO Max,entretenimiento,1234.23,Expense
 2024-08-09,Compra de vitaminas,salud,486.12,Expense
 2024-08-11,Inversión fondo mutuo,otros,1211.0,Income
 2024-08-14,Compra de zapatillas Adidas,otros,712.72,Expense
-2024-08-14,Suscripción Netflix mensual,ocio,1040.31,Expense
+2024-08-14,Suscripción Netflix mensual,entretenimiento,1040.31,Expense
 2024-08-14,Alquiler de local comercial,vivienda,1839.16,Expense
 2024-08-15,Análisis de laboratorio,salud,701.48,Expense
-2024-08-22,Suscripción Spotify familiar,ocio,1216.66,Expense
+2024-08-22,Suscripción Spotify familiar,entretenimiento,1216.66,Expense
 2024-08-23,Otros gastos varios,otros,538.0,Income
 2024-08-25,Tienda de ropa Saga Falabella,otros,1017.41,Expense
 2024-08-25,Peaje vía evitamiento,transporte,686.53,Expense
@@ -1394,16 +1394,16 @@ fecha,Transaction Description,categoria,monto,Type
 2024-08-28,Depósito nómina mensual,otros,1366.37,Expense
 2024-08-28,Compra Supermercado Metro,alimentacion,969.12,Expense
 2024-08-28,Compra de zapatillas Adidas,otros,1270.99,Expense
-2024-08-30,Compra juego de PlayStation,ocio,1602.32,Expense
+2024-08-30,Compra juego de PlayStation,entretenimiento,1602.32,Expense
 2024-09-01,Medicinas Mifarma,salud,1037.84,Expense
 2024-09-02,Trámite notarial,otros,2533.0,Income
 2024-09-05,Tienda de ropa Saga Falabella,otros,1350.66,Expense
 2024-09-05,Pago alquiler departamento,vivienda,1113.56,Expense
 2024-09-05,Matrícula Universidad,educacion,3396.0,Income
 2024-09-05,Estación de servicio Primax,transporte,373.74,Expense
-2024-09-06,Entrada concierto,ocio,1003.01,Expense
+2024-09-06,Entrada concierto,entretenimiento,1003.01,Expense
 2024-09-07,Aporte voluntario AFP,otros,2674.0,Income
-2024-09-08,Suscripción Netflix mensual,ocio,1671.53,Expense
+2024-09-08,Suscripción Netflix mensual,entretenimiento,1671.53,Expense
 2024-09-10,Consulta odontológica,salud,320.43,Expense
 2024-09-13,Compra de acciones bolsa de valores,otros,4535.0,Income
 2024-09-15,Cena en restaurante rústica,alimentacion,1697.54,Expense
@@ -1434,7 +1434,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-10-10,Compra de vitaminas,salud,727.01,Expense
 2024-10-10,Servicio Taxi Uber,transporte,694.84,Expense
 2024-10-11,Consulta pediatra,salud,1736.06,Expense
-2024-10-12,Entradas Cineplanet,ocio,1157.94,Expense
+2024-10-12,Entradas Cineplanet,entretenimiento,1157.94,Expense
 2024-10-15,Recibo de internet Movistar,servicios,1958.95,Expense
 2024-10-17,Consulta clínica San Felipe,salud,1349.65,Expense
 2024-10-17,Honorarios profesionales,otros,1780.37,Expense
@@ -1462,7 +1462,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-11-14,Inversión fondo mutuo,otros,4240.0,Income
 2024-11-16,Compra de laptop Wilson,otros,1051.69,Expense
 2024-11-17,Servicio Taxi Cabify,transporte,1818.76,Expense
-2024-11-17,Suscripción HBO Max,ocio,1611.37,Expense
+2024-11-17,Suscripción HBO Max,entretenimiento,1611.37,Expense
 2024-11-17,Compra de vitaminas,salud,830.29,Expense
 2024-11-17,Inversión fondo mutuo,otros,500.0,Income
 2024-11-18,Recibo de luz Enel,servicios,694.33,Expense
@@ -1495,7 +1495,7 @@ fecha,Transaction Description,categoria,monto,Type
 2024-12-21,Honorarios profesionales,otros,784.35,Expense
 2024-12-23,Consulta odontológica,salud,325.64,Expense
 2024-12-28,Pago mensual de habitación,vivienda,514.09,Expense
-2024-12-28,Suscripción Disney Plus,ocio,727.25,Expense
+2024-12-28,Suscripción Disney Plus,entretenimiento,727.25,Expense
 2024-12-28,Aporte voluntario AFP,otros,1425.0,Income
 2024-12-29,Compra de zapatillas Adidas,otros,655.78,Expense
 2024-12-29,Otros gastos varios,otros,1480.0,Income
