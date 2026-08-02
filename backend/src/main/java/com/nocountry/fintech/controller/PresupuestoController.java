@@ -3,7 +3,6 @@ package com.nocountry.fintech.controller;
 import com.nocountry.fintech.dto.request.PresupuestoRequestDto;
 import com.nocountry.fintech.dto.response.PresupuestoResponseDto;
 import com.nocountry.fintech.service.PresupuestoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,11 @@ import java.util.List;
 @RequestMapping("/api/presupuestos")
 public class PresupuestoController {
 
-    @Autowired
-    private PresupuestoService presupuestoService;
+    private final PresupuestoService presupuestoService;
+
+    public PresupuestoController(PresupuestoService presupuestoService){
+        this.presupuestoService = presupuestoService;
+    }
 
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<PresupuestoResponseDto>> obtenerPorUsuario(@PathVariable Long usuarioId) {
