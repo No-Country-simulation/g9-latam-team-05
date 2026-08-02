@@ -19,9 +19,8 @@ export class LoginComponent {
   });
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      // Mock login validation
-      this.router.navigate(['/onboarding']);
-    }
+    // Mock login validation
+    localStorage.setItem('isLoggedIn', 'true');
+    this.router.navigate(['/onboarding']);
   }
 }

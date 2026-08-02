@@ -14,6 +14,7 @@ export class ShellComponent {
   protected financeService = inject(FinanceService);
 
   logout() {
+    localStorage.removeItem('isLoggedIn');
     this.router.navigate(['/login']);
   }
 }

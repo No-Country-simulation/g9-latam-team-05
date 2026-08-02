@@ -61,7 +61,7 @@ class HealthPredictionRequestDTO(pydantic.BaseModel):
 
 
 class ResumenGastosDTO(pydantic.BaseModel):
-    """DTO para el desglose consolidado de gastos por categoría."""
+    """DTO para el desglose consolidado de gastos por categoría oficial de la Hackathon."""
     alimentacion: float = pydantic.Field(
         default=0.0, 
         ge=0.0, 
@@ -74,11 +74,41 @@ class ResumenGastosDTO(pydantic.BaseModel):
         description="Total acumulado en transporte",
         json_schema_extra={"example": 300.00}
     )
-    entretenimiento: float = pydantic.Field(
+    salud: float = pydantic.Field(
         default=0.0, 
         ge=0.0, 
-        description="Total acumulado en entretenimiento",
+        description="Total acumulado en salud",
+        json_schema_extra={"example": 150.00}
+    )
+    vivienda: float = pydantic.Field(
+        default=0.0, 
+        ge=0.0, 
+        description="Total acumulado en vivienda",
+        json_schema_extra={"example": 1200.00}
+    )
+    educacion: float = pydantic.Field(
+        default=0.0, 
+        ge=0.0, 
+        description="Total acumulado en educación",
+        json_schema_extra={"example": 950.00}
+    )
+    ocio: float = pydantic.Field(
+        default=0.0, 
+        ge=0.0, 
+        description="Total acumulado en ocio y entretenimiento",
         json_schema_extra={"example": 40.00}
+    )
+    servicios: float = pydantic.Field(
+        default=0.0, 
+        ge=0.0, 
+        description="Total acumulado en servicios básicos",
+        json_schema_extra={"example": 80.00}
+    )
+    otros: float = pydantic.Field(
+        default=0.0, 
+        ge=0.0, 
+        description="Total acumulado en otras categorías",
+        json_schema_extra={"example": 0.00}
     )
 
 

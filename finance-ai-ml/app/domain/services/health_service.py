@@ -68,32 +68,46 @@ class FinancialHealthService:
         )
 
     def _procesar_resumen_gastos(self, transacciones: List[Any]) -> ResumenGastosDTO:
-        gastos_dict = {"alimentacion": 0.0, "transporte": 0.0, "entretenimiento": 0.0}
+        # Inicializar el desglose con las 8 categorías oficiales
+        gastos_dict = {
+            "alimentacion": 0.0,
+            "transporte": 0.0,
+            "salud": 0.0,
+            "vivienda": 0.0,
+            "educacion": 0.0,
+            "ocio": 0.0,
+            "servicios": 0.0,
+            "otros": 0.0
+        }
+
+        import unicodedata
+        def normalizar(txt: str) -> str:
+            return "".join(
+                c for c in unicodedata.normalize('NFD', txt)
+                if unicodedata.category(c) != 'Mn'
+            ).lower()
 
         for t in transacciones:
-            desc_lower = t.descripcion.lower()
-            
-            # 1. Intentar predecir vía NLP si existe el modelo, o analizar el texto
             try:
-                categoria_predicha = self.nlp_classifier.predict([t.descripcion])[0].lower()
-            except Exception:
-                categoria_predicha = ""
+                # Usamos el modelo NLP entrenado con el dataset en español
+                categoria_predicha = self.nlp_classifier.predict([t.descripcion])[0]
+                cat_limpia = normalizar(categoria_predicha)
 
-            # 2. Reglas de asignación priorizando palabras clave en la descripción
-            if any(k in desc_lower for k in ["super", "alimen", "comida", "restaurante", "mercao"]):
-                gastos_dict["alimentacion"] += t.valor
-            elif any(k in desc_lower for k in ["transpor", "combus", "gaso", "uber", "peaje", "taxis"]):
-                gastos_dict["transporte"] += t.valor
-            elif any(k in desc_lower for k in ["stream", "cine", "netflix", "spotify", "juego", "entrete"]):
-                gastos_dict["entretenimiento"] += t.valor
-            else:
-                # Fallback por predicción del modelo NLP o categoría por defecto
-                if "alimen" in categoria_predicha:
-                    gastos_dict["alimentacion"] += t.valor
-                elif "transpor" in categoria_predicha:
-                    gastos_dict["transporte"] += t.valor
+                # Mapear variaciones comunes de etiquetas
+                if "salud" in cat_limpia:
+                    cat_limpia = "salud"
+                elif "restaurante" in cat_limpia:
+                    cat_limpia = "alimentacion"
+                elif "ocio" in cat_limpia or "entretenimiento" in cat_limpia:
+                    cat_limpia = "ocio"
+
+                if cat_limpia in gastos_dict:
+                    gastos_dict[cat_limpia] += t.valor
                 else:
-                    gastos_dict["entretenimiento"] += t.valor
+                    gastos_dict["otros"] += t.valor
+            except Exception as exc:
+                logger.error(f"Error clasificando transaccion '{t.descripcion}': {exc}")
+                gastos_dict["otros"] += t.valor
 
         return ResumenGastosDTO(**gastos_dict)
 
@@ -112,8 +126,8 @@ class FinancialHealthService:
 
     def _generar_recomendaciones(self, resumen: ResumenGastosDTO, nivel_endeudamiento: float) -> List[str]:
         recomendaciones = []
-        if resumen.entretenimiento > 0:
-            recomendaciones.append("Monitorear los gastos recurrentes de entretenimiento")
+        if resumen.ocio > 0:
+            recomendaciones.append("Monitorear los gastos recurrentes de ocio y entretenimiento")
         if nivel_endeudamiento > 20:
             recomendaciones.append("Aumentar la reserva financiera mensual")
         return recomendaciones
