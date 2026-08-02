@@ -92,7 +92,7 @@ class ResumenGastosDTO(pydantic.BaseModel):
         description="Total acumulado en educación",
         json_schema_extra={"example": 950.00}
     )
-    ocio: float = pydantic.Field(
+    entretenimiento: float = pydantic.Field(
         default=0.0, 
         ge=0.0, 
         description="Total acumulado en ocio y entretenimiento",
@@ -126,9 +126,16 @@ class HealthPredictionResponseDTO(pydantic.BaseModel):
         description="Confianza del modelo en la inferencia (0.0 a 1.0)",
         json_schema_extra={"example": 0.82}
     )
-    resumen_gastos: ResumenGastosDTO = pydantic.Field(
+    resumen_gastos: typing.Dict[str, float] = pydantic.Field(
         ..., 
-        description="Agregación de gastos categorizados por el modelo NLP"
+        description="Desglose de gastos consolidados por categoría activa (excluye categorías con valor 0)",
+        json_schema_extra={
+            "example": {
+                "alimentacion": 420.00,
+                "transporte": 300.00,
+                "entretenimiento": 40.00
+            }
+        }
     )
     recomendaciones: typing.List[str] = pydantic.Field(
         ..., 
