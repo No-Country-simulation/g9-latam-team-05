@@ -452,10 +452,15 @@ graph LR
       "resumen_gastos": {
         "alimentacion": 420.00,
         "transporte": 300.00,
-        "entretenimiento": 40.00
+        "salud": 0.00,
+        "vivienda": 0.00,
+        "educacion": 0.00,
+        "ocio": 40.00,
+        "servicios": 0.00,
+        "otros": 0.00
       },
       "recomendaciones": [
-        "Monitorear los gastos recurrentes de entretenimiento",
+        "Monitorear los gastos recurrentes de ocio y entretenimiento",
         "Aumentar la reserva financiera mensual"
       ]
     }

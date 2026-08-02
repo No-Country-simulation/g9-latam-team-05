@@ -268,6 +268,21 @@ Esta es la funcionalidad central y punto crítico exigido en las reglas oficiale
 Lista reducida con `Supermercado Plaza` | `2026-07-10` | `Alimentación` | `$420.00`.
 
 #### 🔄 Flujo de Datos (Agnóstico de Base de Datos - Spring Data JPA):
+- `balanceNeto = ingresosMensuales - gastosTotales` ($4,500.00 - $2,470.00 = $2,030.00)
+       - `tasaAhorro = (balanceNeto / ingresosMensuales) * 100` (45.11%)
+    4. **Microservicio Python:** `N/A` *(No se requiere inferencia de IA para este cálculo aritmético estándar)*.
+    5. **Java responde a Frontend (200 OK):**
+       ```json
+       {
+         "ingresosMensuales": 4500.00,
+         "gastosTotales": 2470.00,
+         "balanceNeto": 2030.00,
+         "tasaAhorro": 45.11
+       }
+       ```
+
+---
+
 1. **Frontend envía a Java:** `GET /api/transacciones/usuario/1/recientes?limit=5`
 2. **Java (Spring Boot) consulta via Repositorio JPA (Agnóstico PostgreSQL / Oracle):**
    - Invoca `transaccionRepository.findByUsuarioIdOrderByFechaDesc(1, PageRequest.of(0, 5))`.
@@ -285,3 +300,97 @@ Lista reducida con `Supermercado Plaza` | `2026-07-10` | `Alimentación` | `$420
      }
    ]
    ```
+
+---
+
+## 🖥️ PANTALLA 2: PÁGINA DE TRANSACCIONES (Flujo Completo por Componente)
+
+### 🎯 Objetivos de la Pantalla:
+1. **Ingreso Manual de Transacciones:** Permitir al usuario registrar transacciones ingresando descripción y valor, asociándolo a una categoría seleccionada o guardándolo como "Sin clasificar" para su posterior procesamiento.
+2. **Carga Masiva en Lote:** Procesar masivamente listados de transacciones desde archivos CSV, registrándolas en la base de datos de manera ágil sin latencia de clasificación inmediata.
+3. **Auditoría e Historial de Movimientos:** Presentar la lista completa de transacciones con opciones de ordenamiento dinámico y eliminación directa.
+
+> [!NOTE]
+> **Estrategia de Clasificación IA Bajo Demanda (Lazy Classification):**
+> Para evitar sobrecargar el microservicio de Python y la base de datos con llamadas NLP síncronas en cada registro (Manual o CSV), las nuevas transacciones se guardan directamente en base de datos con la categoría default `"Sin clasificar"` (`categoria_id` apuntando a un registro default).
+> La clasificación real mediante IA se ejecuta de manera diferida cuando el usuario vuelve a la **Pantalla 1 (Dashboard)**: al cargarse, el endpoint existente `GET /api/transacciones/usuario/{usuarioId}/distribucion` detecta transacciones pendientes, llama en lote a Python FastAPI para categorizarlas, actualiza la base de datos y recalcula la distribución en una sola operación optimizada. Si no hay pendientes, Java simplemente realiza una agregación SQL local rápida, evitando consumir recursos de red hacia Python.
+
+---
+
+### 🟢 NIVEL 1 (PANEL IZQUIERDO - SUPERIOR): Formulario de Registro Manual (`Añadir Transacción`)
+*   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT DE ESCRITURA]** (En la Pantalla 1 solo se consultan transacciones, por lo que este endpoint es de nueva creación).
+*   **Elementos UI:** Formulario con campos: `Descripción` (input de texto), `Monto ($)` (input numérico), y `Categoría` (selector dropdown con opción por defecto "Clasificación IA").
+*   **Flujo de Datos Paso a Paso (Optimizado - Registro Directo):**
+    1. **Frontend envía a Java (Dispara petición HTTP):**
+       * **Endpoint:** `POST /api/transacciones`
+       * **Request Payload (JSON):**
+         ```json
+         {
+           "descripcion": "Supermercado Plaza",
+           "monto": 420.00,
+           "tipo": "GASTO",
+           "categoriaNombre": "" // Vacío para postergar la clasificación por IA, o valor de dropdown explícito
+         }
+         ```
+       *(Nota: El backend extrae la identidad del usuario desde el token JWT en el encabezado `Authorization: Bearer <token>`)*.
+    2. **Java Orquestador procesa (Sin llamada a IA inmediata):**
+       * Si `categoriaNombre` viene vacío (`""` o `null`), Java asocia la transacción a la categoría default `"Sin clasificar"` (color `#6C757D`, icono `"tag"`). **No se realiza ninguna llamada de red al microservicio de Python FastAPI en este momento.**
+       * Si `categoriaNombre` viene con un valor explícito seleccionado por el usuario (ej. `"Transporte"`), Java asocia esa categoría existente de la BD.
+    3. **Persistencia:** Java graba el registro en la tabla `transacciones` vinculándolo al usuario y la categoría correspondiente.
+    4. **Java responde a Frontend (201 Created):** Retorna la transacción con su ID de BD y la información de la categoría:
+       ```json
+       {
+         "id": 15,
+         "userId": 1,
+         "categoria": { "id": 10, "nombre": "Sin clasificar", "icono": "tag", "color": "#6C757D" },
+         "descripcion": "Supermercado Plaza",
+         "monto": 420.00,
+         "tipo": "GASTO",
+         "fecha": "2026-07-31"
+       }
+       ```
+    5. **Frontend actualiza estado:** Agrega la transacción a la señal de datos `transactions`, actualizando la tabla y los KPIs del dashboard de manera reactiva.
+
+---
+
+### 🟢 NIVEL 2 (PANEL IZQUIERDO - INFERIOR): Importación Masiva en Lote (`Importar Lote (CSV)`)
+*   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT]** (Procesamiento y creación de transacciones en lote de manera optimizada).
+*   **Elementos UI:** Zona de arrastre de archivos (Drag & Drop) y botón de búsqueda de archivos locales que admite archivos `.csv` en formato `descripcion,monto`.
+*   **Flujo de Datos Paso a Paso (Optimizado - Registro Directo en Lote):**
+    1. **Frontend procesa localmente:** El componente lee el archivo CSV, parsea sus líneas y extrae la lista de descripciones y montos.
+    2. **Frontend envía a Java (Dispara petición HTTP):**
+       * **Endpoint:** `POST /api/transacciones/lote`
+       * **Request Payload (JSON):**
+         ```json
+         [
+           { "descripcion": "Combustible Puma", "monto": 300.00 },
+           { "descripcion": "Suscripción Netflix", "monto": 40.00 }
+         ]
+         ```
+    3. **Java procesa y persiste (Sin llamada a IA inmediata):**
+       * Java recorre la lista e inserta todos los movimientos vinculándolos a la categoría default `"Sin clasificar"`. **No se realiza ninguna llamada de red al microservicio de Python FastAPI durante el proceso de importación.**
+    4. **Java responde a Frontend (201 Created):** Devuelve el listado de transacciones creadas y guardadas en BD, marcadas como `"Sin clasificar"`.
+    5. **Frontend actualiza estado:** Concatena las nuevas transacciones a la señal `transactions` para repintar la tabla de manera inmediata y muestra una notificación de éxito al usuario.
+
+---
+
+### 🟢 NIVEL 3 (PANEL DERECHO): Historial de Movimientos (Tabla Interactiva)
+*   **Elementos UI:** Tabla completa con columnas ordenables interactiva (`Fecha`, `Descripción`, `Categoría` con badges de color, `Monto`) y botón de acción de borrado.
+*   **Flujo de Datos de Consulta Inicial:**
+    *   **Estado del Endpoint:** 🔄 **[REUTILIZACIÓN DE ENDPOINT EXISTENTE]**
+    *   **Nota de Reutilización:**
+        > [!NOTE]
+        > Este flujo trabaja directamente sobre el controlador y repositorio ya existentes del backend, reutilizando el endpoint de la **Pantalla 1** (`GET /api/transacciones/usuario/{usuarioId}/recientes`). Sin embargo, en esta pantalla se amplía omitiendo el parámetro query `limit=5` (o pasándolo vacío) para recuperar el listado completo de movimientos del usuario.
+    1. **Frontend envía a Java (Dispara petición HTTP):**
+       * **Endpoint:** `GET /api/transacciones/usuario/{usuarioId}/recientes`
+    2. **Java consulta a BD:** `transaccionRepository.findByUsuarioId(1)`.
+    3. **Java responde a Frontend (200 OK):** Arreglo de transacciones asociadas.
+    4. **Frontend ordena en memoria:** Utiliza la señal de ordenación (`sortColumn` y `sortAsc`) en una propiedad computada (`sortedTransactions`) para organizar las filas en base al clic del usuario.
+
+*   **Flujo de Datos de Eliminación (`onDelete(id)`):**
+    *   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT]**
+    1. **Frontend envía a Java (Dispara petición HTTP):**
+       * **Endpoint:** `DELETE /api/transacciones/{id}`
+    2. **Java procesa:** Ejecuta la eliminación del registro en base de datos mediante `transaccionRepository.deleteById(id)`.
+    3. **Java responde a Frontend (204 No Content):** Confirma la eliminación exitosa sin cuerpo de respuesta.
+    4. **Frontend actualiza estado:** Remueve la transacción de la señal `transactions` filtrando por `id` in memoria, forzando la actualización visual de la tabla y los KPIs de forma inmediata.

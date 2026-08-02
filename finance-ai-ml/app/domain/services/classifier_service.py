@@ -2,25 +2,42 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import make_pipeline
 
+import os
+import pandas as pd
+
 class TransactionClassifierService:
     def __init__(self):
-        # Datos de entrenamiento sintéticos
-        X_train = [
-            "Supermercado Plaza", "Exito San Martin", "Jumbo Cencosud", "Tienda D1", "Carulla Express",
-            "Gasolinera Repsol", "Terpel Estacion", "Uber Trip", "Didi Ride", "Peaje Cundinamarca",
-            "Restaurante El Corral", "Mc Donalds", "Starbucks Coffee", "Crepes and Waffles",
-            "Gimnasio Bodytech", "Drogueria Cruz Verde", "Farmatodo Colombia"
-        ]
-        y_train = [
-            "Alimentación", "Alimentación", "Alimentación", "Alimentación", "Alimentación",
-            "Transporte", "Transporte", "Transporte", "Transporte", "Transporte",
-            "Restaurantes", "Restaurantes", "Restaurantes", "Restaurantes",
-            "Salud/Bienestar", "Salud/Bienestar", "Salud/Bienestar"
-        ]
+        # Cargar dataset traducido
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        csv_path = os.path.join(base_dir, "data", "raw", "Personal_Finance_Dataset_ES.csv")
+        
+        import unicodedata
+        def normalizar(txt: str) -> str:
+            return "".join(
+                c for c in unicodedata.normalize('NFD', str(txt))
+                if unicodedata.category(c) != 'Mn'
+            ).lower()
+
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            X_train = [normalizar(t) for t in df['Transaction Description']]
+            y_train = [normalizar(c) for c in df['categoria']]
+        else:
+            # Fallback por seguridad
+            X_train = ["supermercado", "gasolinera", "clinica", "alquiler"]
+            y_train = ["alimentacion", "transporte", "salud", "vivienda"]
         
         # Pipeline TF-IDF + Multinomial Naive Bayes
         self.model = make_pipeline(TfidfVectorizer(ngram_range=(1, 2)), MultinomialNB())
         self.model.fit(X_train, y_train)
 
     def predict(self, texts: list[str]) -> list[str]:
-        return self.model.predict(texts).tolist()
+        import unicodedata
+        def normalizar(txt: str) -> str:
+            return "".join(
+                c for c in unicodedata.normalize('NFD', str(txt))
+                if unicodedata.category(c) != 'Mn'
+            ).lower()
+        
+        normalized_texts = [normalizar(t) for t in texts]
+        return self.model.predict(normalized_texts).tolist()
