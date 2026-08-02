@@ -1,0 +1,22 @@
+# Entorno Virtual Python
+venv/
+env/
+ENV/
+
+# Caches de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Modelos localmente serializados y temporales
+models/*.joblib
+models/*.pkl
+
+# Visual Studio Code & IDEs
+.vscode/
+.idea/
+
+# Testing & Notebooks
+.pytest_cache/
+.coverage
+.ipynb_checkpoints
