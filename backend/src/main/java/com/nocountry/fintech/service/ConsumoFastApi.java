@@ -2,6 +2,8 @@ package com.nocountry.fintech.service;
 
 import com.nocountry.fintech.dto.request.AnalisisPerfilRequestDTO;
 import com.nocountry.fintech.dto.response.AnalisisPerfilResponseDTO;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -10,9 +12,9 @@ public class ConsumoFastApi {
 
     private final RestClient restClient;
 
-    public ConsumoFastApi(){
+    public ConsumoFastApi(@Value("${python.fastapi.url:http://localhost:8000}") String baseUrl){
         this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:8000")
+                .baseUrl(baseUrl)
                 .build();
     }
 

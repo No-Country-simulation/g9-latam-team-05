@@ -26,7 +26,11 @@ public record AnalisisPerfilRequestDTO(
         String frecuenciaAhorro,
 
         @Valid
-        List<TransaccionItemDTO> transacciones
+        List<TransaccionItemDTO> transacciones,
+
+        Long userId,
+        Integer mes,
+        Integer anio
 
 ) {
         public record TransaccionItemDTO(

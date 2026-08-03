@@ -22,18 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class TransaccionService {
+    @Autowired
+    private TransaccionRepository transaccionRepository;
 
-    private final TransaccionRepository transaccionRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final CategoriaRepository categoriaRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public TransaccionService(TransaccionRepository transaccionRepository,
-                              UsuarioRepository usuarioRepository,
-                              CategoriaRepository categoriaRepository) {
-        this.transaccionRepository = transaccionRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.categoriaRepository = categoriaRepository;
-    }
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
         // Validaciones obligatorias

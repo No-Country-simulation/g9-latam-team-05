@@ -1,10 +1,8 @@
 package com.nocountry.fintech.dto.response;
 
 import lombok.Data;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+import java.math.BigDecimal;
 
 public record TransaccionResponseDto (
         Long id,
@@ -12,6 +10,5 @@ public record TransaccionResponseDto (
         LocalDateTime fecha,
         String descripcion,
         String tipo
-){
-
+) {
 }

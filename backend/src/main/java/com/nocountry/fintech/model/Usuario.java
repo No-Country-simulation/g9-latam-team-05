@@ -29,6 +29,7 @@ public class Usuario {
     @Column(name = "PASSWORD_HASH", nullable = false)
     private String passwordHash;
 
+
     @Column(name = "FECHA_CREACION")
     private LocalDateTime fechaRegistro;
 
@@ -47,5 +48,10 @@ public class Usuario {
     public void removerAnalisis(AnalisisHistorial analisis) {
         historiales.remove(analisis);
         analisis.setUsuario(null);
+    }
+
+    @PrePersist
+    protected void creacion(){
+        this.fechaRegistro = LocalDateTime.now();
     }
 }
