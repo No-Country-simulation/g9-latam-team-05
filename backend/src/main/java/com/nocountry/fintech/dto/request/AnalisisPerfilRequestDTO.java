@@ -1,7 +1,6 @@
 package com.nocountry.fintech.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nocountry.fintech.model.Transaccion;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 

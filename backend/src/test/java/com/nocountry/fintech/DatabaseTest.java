@@ -93,7 +93,7 @@ public class DatabaseTest {
         TransaccionResponseDto transaccionCreada = transaccionService.guardar(transaccionDto);
 
         Assertions.assertNotNull(transaccionCreada, "La transacción no pudo ser guardada.");
-        Assertions.assertNotNull(transaccionCreada.getId(), "El ID de la transacción no debe ser nulo.");
+        Assertions.assertNotNull(transaccionCreada.id(), "El ID de la transacción no debe ser nulo.");
 
         System.out.println("Transacción creada y vinculada al usuario ID: " + usuarioCreado.getId());
 
