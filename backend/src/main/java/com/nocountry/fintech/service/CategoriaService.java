@@ -4,7 +4,6 @@ import com.nocountry.fintech.dto.request.CategoriaRequestDto;
 import com.nocountry.fintech.dto.response.CategoriaResponseDto;
 import com.nocountry.fintech.model.Categoria;
 import com.nocountry.fintech.repository.CategoriaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.util.List;
@@ -14,8 +13,12 @@ import java.util.stream.Collectors;
 @Service
 public class CategoriaService {
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    
+    private final CategoriaRepository categoriaRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
 
     public CategoriaResponseDto guardar(CategoriaRequestDto dto) {
         if (dto.getNombre() == null || dto.getNombre().trim().isEmpty() ||
@@ -69,7 +72,6 @@ public class CategoriaService {
         dto.setTipo(c.getTipo());
         dto.setIcono(c.getIcono());
         dto.setColor(c.getColor());
-        return dto;
+        return dto; 
     }
-    
 }
