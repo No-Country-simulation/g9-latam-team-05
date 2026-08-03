@@ -3,7 +3,6 @@ package com.nocountry.fintech.controller;
 import com.nocountry.fintech.dto.request.CategoriaRequestDto;
 import com.nocountry.fintech.dto.response.CategoriaResponseDto;
 import com.nocountry.fintech.service.CategoriaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,11 @@ import java.util.List;
 @RequestMapping("/api/categorias")
 public class CategoriaController {
 
-    @Autowired
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
+
+    public CategoriaController(CategoriaService categoriaService){
+        this.categoriaService = categoriaService;
+    }
 
     @GetMapping
     public ResponseEntity<List<CategoriaResponseDto>> obtenerTodas() {

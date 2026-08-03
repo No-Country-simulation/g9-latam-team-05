@@ -27,7 +27,7 @@ public class CategoriaService {
         }
 
         // Evitar categoriás duplicadas
-        if (categoriaRepository.findByNombre(dto.getNombre()).isPresent()) {
+        if (categoriaRepository.findFirstByNombre(dto.getNombre()).isPresent()) {
             throw new IllegalStateException("La categoría '" + dto.getNombre() + "' ya existe.");
         }
 

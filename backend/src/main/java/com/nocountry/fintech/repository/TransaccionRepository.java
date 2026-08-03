@@ -26,4 +26,6 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, Long> 
             @Param("mes") Integer mes,
             @Param("anio") Integer anio
     );
+
+    List<Transaccion> findByUsuarioId(Long usuarioId);
 }
