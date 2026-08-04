@@ -301,96 +301,182 @@ Lista reducida con `Supermercado Plaza` | `2026-07-10` | `Alimentación` | `$420
    ]
    ```
 
----
+-----------------------------------
+----------------------------
+--------------------------------------------
+
 
 ## 🖥️ PANTALLA 2: PÁGINA DE TRANSACCIONES (Flujo Completo por Componente)
 
 ### 🎯 Objetivos de la Pantalla:
-1. **Ingreso Manual de Transacciones:** Permitir al usuario registrar transacciones ingresando descripción y valor, asociándolo a una categoría seleccionada o guardándolo como "Sin clasificar" para su posterior procesamiento.
-2. **Carga Masiva en Lote:** Procesar masivamente listados de transacciones desde archivos CSV, registrándolas en la base de datos de manera ágil sin latencia de clasificación inmediata.
+1. **Ingreso Manual de Transacciones:** Permitir al usuario registrar transacciones ingresando descripción y valor, clasificándolas dinámicamente mediante IA al instante.
+2. **Carga Masiva en Lote:** Procesar masivamente archivos CSV, clasificándolos en bloque mediante el modelo NLP antes de guardarlos en BD.
 3. **Auditoría e Historial de Movimientos:** Presentar la lista completa de transacciones con opciones de ordenamiento dinámico y eliminación directa.
 
-> [!NOTE]
-> **Estrategia de Clasificación IA Bajo Demanda (Lazy Classification):**
-> Para evitar sobrecargar el microservicio de Python y la base de datos con llamadas NLP síncronas en cada registro (Manual o CSV), las nuevas transacciones se guardan directamente en base de datos con la categoría default `"Sin clasificar"` (`categoria_id` apuntando a un registro default).
-> La clasificación real mediante IA se ejecuta de manera diferida cuando el usuario vuelve a la **Pantalla 1 (Dashboard)**: al cargarse, el endpoint existente `GET /api/transacciones/usuario/{usuarioId}/distribucion` detecta transacciones pendientes, llama en lote a Python FastAPI para categorizarlas, actualiza la base de datos y recalcula la distribución en una sola operación optimizada. Si no hay pendientes, Java simplemente realiza una agregación SQL local rápida, evitando consumir recursos de red hacia Python.
+> [!IMPORTANT]
+> **Estrategia de Clasificación IA Inmediata (On-the-fly Classification):**
+> Para garantizar que el Dashboard principal nunca muestre transacciones vacías o marcadas como `"Sin clasificar"`, la clasificación se ejecuta de forma síncrona en caliente.
+> El orquestador Java intercepta las transacciones creadas (manuales o CSV), las envía en lote al endpoint de clasificación de texto de Python FastAPI (`POST /api/v1/classify-transactions`), obtiene las categorías predichas por el modelo NLP, realiza el auto-registro dinámico en la BD si la categoría es nueva, y persiste todo de inmediato con su clasificación correcta asignada.
 
 ---
 
-### 🟢 NIVEL 1 (PANEL IZQUIERDO - SUPERIOR): Formulario de Registro Manual (`Añadir Transacción`)
-*   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT DE ESCRITURA]** (En la Pantalla 1 solo se consultan transacciones, por lo que este endpoint es de nueva creación).
-*   **Elementos UI:** Formulario con campos: `Descripción` (input de texto), `Monto ($)` (input numérico), y `Categoría` (selector dropdown con opción por defecto "Clasificación IA").
-*   **Flujo de Datos Paso a Paso (Optimizado - Registro Directo):**
-    1. **Frontend envía a Java (Dispara petición HTTP):**
-       * **Endpoint:** `POST /api/transacciones`
-       * **Request Payload (JSON):**
-         ```json
-         {
-           "descripcion": "Supermercado Plaza",
-           "monto": 420.00,
-           "tipo": "GASTO",
-           "categoriaNombre": "" // Vacío para postergar la clasificación por IA, o valor de dropdown explícito
-         }
-         ```
-       *(Nota: El backend extrae la identidad del usuario desde el token JWT en el encabezado `Authorization: Bearer <token>`)*.
-    2. **Java Orquestador procesa (Sin llamada a IA inmediata):**
-       * Si `categoriaNombre` viene vacío (`""` o `null`), Java asocia la transacción a la categoría default `"Sin clasificar"` (color `#6C757D`, icono `"tag"`). **No se realiza ninguna llamada de red al microservicio de Python FastAPI en este momento.**
-       * Si `categoriaNombre` viene con un valor explícito seleccionado por el usuario (ej. `"Transporte"`), Java asocia esa categoría existente de la BD.
-    3. **Persistencia:** Java graba el registro en la tabla `transacciones` vinculándolo al usuario y la categoría correspondiente.
-    4. **Java responde a Frontend (201 Created):** Retorna la transacción con su ID de BD y la información de la categoría:
-       ```json
+### 🟢 NIVEL 1 (PANEL IZQUIERDO - SUPERIOR): Panel de Ajustes del Perfil Financiero (Parámetros del Semáforo IA)
+*   **Estado de los Endpoints:** 🆕 **[NUEVOS ENDPOINTS REST]** (Administración de la tabla `PERFILES_FINANCIEROS` en BD).
+*   **Elementos UI:** Formulario o panel lateral/superior con inputs editables de:
+    *   `Ingreso Mensual Base ($)` (numérico)
+    *   `Nivel de Endeudamiento (%)` (numérico de 0 a 100)
+    *   `Frecuencia de Ahorro` (Dropdown con opciones: *Baja, Media, Alta*)
+    *   Botón **`[Guardar Cambios de Perfil]`**.
+
+*   **Flujo de Datos Paso a Paso:**
+
+#### 🔍 Flujo 1.1: Consulta Inicial del Perfil (Carga de Datos)
+1. **Frontend envía a Java (Dispara petición HTTP):**
+   * **Endpoint:** `GET /api/perfiles-financieros/usuario/{usuarioId}`
+2. **Java consulta a BD:** Busca en `PERFILES_FINANCIEROS` por el ID de usuario.
+3. **Java responde a Frontend:**
+   * **Caso Éxito (200 OK):** Retorna el JSON del perfil. El Frontend carga los inputs con los valores existentes.
+     ```json
+     {
+       "ingreso_mensual": 4500.00,
+       "nivel_endeudamiento": 25.00,
+       "frecuencia_ahorro": "Media"
+     }
+     ```
+   * **Caso Ausente (404 Not Found):** Indica que el usuario no tiene perfil configurado. El Frontend muestra el formulario vacío (o con valores por defecto) y sabe que debe usar el flujo de **Creación (POST)** al guardar por primera vez.
+
+#### 🆕 Flujo 1.2: Registro del Perfil Inicial (Creación - POST)
+1. **Frontend envía a Java (Si el flujo de consulta devolvió 404):**
+   * **Endpoint:** `POST /api/perfiles-financieros`
+   * **Request Body:**
+     ```json
+     {
+       "ingreso_mensual": 5000.00,
+       "nivel_endeudamiento": 30.00,
+       "frecuencia_ahorro": "Alta"
+     }
+     ```
+2. **Java procesa y persiste:** Crea un nuevo objeto `PerfilesFinancieros`, vincula al usuario logueado usando su token JWT, asigna fecha de actualización, y lo guarda en BD.
+3. **Java responde a Frontend (201 Created):** Retorna el nuevo perfil financiero creado de forma exitosa.
+
+#### 🔄 Flujo 1.3: Actualización del Perfil Existente (Modificación - PUT)
+1. **Frontend envía a Java (Si el flujo de consulta devolvió 200 OK previamente):**
+   * **Endpoint:** `PUT /api/perfiles-financieros`
+   * **Request Body:**
+     ```json
+     {
+       "ingreso_mensual": 5500.00,
+       "nivel_endeudamiento": 15.00,
+       "frecuencia_ahorro": "Alta"
+     }
+     ```
+2. **Java procesa y persiste:** Busca la fila existente en `PERFILES_FINANCIEROS` para el usuario y actualiza los valores.
+3. **Java responde a Frontend (200 OK):** Retorna el perfil financiero actualizado de forma exitosa.
+
+4. **Frontend actualiza estado:** Actualiza las señales globales y las variables del Dashboard de forma reactiva, de modo que la próxima recarga del Dashboard y del Diagnóstico IA tomen en cuenta los ingresos y el nivel de endeudamiento actualizados del usuario.
+
+---
+
+### 🟢 NIVEL 2 (PANEL IZQUIERDO - MEDIO): Formulario de Registro Manual (`Añadir Transacción`)
+
+#### 🎨 Elementos UI que Pinta el Frontend:
+Formulario simplificado con:
+*   **Toggle Switch:** Seleccionar entre **Gasto** (por defecto) o **Ingreso**.
+*   **Campos de Entrada:** `Descripción` (input de texto) y `Monto ($)` (input numérico).
+*   **Botón de Registro:** `"Registrar Gasto"` o `"Registrar Ingreso"`.
+
+#### 🔄 Flujo de Datos (Desglose Trilateral):
+
+##### 🧪 Caso A: Registro de GASTO
+1. **Frontend envía a Java Backend:**
+   * **Endpoint:** `POST /api/transacciones/registrar`
+   * **Request Body:**
+     ```json
+     {
+       "descripcion": "Compra Supermercado Metro",
+       "monto": 350.00,
+       "tipo": "GASTO"
+     }
+     ```
+2. **Java procesa y persiste:**
+   * Java extrae el usuario autenticado a partir del token JWT en las cabeceras de la petición.
+   * Valida los campos requeridos (`monto`, `descripcion`).
+   * Al ser de tipo `GASTO` y no recibir categoría del Frontend, Java persiste la transacción en la tabla `TRANSACCIONES` con `categoria_id = NULL`, el enpoint de analisis finaciero se encargara de clasificarlo posteriormente.
+3. **Microservicio Python (IA / ML):**
+   * `N/A` *(La clasificación de texto se difiere de manera síncrona hasta la carga del Análisis Financiero)*.
+4. **Java responde al Frontend (201 Created):**
+   * **Response Body:**
+     ```json
+     {
+       "id": 88,
+       "monto": 350.00,
+       "fecha": "2026-08-04T12:00:00",
+       "descripcion": "Compra Supermercado Metro",
+       "tipo": "GASTO",
+       "categoriaNombre": "Sin clasificar"
+     }
+     ```
+
+##### 💵 Caso B: Registro de INGRESO
+1. **Frontend envía a Java Backend:**
+   * **Endpoint:** `POST /api/transacciones/registrar`
+   * **Request Body:**
+     ```json
+     {
+       "descripcion": "Sueldo Neto de Fin de Mes",
+       "monto": 4500.00,
+       "tipo": "INGRESO"
+     }
+     ```
+2. **Java procesa y persiste:**
+   * Java extrae el usuario autenticado a partir del token JWT en las cabeceras.
+   * Al ser de tipo `INGRESO` y no recibir categoría del Frontend, Java persiste la transacción en la tabla `TRANSACCIONES` con `categoria_id = NULL`.
+3. **Microservicio Python (IA / ML):**
+   * `N/A`.
+4. **Java responde al Frontend (201 Created):**
+   * **Response Body:**
+     ```json
+     {
+       "id": 89,
+       "monto": 4500.00,
+       "fecha": "2026-08-04T12:05:00",
+       "descripcion": "Sueldo Neto de Fin de Mes",
+       "tipo": "INGRESO",
+       "categoriaNombre": "Sin clasificar"
+     }
+     ```
+
+---
+
+### 🟢 NIVEL 3 (PANEL DERECHO): Historial de Movimientos (`Tabla de Transacciones`)
+*   **Estado del Endpoint:** ✅ **[ENDPOINT EXISTENTE EN BACKEND]**
+*   **Nota:**
+    > [!NOTE]
+    > Este componente consume el endpoint de lectura ya existente en el backend: `GET /api/transacciones/usuario/{usuarioId}/recientes`. Por ende, no requiere la creación ni definición de un nuevo contrato de API.
+
+#### 🎨 Elementos UI que Pinta el Frontend:
+*   Tabla completa con columnas ordenables interactiva (`Fecha`, `Descripción`, `Categoría` con badges de color, `Monto`).
+
+#### 🔄 Flujo de Datos (Desglose Trilateral):
+
+1. **Frontend envía a Java Backend:**
+   * **Endpoint:** `GET /api/transacciones/usuario/1/recientes?limit=5`
+2. **Java procesa y consulta a BD:**
+   * Java extrae el usuario autenticado a través del token JWT o la variable de ruta.
+   * Ejecuta `transaccionRepository.findByUsuarioIdOrderByFechaDesc(usuarioId, PageRequest.of(0, limit))`.
+3. **Microservicio Python (IA / ML):**
+   * `N/A` *(Consulta de lectura directa administrada al 100% por Java Spring Boot)*.
+4. **Java responde al Frontend (200 OK):**
+   * **Response Body:**
+     ```json
+     [
        {
          "id": 15,
-         "userId": 1,
-         "categoria": { "id": 10, "nombre": "Sin clasificar", "icono": "tag", "color": "#6C757D" },
          "descripcion": "Supermercado Plaza",
+         "fecha": "2026-07-10",
+         "categoriaNombre": "Alimentación",
          "monto": 420.00,
-         "tipo": "GASTO",
-         "fecha": "2026-07-31"
+         "tipo": "GASTO"
        }
-       ```
-    5. **Frontend actualiza estado:** Agrega la transacción a la señal de datos `transactions`, actualizando la tabla y los KPIs del dashboard de manera reactiva.
-
----
-
-### 🟢 NIVEL 2 (PANEL IZQUIERDO - INFERIOR): Importación Masiva en Lote (`Importar Lote (CSV)`)
-*   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT]** (Procesamiento y creación de transacciones en lote de manera optimizada).
-*   **Elementos UI:** Zona de arrastre de archivos (Drag & Drop) y botón de búsqueda de archivos locales que admite archivos `.csv` en formato `descripcion,monto`.
-*   **Flujo de Datos Paso a Paso (Optimizado - Registro Directo en Lote):**
-    1. **Frontend procesa localmente:** El componente lee el archivo CSV, parsea sus líneas y extrae la lista de descripciones y montos.
-    2. **Frontend envía a Java (Dispara petición HTTP):**
-       * **Endpoint:** `POST /api/transacciones/lote`
-       * **Request Payload (JSON):**
-         ```json
-         [
-           { "descripcion": "Combustible Puma", "monto": 300.00 },
-           { "descripcion": "Suscripción Netflix", "monto": 40.00 }
-         ]
-         ```
-    3. **Java procesa y persiste (Sin llamada a IA inmediata):**
-       * Java recorre la lista e inserta todos los movimientos vinculándolos a la categoría default `"Sin clasificar"`. **No se realiza ninguna llamada de red al microservicio de Python FastAPI durante el proceso de importación.**
-    4. **Java responde a Frontend (201 Created):** Devuelve el listado de transacciones creadas y guardadas en BD, marcadas como `"Sin clasificar"`.
-    5. **Frontend actualiza estado:** Concatena las nuevas transacciones a la señal `transactions` para repintar la tabla de manera inmediata y muestra una notificación de éxito al usuario.
-
----
-
-### 🟢 NIVEL 3 (PANEL DERECHO): Historial de Movimientos (Tabla Interactiva)
-*   **Elementos UI:** Tabla completa con columnas ordenables interactiva (`Fecha`, `Descripción`, `Categoría` con badges de color, `Monto`) y botón de acción de borrado.
-*   **Flujo de Datos de Consulta Inicial:**
-    *   **Estado del Endpoint:** 🔄 **[REUTILIZACIÓN DE ENDPOINT EXISTENTE]**
-    *   **Nota de Reutilización:**
-        > [!NOTE]
-        > Este flujo trabaja directamente sobre el controlador y repositorio ya existentes del backend, reutilizando el endpoint de la **Pantalla 1** (`GET /api/transacciones/usuario/{usuarioId}/recientes`). Sin embargo, en esta pantalla se amplía omitiendo el parámetro query `limit=5` (o pasándolo vacío) para recuperar el listado completo de movimientos del usuario.
-    1. **Frontend envía a Java (Dispara petición HTTP):**
-       * **Endpoint:** `GET /api/transacciones/usuario/{usuarioId}/recientes`
-    2. **Java consulta a BD:** `transaccionRepository.findByUsuarioId(1)`.
-    3. **Java responde a Frontend (200 OK):** Arreglo de transacciones asociadas.
-    4. **Frontend ordena en memoria:** Utiliza la señal de ordenación (`sortColumn` y `sortAsc`) en una propiedad computada (`sortedTransactions`) para organizar las filas en base al clic del usuario.
-
-*   **Flujo de Datos de Eliminación (`onDelete(id)`):**
-    *   **Estado del Endpoint:** 🆕 **[NUEVO ENDPOINT]**
-    1. **Frontend envía a Java (Dispara petición HTTP):**
-       * **Endpoint:** `DELETE /api/transacciones/{id}`
-    2. **Java procesa:** Ejecuta la eliminación del registro en base de datos mediante `transaccionRepository.deleteById(id)`.
-    3. **Java responde a Frontend (204 No Content):** Confirma la eliminación exitosa sin cuerpo de respuesta.
-    4. **Frontend actualiza estado:** Remueve la transacción de la señal `transactions` filtrando por `id` in memoria, forzando la actualización visual de la tabla y los KPIs de forma inmediata.
+     ]
+     ```

@@ -10,6 +10,8 @@ import com.nocountry.fintech.model.enums.FrecuenciaAhorro;
 import com.nocountry.fintech.repository.AnalisisHistorialRepository;
 import com.nocountry.fintech.repository.TransaccionRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
+import com.nocountry.fintech.model.Categoria;
+import com.nocountry.fintech.repository.CategoriaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,15 +29,18 @@ public class AnalisisPerfilService {
     private final UsuarioRepository usuarioRepository;
     private final AnalisisHistorialRepository analisisHistorialRepository;
     private final TransaccionRepository transaccionRepository;
+    private final CategoriaRepository categoriaRepository;
 
     public AnalisisPerfilService(ConsumoFastApi consumoFastApi,
                                  UsuarioRepository usuarioRepository,
                                  AnalisisHistorialRepository analisisHistorialRepository,
-                                 TransaccionRepository transaccionRepository) {
+                                 TransaccionRepository transaccionRepository,
+                                 CategoriaRepository categoriaRepository) {
         this.consumoFastApi = consumoFastApi;
         this.usuarioRepository = usuarioRepository;
         this.analisisHistorialRepository = analisisHistorialRepository;
         this.transaccionRepository = transaccionRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Transactional
@@ -56,6 +61,9 @@ public class AnalisisPerfilService {
 
             int mes = (request.mes() != null) ? request.mes() : LocalDateTime.now().getMonthValue();
             int anio = (request.anio() != null) ? request.anio() : LocalDateTime.now().getYear();
+
+            // Auto-clasificar transacciones nulas antes de procesar el perfil
+            clasificarTransaccionesNulas(userId, mes, anio);
 
             // Consulta transacciones en BD para el mes/año
             List<Transaccion> transaccionesBD = transaccionRepository.findByUsuarioIdAndMesAndAnio(userId, mes, anio);
@@ -98,6 +106,69 @@ public class AnalisisPerfilService {
         guardarSnapshotBD(usuario, transaccionesParaPython, pythonResponse);
 
         return pythonResponse;
+    }
+
+    private void clasificarTransaccionesNulas(Long userId, int mes, int anio) {
+        List<Transaccion> nulas = transaccionRepository.findByUsuarioIdAndMesAndAnio(userId, mes, anio)
+                .stream()
+                .filter(t -> t.getCategoria() == null && "GASTO".equalsIgnoreCase(t.getTipo()))
+                .toList();
+
+        if (nulas.isEmpty()) {
+            return;
+        }
+
+        // Armar Payload para enviar a FastAPI
+        String pythonUrl = "http://localhost:8000/api/v1/classify-transactions";
+        List<java.util.Map<String, Object>> payloadTransacciones = new java.util.ArrayList<>();
+        for (Transaccion t : nulas) {
+            java.util.Map<String, Object> item = new java.util.HashMap<>();
+            item.put("id", t.getId());
+            item.put("text", t.getDescripcion());
+            item.put("monto", t.getMonto());
+            payloadTransacciones.add(item);
+        }
+
+        java.util.Map<String, Object> requestBody = new java.util.HashMap<>();
+        requestBody.put("transacciones", payloadTransacciones);
+
+        try {
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> response = restTemplate.postForObject(pythonUrl, requestBody, java.util.Map.class);
+
+            if (response != null && response.containsKey("clasificados")) {
+                @SuppressWarnings("unchecked")
+                List<java.util.Map<String, Object>> clasificados = (List<java.util.Map<String, Object>>) response.get("clasificados");
+
+                // Mapear por ID de transaccion
+                java.util.Map<Long, String> mapeoCategorias = new java.util.HashMap<>();
+                for (java.util.Map<String, Object> item : clasificados) {
+                    Long txId = ((Number) item.get("id")).longValue();
+                    String nombreCategoria = (String) item.get("categoriaPredicha");
+                    mapeoCategorias.put(txId, nombreCategoria);
+                }
+
+                for (Transaccion t : nulas) {
+                    String nombreCategoria = mapeoCategorias.get(t.getId());
+                    if (nombreCategoria != null) {
+                        Categoria categoria = categoriaRepository.findFirstByNombre(nombreCategoria)
+                                .orElseGet(() -> {
+                                    Categoria nuevaCat = new Categoria();
+                                    nuevaCat.setNombre(nombreCategoria);
+                                    nuevaCat.setTipo("Gasto");
+                                    nuevaCat.setColor("#3357FF");
+                                    nuevaCat.setIcono("shopping-cart");
+                                    return categoriaRepository.save(nuevaCat);
+                                });
+                        t.setCategoria(categoria);
+                        transaccionRepository.save(t);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al auto-clasificar transacciones nulas: " + e.getMessage());
+        }
     }
 
     private void guardarSnapshotBD(Usuario usuario, AnalisisPerfilRequestDTO requestUsado, AnalisisPerfilResponseDTO response) {

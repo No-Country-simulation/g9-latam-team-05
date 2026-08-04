@@ -16,14 +16,22 @@ export class TransactionsComponent {
 
   // UI state
   isSubmitting = signal<boolean>(false);
-  isImporting = signal<boolean>(false);
+  isSavingProfile = signal<boolean>(false);
   sortColumn = signal<string>('fecha');
   sortAsc = signal<boolean>(false);
 
+  // Gasto / Ingreso toggle switch
+  tipoSelected = signal<string>('GASTO');
+
   transactionForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(3)]],
-    valor: [0, [Validators.required, Validators.min(0.01)]],
-    categoria: ['']
+    valor: [0, [Validators.required, Validators.min(0.01)]]
+  });
+
+  profileForm = this.fb.group({
+    ingreso: [this.financeService.income(), [Validators.required, Validators.min(0.01)]],
+    endeudamiento: [this.financeService.debtRatio(), [Validators.required, Validators.min(0), Validators.max(100)]],
+    frecuencia: [this.financeService.savingFrequency(), [Validators.required]]
   });
 
   // Computed sorted transactions
@@ -56,45 +64,37 @@ export class TransactionsComponent {
     }
   }
 
+  setTipo(tipo: string) {
+    this.tipoSelected.set(tipo);
+  }
+
   onSubmit() {
     if (this.transactionForm.valid) {
       this.isSubmitting.set(true);
       const vals = this.transactionForm.getRawValue();
-      
-      this.financeService.addTransaction(vals.descripcion, vals.valor, vals.categoria || undefined)
+      const tipo = this.tipoSelected();
+      const categoria = tipo === 'INGRESO' ? 'Ingresos' : undefined;
+
+      this.financeService.addTransaction(vals.descripcion, vals.valor, tipo, categoria)
         .then(() => {
           this.isSubmitting.set(false);
           this.transactionForm.reset({
             descripcion: '',
-            valor: 0,
-            categoria: ''
+            valor: 0
           });
         });
     }
   }
 
-  onDelete(id: string) {
-    this.financeService.deleteTransaction(id);
-  }
-
-  onCSVUpload(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.isImporting.set(true);
-      const file = input.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const text = e.target?.result as string;
-        this.financeService.importCSV(text)
-          .then((count) => {
-            this.isImporting.set(false);
-            input.value = ''; // Reset input
-            alert(`Se importaron con éxito ${count} transacciones clasificados por IA.`);
-          });
-      };
-
-      reader.readAsText(file);
+  onUpdateProfile() {
+    if (this.profileForm.valid) {
+      this.isSavingProfile.set(true);
+      const vals = this.profileForm.getRawValue();
+      this.financeService.updateProfile(vals.ingreso, vals.endeudamiento, vals.frecuencia)
+        .then(() => {
+          this.isSavingProfile.set(false);
+          alert('¡Perfil financiero actualizado correctamente!');
+        });
     }
   }
 }

@@ -6,6 +6,7 @@ export interface Transaction {
   valor: number;
   categoria: string;
   fecha: string;
+  tipo: string;
 }
 
 @Injectable({
@@ -18,34 +19,46 @@ export class FinanceService {
   readonly savingFrequency = signal<string>('Media');
   
   readonly transactions = signal<Transaction[]>([
-    { id: '1', descripcion: 'Supermercado Plaza', valor: 420, categoria: 'Alimentación', fecha: '2026-07-10' },
-    { id: '2', descripcion: 'Combustible Puma', valor: 300, categoria: 'Transporte', fecha: '2026-07-11' },
-    { id: '3', descripcion: 'Suscripción Streaming', valor: 40, categoria: 'Ocio', fecha: '2026-07-12' },
-    { id: '4', descripcion: 'Alquiler Residencia', valor: 1200, categoria: 'Vivienda', fecha: '2026-07-01' },
-    { id: '5', descripcion: 'Farmacia Ahorro', valor: 150, categoria: 'Salud', fecha: '2026-07-05' },
-    { id: '6', descripcion: 'Electricidad y Luz', valor: 110, categoria: 'Servicios', fecha: '2026-07-08' },
-    { id: '7', descripcion: 'Curso Angular', valor: 250, categoria: 'Educación', fecha: '2026-07-09' }
+    { id: '1', descripcion: 'Supermercado Plaza', valor: 420, categoria: 'Alimentación', fecha: '2026-07-10', tipo: 'GASTO' },
+    { id: '2', descripcion: 'Combustible Puma', valor: 300, categoria: 'Transporte', fecha: '2026-07-11', tipo: 'GASTO' },
+    { id: '3', descripcion: 'Suscripción Streaming', valor: 40, categoria: 'Ocio', fecha: '2026-07-12', tipo: 'GASTO' },
+    { id: '4', descripcion: 'Alquiler Residencia', valor: 1200, categoria: 'Vivienda', fecha: '2026-07-01', tipo: 'GASTO' },
+    { id: '5', descripcion: 'Farmacia Ahorro', valor: 150, categoria: 'Salud', fecha: '2026-07-05', tipo: 'GASTO' },
+    { id: '6', descripcion: 'Electricidad y Luz', valor: 110, categoria: 'Servicios', fecha: '2026-07-08', tipo: 'GASTO' },
+    { id: '7', descripcion: 'Curso Angular', valor: 250, categoria: 'Educación', fecha: '2026-07-09', tipo: 'GASTO' }
   ]);
 
   // Computed Values
   readonly totalExpenses = computed(() => {
-    return this.transactions().reduce((acc, t) => acc + t.valor, 0);
+    return this.transactions()
+      .filter(t => t.tipo !== 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
   });
 
   readonly balance = computed(() => {
-    return this.income() - this.totalExpenses();
+    // Total income from profile + any INGRESO transactions registered
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    return totalIncomes - this.totalExpenses();
   });
 
   readonly savingsRate = computed(() => {
     const left = this.balance();
-    if (this.income() <= 0) return 0;
-    return Math.max(0, Math.round((left / this.income()) * 100));
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    if (totalIncomes <= 0) return 0;
+    return Math.max(0, Math.round((left / totalIncomes) * 100));
   });
 
   readonly riskProfile = computed(() => {
     const debt = this.debtRatio();
     const rate = this.savingsRate();
-    const ratioExpenses = (this.totalExpenses() / this.income()) * 100;
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    const ratioExpenses = totalIncomes > 0 ? (this.totalExpenses() / totalIncomes) * 100 : 100;
 
     if (ratioExpenses > 95 || debt > 50 || rate < 0) {
       return 'En riesgo';
@@ -65,10 +78,12 @@ export class FinanceService {
 
   readonly categoryExpenses = computed(() => {
     const map: Record<string, number> = {};
-    this.transactions().forEach(t => {
-      const cat = t.categoria || 'Otros';
-      map[cat] = (map[cat] || 0) + t.valor;
-    });
+    this.transactions()
+      .filter(t => t.tipo !== 'INGRESO')
+      .forEach(t => {
+        const cat = t.categoria || 'Otros';
+        map[cat] = (map[cat] || 0) + t.valor;
+      });
     return map;
   });
 
@@ -77,6 +92,7 @@ export class FinanceService {
     const debt = this.debtRatio();
     const rate = this.savingsRate();
     const catMap = this.categoryExpenses();
+    const currentIncome = this.income();
 
     if (rate < 10) {
       list.push('Tu tasa de ahorro es crítica. Intenta recortar al menos un 10% en gastos de Ocio.');
@@ -87,10 +103,10 @@ export class FinanceService {
     if (this.savingFrequency() === 'Baja') {
       list.push('Aumenta tu frecuencia de ahorro programando transferencias automáticas el día de pago.');
     }
-    if (catMap['Ocio'] && catMap['Ocio'] > this.income() * 0.15) {
+    if (catMap['Ocio'] && catMap['Ocio'] > currentIncome * 0.15) {
       list.push('Detectamos gastos elevados en Ocio y Entretenimiento. Monitorea suscripciones mensuales duplicadas.');
     }
-    if (catMap['Alimentación'] && catMap['Alimentación'] > this.income() * 0.25) {
+    if (catMap['Alimentación'] && catMap['Alimentación'] > currentIncome * 0.25) {
       list.push('Tus gastos en Alimentación superan el 25% de tu presupuesto. Planifica compras semanales en supermercado.');
     }
 
@@ -102,12 +118,24 @@ export class FinanceService {
   });
 
   // Action Methods
-  addTransaction(descripcion: string, valor: number, categoryOverride?: string): Promise<Transaction> {
+  updateProfile(income: number, debtRatio: number, savingFrequency: string): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Simple mock NLP logic to predict category
+        this.income.set(income);
+        this.debtRatio.set(debtRatio);
+        this.savingFrequency.set(savingFrequency);
+        resolve();
+      }, 300);
+    });
+  }
+
+  addTransaction(descripcion: string, valor: number, tipo: string = 'GASTO', categoryOverride?: string): Promise<Transaction> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
         let categoria = categoryOverride || 'Otros';
-        if (!categoryOverride) {
+        if (tipo === 'INGRESO') {
+          categoria = 'Ingresos';
+        } else if (!categoryOverride) {
           const desc = descripcion.toLowerCase();
           if (desc.includes('super') || desc.includes('comida') || desc.includes('cena') || desc.includes('restaurante') || desc.includes('mercado') || desc.includes('pizza')) {
             categoria = 'Alimentación';
@@ -131,12 +159,13 @@ export class FinanceService {
           descripcion,
           valor,
           categoria,
-          fecha: new Date().toISOString().split('T')[0]
+          fecha: new Date().toISOString().split('T')[0],
+          tipo
         };
 
         this.transactions.update(txs => [newTx, ...txs]);
         resolve(newTx);
-      }, 500); // simulate API latency
+      }, 500);
     });
   }
 
@@ -173,7 +202,8 @@ export class FinanceService {
                 descripcion,
                 valor,
                 categoria,
-                fecha: new Date().toISOString().split('T')[0]
+                fecha: new Date().toISOString().split('T')[0],
+                tipo: 'GASTO'
               });
               importedCount++;
             }
