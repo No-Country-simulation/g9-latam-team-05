@@ -16,6 +16,8 @@
 .vscode/
 # IntelliJ / WebStorm / Pycharm
 .idea/
+# Agent Skills
+.agents/
 
 # ==========================================
 # Backend (Java / Maven / Gradle)
