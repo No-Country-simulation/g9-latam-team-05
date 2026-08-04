@@ -4,9 +4,8 @@ import com.nocountry.fintech.dto.request.CategoriaRequestDto;
 import com.nocountry.fintech.dto.response.CategoriaResponseDto;
 import com.nocountry.fintech.model.Categoria;
 import com.nocountry.fintech.repository.CategoriaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.nocountry.fintech.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,20 +13,22 @@ import java.util.stream.Collectors;
 @Service
 public class CategoriaService {
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    
+    private final CategoriaRepository categoriaRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
 
     public CategoriaResponseDto guardar(CategoriaRequestDto dto) {
         if (dto.getNombre() == null || dto.getNombre().trim().isEmpty() ||
             dto.getTipo() == null || dto.getTipo().trim().isEmpty()) {
-            System.err.println("Error: Nombre y tipo son obligatorios para la categoría.");
-            return null;
+            throw new IllegalArgumentException("Nombre y tipo son obligatorios para la categoría.");
         }
 
         // Evitar categoriás duplicadas
-        if (categoriaRepository.findByNombre(dto.getNombre()).isPresent()) {
-            System.err.println("Error: La categoría '" + dto.getNombre() + "' ya existe.");
-            return null;
+        if (categoriaRepository.findFirstByNombre(dto.getNombre()).isPresent()) {
+            throw new IllegalStateException("La categoría '" + dto.getNombre() + "' ya existe.");
         }
 
         Categoria categoria = new Categoria();
@@ -59,6 +60,8 @@ public class CategoriaService {
     public void eliminar(Long id) {
         if (categoriaRepository.existsById(id)) {
             categoriaRepository.deleteById(id);
+        } else{
+            throw new ResourceNotFoundException("No se pudo eliminar. Categoría no encontrada con ID: " + id);
         }
     }
 
@@ -69,7 +72,6 @@ public class CategoriaService {
         dto.setTipo(c.getTipo());
         dto.setIcono(c.getIcono());
         dto.setColor(c.getColor());
-        return dto;
+        return dto; 
     }
-    
 }

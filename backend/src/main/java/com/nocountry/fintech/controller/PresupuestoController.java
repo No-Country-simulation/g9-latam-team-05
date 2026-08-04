@@ -3,18 +3,20 @@ package com.nocountry.fintech.controller;
 import com.nocountry.fintech.dto.request.PresupuestoRequestDto;
 import com.nocountry.fintech.dto.response.PresupuestoResponseDto;
 import com.nocountry.fintech.service.PresupuestoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/presupuestos")
 public class PresupuestoController {
 
-    @Autowired
-    private PresupuestoService presupuestoService;
+    private final PresupuestoService presupuestoService;
+
+    public PresupuestoController(PresupuestoService presupuestoService){
+        this.presupuestoService = presupuestoService;
+    }
 
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<PresupuestoResponseDto>> obtenerPorUsuario(@PathVariable Long usuarioId) {
@@ -32,10 +34,7 @@ public class PresupuestoController {
     @PostMapping
     public ResponseEntity<PresupuestoResponseDto> crear(@RequestBody PresupuestoRequestDto dto) {
         PresupuestoResponseDto nuevo = presupuestoService.guardar(dto);
-        if (nuevo != null) {
-            return ResponseEntity.ok(nuevo);
-        }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
     @DeleteMapping("/{id}")

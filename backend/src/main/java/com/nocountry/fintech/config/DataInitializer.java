@@ -111,11 +111,11 @@ public class DataInitializer implements CommandLineRunner {
             perfilesFinancierosRepository.save(pf);
 
             // C. TABLA: TRANSACCIONES (25 Registros - 5 por Usuario)
-            crearTransaccion(u, c1, "Supermercado Plaza", 420.00, "GASTO", LocalDateTime.now().minusDays(2));
-            crearTransaccion(u, c2, "Combustible Repsol", 300.00, "GASTO", LocalDateTime.now().minusDays(4));
-            crearTransaccion(u, c3, "Streaming Netflix", 40.00, "GASTO", LocalDateTime.now().minusDays(6));
-            crearTransaccion(u, c4, "Alquiler Departamento", 700.00, "GASTO", LocalDateTime.now().minusDays(10));
-            crearTransaccion(u, c5, "Sueldo Mensual", 4500.00, "INGRESO", LocalDateTime.now().minusDays(15));
+            crearTransaccion(u, c1, "Supermercado Plaza", BigDecimal.valueOf(420.00), "GASTO", LocalDateTime.now().minusDays(2));
+            crearTransaccion(u, c2, "Combustible Repsol", BigDecimal.valueOf(300.00), "GASTO", LocalDateTime.now().minusDays(4));
+            crearTransaccion(u, c3, "Streaming Netflix", BigDecimal.valueOf(40.00), "GASTO", LocalDateTime.now().minusDays(6));
+            crearTransaccion(u, c4, "Alquiler Departamento", BigDecimal.valueOf(700.00), "GASTO", LocalDateTime.now().minusDays(10));
+            crearTransaccion(u, c5, "Sueldo Mensual", BigDecimal.valueOf(4500.00), "INGRESO", LocalDateTime.now().minusDays(15));
 
             // D. TABLA: PRESUPUESTOS (5 Registros - 1 por Usuario)
             Presupuesto p = new Presupuesto();
@@ -151,7 +151,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("✅ DataInitializer: ¡Las 7 tablas del esquema relacional han sido pobladas con 5 usuarios y datos de prueba completos!");
     }
 
-    private void crearTransaccion(Usuario u, Categoria cat, String descripcion, Double monto, String tipo, LocalDateTime fecha) {
+    private void crearTransaccion(Usuario u, Categoria cat, String descripcion, BigDecimal monto, String tipo, LocalDateTime fecha) {
         Transaccion t = new Transaccion();
         t.setUsuario(u);
         t.setCategoria(cat);

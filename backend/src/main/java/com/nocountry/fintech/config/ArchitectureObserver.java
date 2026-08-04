@@ -1,5 +1,6 @@
 package com.nocountry.fintech.config;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ArchitectureObserver implements CommandLineRunner {
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String @NonNull ... args) throws Exception {
         System.out.println("\n====================================================================================================");
         System.out.println("📢 OBSERVACIONES DE ARQUITECTURA Y METODOLOGÍA SDLC (FINANCE AI - SEMANA 1)");
         System.out.println("----------------------------------------------------------------------------------------------------");
