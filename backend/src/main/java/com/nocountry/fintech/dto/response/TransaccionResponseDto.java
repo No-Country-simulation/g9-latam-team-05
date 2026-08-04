@@ -9,6 +9,7 @@ public record TransaccionResponseDto (
         BigDecimal monto,
         LocalDateTime fecha,
         String descripcion,
-        String tipo
+        String tipo,
+        String categoriaNombre
 ) {
 }

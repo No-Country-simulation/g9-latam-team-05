@@ -6,6 +6,8 @@ import com.nocountry.fintech.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,19 +22,22 @@ public class DataInitializer implements CommandLineRunner {
     private final TransaccionRepository transaccionRepository;
     private final PresupuestoRepository presupuestoRepository;
     private final AnalisisHistorialRepository analisisHistorialRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UsuarioRepository usuarioRepository,
                            CategoriaRepository categoriaRepository,
                            PerfilesFinancierosRepository perfilesFinancierosRepository,
                            TransaccionRepository transaccionRepository,
                            PresupuestoRepository presupuestoRepository,
-                           AnalisisHistorialRepository analisisHistorialRepository) {
+                           AnalisisHistorialRepository analisisHistorialRepository,
+                           PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
         this.perfilesFinancierosRepository = perfilesFinancierosRepository;
         this.transaccionRepository = transaccionRepository;
         this.presupuestoRepository = presupuestoRepository;
         this.analisisHistorialRepository = analisisHistorialRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -82,21 +87,24 @@ public class DataInitializer implements CommandLineRunner {
         c5.setColor("#2E7D32");
         categorias.add(categoriaRepository.save(c5));
 
-        // 2. TABLA: USUARIOS (5 Registros)
+        // 2. TABLA: USUARIOS (5 Registros con contraseñas individuales)
         String[][] datosUsuarios = {
-            {"Carlos Mendoza", "carlos.mendoza@nocountry.com"},
-            {"Ana Gómez", "ana.gomez@nocountry.com"},
-            {"Luis Torres", "luis.torres@nocountry.com"},
-            {"María Rodríguez", "maria.rodriguez@nocountry.com"},
-            {"Jorge Benítez", "jorge.benitez@nocountry.com"}
+            {"Carlos Mendoza", "carlos.mendoza@nocountry.com", "CarlosPass123!"},
+            {"Ana Gómez", "ana.gomez@nocountry.com", "AnaPass123!"},
+            {"Luis Torres", "luis.torres@nocountry.com", "LuisPass123!"},
+            {"María Rodríguez", "maria.rodriguez@nocountry.com", "MariaPass123!"},
+            {"Jorge Benítez", "jorge.benitez@nocountry.com", "JorgePass123!"}
         };
 
         for (int i = 0; i < datosUsuarios.length; i++) {
-            // A. Crear Usuario
+            // A. Crear Usuario con su propia contraseña encriptada
+            String rawPassword = datosUsuarios[i][2];
+            String encodedPassword = passwordEncoder.encode(rawPassword);
+
             Usuario u = new Usuario();
             u.setNombre(datosUsuarios[i][0]);
             u.setEmail(datosUsuarios[i][1]);
-            u.setPasswordHash("Password123!");
+            u.setPasswordHash(encodedPassword);
             u.setFechaRegistro(LocalDateTime.now().minusDays(30 - (i * 5)));
             u.setEstado("ACTIVO");
             u = usuarioRepository.save(u);

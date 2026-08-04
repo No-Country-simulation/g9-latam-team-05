@@ -523,3 +523,161 @@ graph LR
 
 #### 🐍 CONTRATO BACKEND PYTHON (FastAPI / Data Science)
 *   **Endpoint Intermedio:** `N/A` *(Consulta de lectura directa administrada al 100% por Java Spring Boot)*.
+
+---
+
+-------------Nuevo-------------------------------
+
+
+
+
+## ⚙️ MÓDULO 5: CONFIGURACIÓN DE PERFIL FINANCIERO
+
+---
+
+### 5.1 OBTENER PERFIL FINANCIERO DEL USUARIO
+
+#### 💻 CONTRATO FRONTEND
+*   **Endpoint REST al que dispara la petición HTTP:** `GET http://localhost:8080/api/perfiles-financieros/usuario/{usuarioId}`
+*   **JSON a Recibir (Response Body 200 OK desde Java):**
+    ```json
+    {
+      "ingreso_mensual": 4500.00,
+      "nivel_endeudamiento": 25.00,
+      "frecuencia_ahorro": "Media"
+    }
+    ```
+
+#### ☕ CONTRATO BACKEND JAVA (Spring Boot)
+*   **Controlador Java:** `PerfilFinancieroController.java`
+*   **Anotaciones de Controlador:**
+    ```java
+    @RestController
+    @RequestMapping("/api/perfiles-financieros")
+    public class PerfilFinancieroController {
+        @GetMapping("/usuario/{usuarioId}")
+        public ResponseEntity<PerfilFinancieroResponseDto> obtenerPerfil(@PathVariable Long usuarioId) { ... }
+    }
+    ```
+*   **Endpoint REST Expuesto:** `GET /api/perfiles-financieros/usuario/{usuarioId}`
+*   **JSON a Devolver (Response Body a Frontend - 200 OK):**
+    ```json
+    {
+      "ingreso_mensual": 4500.00,
+      "nivel_endeudamiento": 25.00,
+      "frecuencia_ahorro": "Media"
+    }
+    ```
+
+---
+
+### 5.2 REGISTRAR PERFIL FINANCIERO INICIAL (POST)
+
+#### 💻 CONTRATO FRONTEND
+*   **Endpoint REST al que dispara la petición HTTP:** `POST http://localhost:8080/api/perfiles-financieros`
+*   **JSON a Enviar (Request Body):**
+    ```json
+    {
+      "ingreso_mensual": 5000.00,
+      "nivel_endeudamiento": 30.00,
+      "frecuencia_ahorro": "Alta"
+    }
+    ```
+*   **JSON a Recibir (Response Body 201 Created desde Java):**
+    ```json
+    {
+      "ingreso_mensual": 5000.00,
+      "nivel_endeudamiento": 30.00,
+      "frecuencia_ahorro": "Alta"
+    }
+    ```
+
+#### ☕ CONTRATO BACKEND JAVA (Spring Boot)
+*   **Anotación de Controlador:**
+    ```java
+    @PostMapping
+    public ResponseEntity<PerfilFinancieroResponseDto> registrarPerfil(@RequestBody PerfilFinancieroRequestDto dto) { ... }
+    ```
+*   **Endpoint REST Expuesto:** `POST /api/perfiles-financieros`
+
+---
+
+### 5.3 ACTUALIZAR PERFIL FINANCIERO EXISTENTE (PUT)
+
+#### 💻 CONTRATO FRONTEND
+*   **Endpoint REST al que dispara la petición HTTP:** `PUT http://localhost:8080/api/perfiles-financieros`
+*   **JSON a Enviar (Request Body):**
+    ```json
+    {
+      "ingreso_mensual": 5500.00,
+      "nivel_endeudamiento": 15.00,
+      "frecuencia_ahorro": "Alta"
+    }
+    ```
+*   **JSON a Recibir (Response Body 200 OK desde Java):**
+    ```json
+    {
+      "ingreso_mensual": 5500.00,
+      "nivel_endeudamiento": 15.00,
+      "frecuencia_ahorro": "Alta"
+    }
+    ```
+
+#### ☕ CONTRATO BACKEND JAVA (Spring Boot)
+*   **Anotación de Controlador:**
+    ```java
+    @PutMapping
+    public ResponseEntity<PerfilFinancieroResponseDto> actualizarPerfil(@RequestBody PerfilFinancieroRequestDto dto) { ... }
+    ```
+*   **Endpoint REST Expuesto:** `PUT /api/perfiles-financieros`
+
+---
+
+## ⚙️ MÓDULO 6: REGISTRO Y GESTIÓN DE TRANSACCIONES
+
+---
+
+### 6.1 REGISTRAR TRANSACCIÓN INDIVIDUAL (POST)
+
+#### 💻 CONTRATO FRONTEND
+*   **Endpoint REST al que dispara la petición HTTP:** `POST http://localhost:8080/api/transacciones/registrar`
+*   **Cabeceras Requeridas:** `Authorization: Bearer <TOKEN_JWT>`, `Content-Type: application/json`
+*   **JSON a Enviar (Request Body):**
+    ```json
+    {
+      "descripcion": "Compra Supermercado Metro",
+      "monto": 350.00,
+      "tipo": "GASTO"
+    }
+    ```
+*   **JSON a Recibir (Response Body 201 Created desde Java):**
+    ```json
+    {
+      "id": 88,
+      "monto": 350.00,
+      "fecha": "2026-08-04T12:00:00",
+      "descripcion": "Compra Supermercado Metro",
+      "tipo": "GASTO",
+      "categoriaNombre": "Sin clasificar"
+    }
+    ```
+
+#### ☕ CONTRATO BACKEND JAVA (Spring Boot)
+*   **Controlador Java:** `TransaccionController.java`
+*   **Anotaciones de Controlador:**
+    ```java
+    @RestController
+    @RequestMapping("/api/transacciones")
+    public class TransaccionController {
+
+        @PostMapping("/registrar")
+        public ResponseEntity<TransaccionResponseDto> registrar(@RequestBody TransaccionRequestDto tDto) { ... }
+    }
+    ```
+*   **Endpoint REST Expuesto:** `POST /api/transacciones/registrar`
+*   **Comportamiento Interno:** Extrae el usuario autenticado a través de `SecurityContextHolder` / Token JWT. Inserta el registro en `TRANSACCIONES` asignando `categoria_id = NULL`. La clasificación de categorías se difiere de manera síncrona hasta la llamada al diagnóstico de salud financiera (`POST /api/analisis-financiero`).
+
+#### 🐍 CONTRATO BACKEND PYTHON (FastAPI)
+*   **Endpoint Intermedio:** `N/A` *(No se realiza llamada a Python durante el registro individual para garantizar latencia cero)*.
+
+

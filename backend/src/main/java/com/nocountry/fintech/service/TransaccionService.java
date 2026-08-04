@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TransaccionService {
 
     private final TransaccionRepository transaccionRepository;
@@ -44,8 +45,7 @@ public class TransaccionService {
     @Transactional
     public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
         // Validaciones obligatorias
-        if (dto.getUsuarioId() == null || dto.getCategoriaId() == null ||
-                dto.getMonto() == null || dto.getDescripcion() == null) {
+        if (dto.getUsuarioId() == null || dto.getMonto() == null || dto.getDescripcion() == null) {
             throw new IllegalArgumentException("Faltan datos obligatorios para registrar la transacción.");
         }
 
@@ -53,8 +53,22 @@ public class TransaccionService {
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + dto.getUsuarioId()));
 
-        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + dto.getCategoriaId()));
+        Categoria categoria = null;
+        if (dto.getCategoriaId() != null) {
+            categoria = categoriaRepository.findById(dto.getCategoriaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + dto.getCategoriaId()));
+        } else if ("INGRESO".equalsIgnoreCase(dto.getTipo()) || "ingreso".equalsIgnoreCase(dto.getTipo())) {
+            // Auto-assign "Ingresos" category
+            categoria = categoriaRepository.findFirstByNombre("Ingresos")
+                    .orElseGet(() -> {
+                        Categoria nueva = new Categoria();
+                        nueva.setNombre("Ingresos");
+                        nueva.setTipo("Ingreso");
+                        nueva.setColor("#10b981");
+                        nueva.setIcono("arrow-trending-up");
+                        return categoriaRepository.save(nueva);
+                    });
+        }
 
         // Crear y guardar transacción
         Transaccion transaccion = new Transaccion();
@@ -73,7 +87,8 @@ public class TransaccionService {
                 guardada.getMonto(),
                 guardada.getFecha(),
                 guardada.getDescripcion(),
-                guardada.getTipo()
+                guardada.getTipo(),
+                guardada.getCategoria() != null ? guardada.getCategoria().getNombre() : "Sin clasificar"
         );
     }
 
@@ -87,7 +102,8 @@ public class TransaccionService {
                 t.getMonto(),
                 t.getFecha(),
                 t.getDescripcion(),
-                t.getTipo()
+                t.getTipo(),
+                t.getCategoria() != null ? t.getCategoria().getNombre() : "Sin clasificar"
         ));
     }
 

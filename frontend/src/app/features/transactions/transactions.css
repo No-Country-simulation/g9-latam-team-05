@@ -237,3 +237,63 @@
   border: 1px solid rgba(6, 182, 212, 0.3);
   color: #22d3ee;
 }
+
+.cat-income {
+  background-color: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+/* Value text coloring */
+.val-income {
+  color: #10b981 !important;
+}
+
+.val-expense {
+  color: var(--text-primary);
+}
+
+/* Toggle Switch Gasto / Ingreso */
+.toggle-container {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+}
+
+.toggle-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(51, 87, 255, 0.3);
+}
+
+/* CSV Upload File Selected */
+.csv-drop-zone.has-file {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.02);
+}
+
+.file-name-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #34d399;
+}
+
+.record-preview {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

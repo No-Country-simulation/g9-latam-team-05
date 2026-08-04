@@ -3,17 +3,72 @@
   <!-- Left Side: Forms -->
   <div class="control-panel">
     
+    <!-- Financial Profile Settings Card -->
+    <div class="glass-card profile-card">
+      <div class="card-title-wrap">
+        <h2>Mi Perfil Financiero</h2>
+        <p class="subtitle">Ajusta los parámetros base de tu salud financiera</p>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="tx-form">
+        <div class="form-group">
+          <label for="ingreso">Ingreso Mensual Base ($)</label>
+          <input type="number" id="ingreso" formControlName="ingreso" placeholder="0.00">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="endeudamiento">Endeudamiento (%)</label>
+            <input type="number" id="endeudamiento" formControlName="endeudamiento" placeholder="0">
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="frecuencia">Ahorro</label>
+            <select id="frecuencia" formControlName="frecuencia">
+              <option value="Baja">Baja</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-secondary w-full" [disabled]="profileForm.invalid || isSavingProfile()">
+          @if (isSavingProfile()) {
+            Actualizando Perfil...
+          } @else {
+            Actualizar Perfil
+          }
+        </button>
+      </form>
+    </div>
+    
     <!-- Manual Entry Card -->
     <div class="glass-card form-card">
       <div class="card-title-wrap">
         <h2>Añadir Transacción</h2>
-        <p class="subtitle">La IA clasificará el gasto automáticamente</p>
+        <p class="subtitle">
+          @if (tipoSelected() === 'GASTO') {
+            La IA clasificará el gasto automáticamente
+          } @else {
+            Registra un nuevo ingreso financiero
+          }
+        </p>
+      </div>
+
+      <!-- Toggle Gasto / Ingreso -->
+      <div class="toggle-container">
+        <button type="button" class="toggle-btn" [class.active]="tipoSelected() === 'GASTO'" (click)="setTipo('GASTO')">
+          Gasto
+        </button>
+        <button type="button" class="toggle-btn" [class.active]="tipoSelected() === 'INGRESO'" (click)="setTipo('INGRESO')">
+          Ingreso
+        </button>
       </div>
 
       <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="tx-form">
         <div class="form-group">
           <label for="descripcion">Descripción</label>
-          <input type="text" id="descripcion" formControlName="descripcion" placeholder="Ej: Supermercado Plaza, Taxi Aeropuerto">
+          <input type="text" id="descripcion" formControlName="descripcion" [placeholder]="tipoSelected() === 'GASTO' ? 'Ej: Supermercado Plaza, Taxi Aeropuerto' : 'Ej: Pago de Nómina, Venta Freelance'">
         </div>
 
         <div class="form-row">
@@ -21,58 +76,16 @@
             <label for="valor">Monto ($)</label>
             <input type="number" id="valor" formControlName="valor" placeholder="0.00" step="0.01">
           </div>
-
-          <div class="form-group flex-1">
-            <label for="categoria">Categoría (Opcional)</label>
-            <select id="categoria" formControlName="categoria">
-              <option value="">Clasificación IA</option>
-              <option value="Alimentación">Alimentación</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Vivienda">Vivienda</option>
-              <option value="Ocio">Ocio</option>
-              <option value="Salud">Salud</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Educación">Educación</option>
-            </select>
-          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-full" [disabled]="transactionForm.invalid || isSubmitting()">
           @if (isSubmitting()) {
-            Procesando con IA...
+            Procesando...
           } @else {
-            Registrar Gasto
+            {{ tipoSelected() === 'GASTO' ? 'Registrar Gasto' : 'Registrar Ingreso' }}
           }
         </button>
       </form>
-    </div>
-
-    <!-- CSV Bulk Upload Card -->
-    <div class="glass-card upload-card">
-      <div class="card-title-wrap">
-        <h2>Importar Lote (CSV)</h2>
-        <p class="subtitle">Sube un extracto bancario completo</p>
-      </div>
-
-      <div class="csv-drop-zone">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="upload-icon">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-        </svg>
-        <span class="upload-text">Selecciona o arrastra tu archivo CSV</span>
-        <input type="file" id="csvFile" (change)="onCSVUpload($event)" accept=".csv" class="file-input">
-        <label for="csvFile" class="btn btn-secondary text-sm upload-btn">
-          @if (isImporting()) {
-            Procesando...
-          } @else {
-            Examinar Archivos
-          }
-        </label>
-      </div>
-
-      <div class="csv-format-info">
-        <span>Formato requerido:</span>
-        <code>descripcion,monto</code>
-      </div>
     </div>
 
   </div>
@@ -112,7 +125,6 @@
                 <span>{{ sortAsc() ? '▲' : '▼' }}</span>
               }
             </th>
-            <th class="actions-header">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -128,22 +140,18 @@
                       [class.cat-viv]="tx.categoria === 'Vivienda'"
                       [class.cat-health]="tx.categoria === 'Salud'"
                       [class.cat-serv]="tx.categoria === 'Servicios'"
-                      [class.cat-edu]="tx.categoria === 'Educación'">
+                      [class.cat-edu]="tx.categoria === 'Educación'"
+                      [class.cat-income]="tx.categoria === 'Ingresos'">
                   {{ tx.categoria }}
                 </span>
               </td>
-              <td class="numeric font-medium">${{ tx.valor | number:'1.2-2' }}</td>
-              <td>
-                <button class="delete-btn" (click)="onDelete(tx.id)">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                  </svg>
-                </button>
+              <td class="numeric font-medium" [class.val-income]="tx.tipo === 'INGRESO'" [class.val-expense]="tx.tipo !== 'INGRESO'">
+                {{ tx.tipo === 'INGRESO' ? '+' : '-' }} ${{ tx.valor | number:'1.2-2' }}
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="empty-table-cell">No hay transacciones en el historial.</td>
+              <td colspan="4" class="empty-table-cell">No hay transacciones en el historial.</td>
             </tr>
           }
         </tbody>
