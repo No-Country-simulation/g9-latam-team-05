@@ -1,6 +1,5 @@
 package com.nocountry.fintech.dto.response;
 
-import lombok.Data;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
