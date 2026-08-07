@@ -1,4 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Transaction {
   id: string;
@@ -9,24 +12,60 @@ export interface Transaction {
   tipo: string;
 }
 
+export interface DashboardResumen {
+  ingresosMensuales: number;
+  gastosTotales: number;
+  balanceNeto: number;
+  tasaAhorro: number;
+}
+
+export interface CategoriaDistribucion {
+  categoria: string;
+  montoTotal: number;
+  porcentaje: number;
+  color: string;
+  icono: string;
+}
+
+export interface DistribucionResponse {
+  modoContingencia: boolean;
+  mensajeEstado: string;
+  distribucion: CategoriaDistribucion[];
+}
+
+export interface AnalisisIaResponse {
+  perfil_financiero: string;
+  probabilidad: number;
+  resumen_gastos?: Record<string, number>;
+  recomendaciones: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class FinanceService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.apiUrl;
+
+  // Real State Signals from API
+  readonly kpiResumen = signal<DashboardResumen>({
+    ingresosMensuales: 0,
+    gastosTotales: 0,
+    balanceNeto: 0,
+    tasaAhorro: 0
+  });
+
+  readonly distribucionGastos = signal<CategoriaDistribucion[]>([]);
+  readonly modoContingenciaIA = signal<boolean>(false);
+  readonly mensajeEstadoIA = signal<string>('Servicio de IA Python Online');
+  readonly analisisIaResult = signal<AnalisisIaResponse | null>(null);
+
   // Global State (Signals)
-  readonly income = signal<number>(4500);
-  readonly debtRatio = signal<number>(25);
-  readonly savingFrequency = signal<string>('Media');
+  readonly income = signal<number>(0);
+  readonly debtRatio = signal<number>(0);
+  readonly savingFrequency = signal<string>('');
   
-  readonly transactions = signal<Transaction[]>([
-    { id: '1', descripcion: 'Supermercado Plaza', valor: 420, categoria: 'Alimentación', fecha: '2026-07-10', tipo: 'GASTO' },
-    { id: '2', descripcion: 'Combustible Puma', valor: 300, categoria: 'Transporte', fecha: '2026-07-11', tipo: 'GASTO' },
-    { id: '3', descripcion: 'Suscripción Streaming', valor: 40, categoria: 'Ocio', fecha: '2026-07-12', tipo: 'GASTO' },
-    { id: '4', descripcion: 'Alquiler Residencia', valor: 1200, categoria: 'Vivienda', fecha: '2026-07-01', tipo: 'GASTO' },
-    { id: '5', descripcion: 'Farmacia Ahorro', valor: 150, categoria: 'Salud', fecha: '2026-07-05', tipo: 'GASTO' },
-    { id: '6', descripcion: 'Electricidad y Luz', valor: 110, categoria: 'Servicios', fecha: '2026-07-08', tipo: 'GASTO' },
-    { id: '7', descripcion: 'Curso Angular', valor: 250, categoria: 'Educación', fecha: '2026-07-09', tipo: 'GASTO' }
-  ]);
+  readonly transactions = signal<Transaction[]>([]);
 
   // Computed Values
   readonly totalExpenses = computed(() => {
@@ -216,5 +255,58 @@ export class FinanceService {
         resolve(importedCount);
       }, 1000);
     });
+  }
+
+  // Real HTTP API Methods
+  getDashboardResumen(usuarioId: number = 1): Observable<DashboardResumen> {
+    return this.http.get<DashboardResumen>(`${this.apiUrl}/dashboard/resumen/${usuarioId}`).pipe(
+      tap(res => this.kpiResumen.set(res))
+    );
+  }
+
+  getDistribucionGastos(usuarioId: number = 1): Observable<DistribucionResponse> {
+    return this.http.get<DistribucionResponse>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/distribucion`).pipe(
+      tap(res => {
+        if (res && res.distribucion) {
+          this.distribucionGastos.set(res.distribucion);
+          this.modoContingenciaIA.set(res.modoContingencia);
+          this.mensajeEstadoIA.set(res.mensajeEstado);
+        }
+      })
+    );
+  }
+
+  calcularAnalisisIa(userId: number = 1): Observable<AnalisisIaResponse> {
+    return this.http.post<AnalisisIaResponse>(`${this.apiUrl}/analisis-financiero`, { userId }).pipe(
+      tap(res => {
+        if (res) {
+          this.analisisIaResult.set(res);
+        }
+      })
+    );
+  }
+
+  getTransaccionesRecientes(usuarioId: number = 1, limit: number = 5): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/recientes?limit=${limit}`).pipe(
+      tap(res => {
+        let content: any[] = [];
+        if (Array.isArray(res)) {
+          content = res;
+        } else if (res && Array.isArray(res.content)) {
+          content = res.content;
+        }
+
+        const mapped: Transaction[] = content.map((item: any) => ({
+          id: String(item.id),
+          descripcion: item.descripcion,
+          valor: item.monto,
+          categoria: item.categoriaNombre || 'Sin clasificar',
+          fecha: item.fecha ? String(item.fecha).split('T')[0] : new Date().toISOString().split('T')[0],
+          tipo: item.tipo || 'GASTO'
+        }));
+
+        this.transactions.set(mapped);
+      })
+    );
   }
 }

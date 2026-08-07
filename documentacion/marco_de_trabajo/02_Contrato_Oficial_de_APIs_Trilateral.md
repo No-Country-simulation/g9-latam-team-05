@@ -219,12 +219,26 @@ graph LR
 *   **Endpoint REST al que dispara la petición HTTP:** `GET http://localhost:8080/api/transacciones/usuario/1/distribucion`
 *   **JSON a Recibir (Response Body 200 OK desde Java):**
     ```json
-    [
-      { "categoria": "Alimentación", "montoTotal": 850.00, "porcentaje": 34.41, "color": "#3357FF", "icono": "shopping-cart" },
-      { "categoria": "Transporte", "montoTotal": 320.00, "porcentaje": 12.95, "color": "#28A745", "icono": "bus" },
-      { "categoria": "Ocio", "montoTotal": 200.00, "porcentaje": 8.09, "color": "#00BCD4", "icono": "film" },
-      { "categoria": "Vivienda", "montoTotal": 700.00, "porcentaje": 28.34, "color": "#FFC107", "icono": "home" }
-    ]
+    {
+      "modoContingencia": false,
+      "mensajeEstado": "Servicio de IA Python Online",
+      "distribucion": [
+        {
+          "categoria": "Alimentación",
+          "montoTotal": 850.00,
+          "porcentaje": 34.41,
+          "color": "#3357FF",
+          "icono": "shopping-cart"
+        },
+        {
+          "categoria": "Transporte",
+          "montoTotal": 320.00,
+          "porcentaje": 12.95,
+          "color": "#28A745",
+          "icono": "bus"
+        }
+      ]
+    }
     ```
 
 ---
@@ -243,9 +257,10 @@ graph LR
     ```
 *   **Endpoint REST Expuesto:** `GET /api/transacciones/usuario/{usuarioId}/distribucion`
 *   **🧪 PRUEBA EN POSTMAN (Petición Interna que Java realiza a Python FastAPI):**
+    *   **Regla de Optimización de Arquitectura:** Java consulta primero la base de datos `WHERE usuario_id = :usuarioId AND categoria_id IS NULL`. Únicamente se envían a Python las transacciones pendientes de clasificar (con `categoria_id == NULL`). Una vez clasificadas por Python, Java las actualiza en BD. Si todas las transacciones del usuario ya tienen categoría, Java responde directamente desde PostgreSQL sin llamar a Python.
     *   **Método HTTP:** `POST`
     *   **URL Interna (FastAPI):** `http://localhost:8000/api/v1/classify-transactions`
-    *   **Request Payload enviado por Java:**
+    *   **Request Payload enviado por Java (Solo transacciones pendientes con `categoria_id == NULL`):**
         ```json
         {
           "transacciones": [

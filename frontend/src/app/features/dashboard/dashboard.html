@@ -10,7 +10,7 @@
       </div>
       <div class="kpi-info">
         <span class="kpi-label">Ingresos Mensuales</span>
-        <h3 class="kpi-value">${{ financeService.income() | number:'1.2-2' }}</h3>
+        <h3 class="kpi-value">${{ (financeService.kpiResumen().ingresosMensuales || financeService.income()) | number:'1.2-2' }}</h3>
       </div>
     </div>
 
@@ -22,7 +22,7 @@
       </div>
       <div class="kpi-info">
         <span class="kpi-label">Gastos Totales</span>
-        <h3 class="kpi-value">${{ financeService.totalExpenses() | number:'1.2-2' }}</h3>
+        <h3 class="kpi-value">${{ (financeService.kpiResumen().gastosTotales || financeService.totalExpenses()) | number:'1.2-2' }}</h3>
       </div>
     </div>
 
@@ -34,7 +34,7 @@
       </div>
       <div class="kpi-info">
         <span class="kpi-label">Balance Neto</span>
-        <h3 class="kpi-value">${{ financeService.balance() | number:'1.2-2' }}</h3>
+        <h3 class="kpi-value">${{ (financeService.kpiResumen().balanceNeto || financeService.balance()) | number:'1.2-2' }}</h3>
       </div>
     </div>
 
@@ -47,9 +47,17 @@
       </div>
       <div class="kpi-info">
         <span class="kpi-label">Tasa de Ahorro</span>
-        <h3 class="kpi-value">{{ financeService.savingsRate() }}%</h3>
+        <h3 class="kpi-value">{{ (financeService.kpiResumen().tasaAhorro || financeService.savingsRate()) | number:'1.2-2' }}%</h3>
       </div>
     </div>
+  </div>
+
+  <!-- Hackathon Scope Info Banner -->
+  <div class="alert alert-info-hackathon" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; line-height: 1.4;">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px; flex-shrink: 0;">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+    </svg>
+    <span><strong>Modo Demo Hackathon Activo:</strong> Por fines de evaluación, el Diagnóstico de IA y la Distribución de Gastos están analizando el consolidado total de transacciones de todos los meses.</span>
   </div>
 
   <!-- Charts & Analysis Grid -->
@@ -57,7 +65,7 @@
     <div class="glass-card chart-container-card">
       <div class="card-title-wrap">
         <h2>Distribución de Gastos</h2>
-        <span class="subtitle">Análisis por categorías</span>
+        <span class="subtitle">Análisis por categorías con IA NLP</span>
       </div>
       <div class="chart-wrapper">
         <canvas #chartCanvas></canvas>
@@ -66,27 +74,27 @@
 
     <div class="glass-card profile-details-card">
       <div class="card-title-wrap">
-        <h2>Diagnóstico de Perfil</h2>
-        <span class="subtitle">Evaluación en tiempo real</span>
+        <h2>Diagnóstico de Perfil (IA)</h2>
+        <span class="subtitle">Evaluación de salud financiera</span>
       </div>
 
       <div class="profile-semaphore">
         <div class="semaphore-badge" 
-             [class.profile-badge-healthy]="financeService.riskProfile() === 'Saludable'"
-             [class.profile-badge-observation]="financeService.riskProfile() === 'En observación'"
-             [class.profile-badge-risk]="financeService.riskProfile() === 'En riesgo'">
+             [class.profile-badge-healthy]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'Saludable'"
+             [class.profile-badge-observation]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En observación'"
+             [class.profile-badge-risk]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En riesgo'">
           <span class="semaphore-dot"></span>
-          {{ financeService.riskProfile() }}
+          {{ financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile() }}
         </div>
         <div class="probability-label">
-          Probabilidad de predicción: <strong>{{ financeService.probability() | percent }}</strong>
+          Probabilidad de predicción: <strong>{{ (financeService.analisisIaResult()?.probabilidad || financeService.probability()) | percent }}</strong>
         </div>
       </div>
 
       <div class="dashboard-recommendations">
         <h3>Recomendaciones de IA</h3>
         <ul class="rec-list">
-          @for (rec of financeService.recommendations(); track rec) {
+          @for (rec of (financeService.analisisIaResult()?.recomendaciones || financeService.recommendations()); track rec) {
             <li class="rec-item">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="bullet-arrow">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

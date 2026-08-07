@@ -1,7 +1,8 @@
-import { Component, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, effect } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, OnInit, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe, PercentPipe, NgClass } from '@angular/common';
-import { FinanceService } from '../../core/services/finance';
+import { DecimalPipe, PercentPipe } from '@angular/common';
+import { FinanceService, CategoriaDistribucion } from '../../core/services/finance';
+import { AuthService } from '../../core/services/auth';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -13,26 +14,40 @@ Chart.register(...registerables);
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-
-export class DashboardComponent implements AfterViewInit, OnDestroy {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   protected financeService = inject(FinanceService);
+  protected authService = inject(AuthService);
   
   @ViewChild('chartCanvas') private chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chartInstance: Chart | null = null;
 
   constructor() {
-    // Reactive effect to update charts when state changes
+    // Effect to update chart when API distribution signal changes
     effect(() => {
-      const expensesMap = this.financeService.categoryExpenses();
-      if (this.chartInstance) {
-        this.updateChart(expensesMap);
+      const items = this.financeService.distribucionGastos();
+      if (this.chartInstance && items.length > 0) {
+        this.updateChart(items);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    const userId = this.authService.currentUser()?.id || 1;
+    this.financeService.getDashboardResumen(userId).subscribe();
+    this.financeService.calcularAnalisisIa(userId).subscribe();
+    this.financeService.getTransaccionesRecientes(userId, 5).subscribe();
+    this.financeService.getDistribucionGastos(userId).subscribe({
+      next: (res) => {
+        if (this.chartInstance && res && res.distribucion) {
+          this.updateChart(res.distribucion);
+        }
       }
     });
   }
 
   ngAfterViewInit(): void {
-    const expensesMap = this.financeService.categoryExpenses();
-    this.initChart(expensesMap);
+    const items = this.financeService.distribucionGastos();
+    this.initChart(items);
   }
 
   ngOnDestroy(): void {
@@ -41,28 +56,22 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private initChart(dataMap: Record<string, number>) {
+  private initChart(items: CategoriaDistribucion[]) {
+    if (!this.chartCanvas) return;
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
-    const categories = Object.keys(dataMap);
-    const values = Object.values(dataMap);
+    const categories = items.map(i => i.categoria);
+    const values = items.map(i => i.montoTotal);
+    const colors = items.map(i => i.color || '#3b82f6');
 
     this.chartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: categories,
+        labels: categories.length ? categories : ['Sin datos'],
         datasets: [{
-          data: values,
-          backgroundColor: [
-            '#6366f1', // Violet
-            '#3b82f6', // Blue
-            '#10b981', // Emerald
-            '#f59e0b', // Amber
-            '#ef4444', // Red
-            '#ec4899', // Pink
-            '#8b5cf6'  // Purple
-          ],
+          data: values.length ? values : [1],
+          backgroundColor: colors.length ? colors : ['#64748b'],
           borderColor: 'rgba(7, 10, 19, 0.6)',
           borderWidth: 2,
         }]
@@ -88,14 +97,16 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  private updateChart(dataMap: Record<string, number>) {
+  private updateChart(items: CategoriaDistribucion[]) {
     if (!this.chartInstance) return;
     
-    const categories = Object.keys(dataMap);
-    const values = Object.values(dataMap);
+    const categories = items.map(i => i.categoria);
+    const values = items.map(i => i.montoTotal);
+    const colors = items.map(i => i.color || '#3b82f6');
 
     this.chartInstance.data.labels = categories;
     this.chartInstance.data.datasets[0].data = values;
+    this.chartInstance.data.datasets[0].backgroundColor = colors;
     this.chartInstance.update();
   }
 }
