@@ -1,15 +1,19 @@
 package com.nocountry.fintech.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-public class TransaccionRequestDto {
-    private Long usuarioId;
-    private Long categoriaId;
-    private BigDecimal monto;
-    private LocalDateTime fecha;
-    private String descripcion;
-    private String tipo; // ingreso o gasto
+
+public record TransaccionRequestDto (
+        @NotBlank
+        String descripcion,
+        @NotNull
+        BigDecimal monto,
+        @NotBlank
+        String tipo
+){
+
 }

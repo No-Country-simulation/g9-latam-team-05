@@ -24,7 +24,7 @@ public class Transaccion {
 
     // -------- Para consultas: transaccion.getCategoria().getNombre()
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORIA_ID", nullable = false)
+    @JoinColumn(name = "CATEGORIA_ID")
     private Categoria categoria;
 
 
