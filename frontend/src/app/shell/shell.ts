@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { FinanceService } from '../core/services/finance';
+import { AuthService } from '../core/services/auth';
 
 @Component({
   selector: 'app-shell',
@@ -10,11 +11,10 @@ import { FinanceService } from '../core/services/finance';
   styleUrl: './shell.css',
 })
 export class ShellComponent {
-  private router = inject(Router);
   protected financeService = inject(FinanceService);
+  protected authService = inject(AuthService);
 
   logout() {
-    localStorage.removeItem('isLoggedIn');
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

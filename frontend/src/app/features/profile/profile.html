@@ -4,65 +4,80 @@
     
     <!-- Left Panel: Profile Gauge Card -->
     <div class="glass-card gauge-card animate-fade-in"
-         [class.profile-healthy]="financeService.riskProfile() === 'Saludable'"
-         [class.profile-observation]="financeService.riskProfile() === 'En observación'"
-         [class.profile-risk]="financeService.riskProfile() === 'En riesgo'">
+         [class.profile-healthy]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'Saludable'"
+         [class.profile-observation]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En observación'"
+         [class.profile-risk]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En riesgo'">
       
-      <h2>Diagnóstico de Perfil</h2>
+      <h2>Diagnóstico de Perfil (IA)</h2>
       
       <div class="radial-gauge">
         <div class="gauge-center">
-          <span class="percentage">{{ financeService.probability() | percent }}</span>
+          <span class="percentage">{{ (financeService.analisisIaResult()?.probabilidad || financeService.probability()) | percent }}</span>
           <span class="label">Seguridad</span>
         </div>
       </div>
 
-      <h3 class="profile-name">{{ financeService.riskProfile() }}</h3>
+      <h3 class="profile-name">{{ financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile() }}</h3>
       <p class="profile-meta-text">
         El perfil financiero se calcula utilizando clasificadores inteligentes basados en tu capacidad de ahorro y nivel de endeudamiento declarado.
       </p>
     </div>
 
-    <!-- Right Panel: Overview statistics -->
+    <!-- Right Panel: Overview statistics & Personal Info -->
     <div class="glass-card stats-overview-card animate-fade-in">
-      <h2>Métricas Base Declaradas</h2>
-      <p class="subtitle">Datos principales de tu Onboarding</p>
+      <h2>Información del Usuario & Métricas</h2>
+      <p class="subtitle">Datos de cuenta y parámetros del perfil</p>
 
       <div class="details-list">
+        <div class="details-row" style="background: rgba(255, 255, 255, 0.05); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;">
+          <span>Nombre Completo:</span>
+          <strong style="color: #60a5fa; font-size: 15px;">{{ authService.currentUser()?.nombre || 'Demo Usuario' }}</strong>
+        </div>
+
+        <div class="details-row" style="background: rgba(255, 255, 255, 0.05); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;">
+          <span>Correo Electrónico:</span>
+          <strong style="color: #34d399; font-size: 15px;">{{ authService.currentUser()?.email || 'demo@nocountry.com' }}</strong>
+        </div>
+
         <div class="details-row">
           <span>Ingreso Fijo Mensual:</span>
-          <strong>${{ financeService.income() | number:'1.2-2' }}</strong>
+          <strong>${{ (financeService.kpiResumen().ingresosMensuales || 4500) | number:'1.2-2' }}</strong>
         </div>
 
         <div class="details-row">
-          <span>Tasa de Ahorro:</span>
-          <strong>{{ financeService.savingsRate() }}%</strong>
+          <span>Tasa de Ahorro Real:</span>
+          <strong>{{ (financeService.kpiResumen().tasaAhorro || 45) | number:'1.2-2' }}%</strong>
         </div>
 
         <div class="details-row">
-          <span>Límite de Endeudamiento:</span>
-          <strong>{{ financeService.debtRatio() }}%</strong>
+          <span>Balance Neto Real:</span>
+          <strong>${{ (financeService.kpiResumen().balanceNeto || 2030) | number:'1.2-2' }}</strong>
         </div>
 
         <div class="details-row">
-          <span>Frecuencia de Ahorro:</span>
-          <strong>{{ financeService.savingFrequency() }}</strong>
+          <span>Gastos Totales Acumulados:</span>
+          <strong>${{ (financeService.kpiResumen().gastosTotales || 2470) | number:'1.2-2' }}</strong>
         </div>
       </div>
 
       <!-- Breakdown table of expenses by category -->
-      <h3 class="breakdown-title">Distribución por Categorías</h3>
+      <h3 class="breakdown-title">Distribución por Categorías (IA)</h3>
       <div class="category-breakdown-list">
-        @for (item of financeService.categoryExpenses() | keyvalue; track item.key) {
+        @for (item of financeService.distribucionGastos(); track item.categoria) {
           <div class="cat-bar-row">
             <div class="cat-bar-header">
-              <span>{{ item.key }}</span>
-              <strong>${{ item.value | number:'1.2-2' }}</strong>
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <span [style.background-color]="item.color" style="width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+                {{ item.categoria }}
+              </span>
+              <strong>${{ item.montoTotal | number:'1.2-2' }} ({{ item.porcentaje }}%)</strong>
             </div>
             <div class="cat-progress-track">
-              <div class="cat-progress-bar" [style.width.%]="(item.value / financeService.income()) * 100"></div>
+              <div class="cat-progress-bar" [style.background-color]="item.color" [style.width.%]="item.porcentaje"></div>
             </div>
           </div>
+        } @empty {
+          <div style="font-size: 13px; opacity: 0.7; padding: 8px 0;">No hay categorías registradas.</div>
         }
       </div>
 
