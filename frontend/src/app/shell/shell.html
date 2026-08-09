@@ -82,12 +82,18 @@
         <h1>Dashboard General</h1>
       </div>
       <div class="user-status-area">
-        <span class="badge" [class.profile-badge-healthy]="financeService.riskProfile() === 'Saludable'" [class.profile-badge-observation]="financeService.riskProfile() === 'En observación'" [class.profile-badge-risk]="financeService.riskProfile() === 'En riesgo'">
-          {{ financeService.riskProfile() }}
+        <span class="badge" 
+              [class.profile-badge-healthy]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'Saludable'" 
+              [class.profile-badge-observation]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En observación'" 
+              [class.profile-badge-risk]="(financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile()) === 'En riesgo'">
+          {{ financeService.analisisIaResult()?.perfil_financiero || financeService.riskProfile() }}
         </span>
         <div class="user-profile">
-          <div class="avatar">U</div>
-          <span class="username">Demo Usuario</span>
+          <div class="avatar">{{ authService.currentUser()?.nombre?.charAt(0) || 'U' }}</div>
+          <div class="user-details-nav" style="display: flex; flex-direction: column; text-align: left; margin-left: 8px;">
+            <span class="username" style="font-weight: 600; font-size: 14px;">{{ authService.currentUser()?.nombre || 'Demo Usuario' }}</span>
+            <span class="user-email" style="font-size: 11px; opacity: 0.75; color: var(--text-secondary, #a0aec0);">{{ authService.currentUser()?.email || 'demo@nocountry.com' }}</span>
+          </div>
         </div>
       </div>
     </header>

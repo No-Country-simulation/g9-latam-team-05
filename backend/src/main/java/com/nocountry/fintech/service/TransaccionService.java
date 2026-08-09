@@ -10,12 +10,14 @@ import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.repository.CategoriaRepository;
 import com.nocountry.fintech.repository.TransaccionRepository;
 import com.nocountry.fintech.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +32,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TransaccionService {
+
+    @Value("${python.fastapi.url:http://localhost:8000}")
+    private String pythonFastApiUrl;
 
     private final TransaccionRepository transaccionRepository;
     private final UsuarioRepository usuarioRepository;
@@ -90,7 +96,8 @@ public class TransaccionService {
                 t.getMonto(),
                 t.getFecha(),
                 t.getDescripcion(),
-                t.getTipo()
+                t.getTipo(),
+                t.getCategoria() != null ? t.getCategoria().getNombre() : "Sin clasificar"
         ));
     }
 
@@ -102,69 +109,111 @@ public class TransaccionService {
         }
     }
 
-    public List<Map<String, Object>> obtenerDistribucionPorUsuario(Long usuarioId) {
-        // Obtener las transacciones del usuario
-        List<Transaccion> transacciones = transaccionRepository.findByUsuarioId(usuarioId);
-        if (transacciones.isEmpty()) {
-            return List.of();
+    public Map<String, Object> obtenerDistribucionPorUsuario(Long usuarioId) {
+        // 1. Verificar estado REAL del microservicio de IA Python a través de un Health Check ultra-rápido (800ms max)
+        boolean pythonOnline = checkPythonHealth();
+        boolean modoContingencia = !pythonOnline;
+        String mensajeEstado;
+
+        if (pythonOnline) {
+            mensajeEstado = "Servicio de IA Python Online";
+        } else {
+            mensajeEstado = "Servicio de IA no disponible (Python Offline). Mostrando datos de BD.";
+            System.err.println("⚠️ Contingencia activada: Microservicio Python en " + pythonFastApiUrl + " está Offline.");
         }
 
-        // Armar Payload para enviar a FastAPI
-        String pythonUrl = "http://localhost:8000/api/v1/classify-transactions";
+        // 2. Filtrar únicamente las transacciones del usuario que faltan clasificar (categoria == null)
+        List<Transaccion> pendientes = transaccionRepository.findByUsuarioIdAndCategoriaIsNull(usuarioId);
 
-        List<Map<String, Object>> payloadTransacciones = transacciones.stream().map(t -> {
-            Map<String, Object> item = new HashMap<>();
-            item.put("id", t.getId());
-            item.put("text", t.getDescripcion());
-            item.put("monto", t.getMonto());
-            return item;
-        }).collect(Collectors.toList());
+        // 3. Si hay transacciones pendientes y Python está Online, procesarlas con la IA
+        if (!pendientes.isEmpty() && pythonOnline) {
+            String pythonUrl = pythonFastApiUrl + "/api/v1/classify-transactions";
 
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("transacciones", payloadTransacciones);
+            List<Map<String, Object>> payloadTransacciones = pendientes.stream().map(t -> {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", t.getId());
+                item.put("text", t.getDescripcion());
+                item.put("monto", t.getMonto());
+                return item;
+            }).collect(Collectors.toList());
 
-        // Consumir el servicio FastAPI usando RestTemplate
-        RestTemplate restTemplate = new RestTemplate();
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("transacciones", payloadTransacciones);
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> response = restTemplate.postForObject(pythonUrl, requestBody, Map.class);
+            try {
+                SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+                factory.setConnectTimeout(3000);
+                factory.setReadTimeout(5000);
+                RestTemplate restTemplate = new RestTemplate(factory);
 
-        if (response == null || !response.containsKey("clasificados")) {
-            throw new RuntimeException("Error al comunicarse con el servicio de IA de Python.");
+                @SuppressWarnings("unchecked")
+                Map<String, Object> response = restTemplate.postForObject(pythonUrl, requestBody, Map.class);
+
+                if (response != null && response.containsKey("clasificados")) {
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> clasificados = (List<Map<String, Object>>) response.get("clasificados");
+
+                    Map<Long, String> prediccionesPorId = new HashMap<>();
+                    for (Map<String, Object> item : clasificados) {
+                        Long id = Long.valueOf(item.get("id").toString());
+                        String catName = (String) item.get("categoriaPredicha");
+                        prediccionesPorId.put(id, catName);
+                    }
+
+                    for (Transaccion tx : pendientes) {
+                        String catNombre = prediccionesPorId.get(tx.getId());
+                        if (catNombre != null) {
+                            String[] estilo = obtenerEstiloCategoria(catNombre);
+                            Categoria cat = categoriaRepository.findFirstByNombre(catNombre)
+                                    .orElseGet(() -> {
+                                        Categoria nuevaCat = new Categoria();
+                                        nuevaCat.setNombre(catNombre);
+                                        nuevaCat.setTipo("Gasto");
+                                        nuevaCat.setColor(estilo[0]);
+                                        nuevaCat.setIcono(estilo[1]);
+                                        return categoriaRepository.save(nuevaCat);
+                                    });
+                            tx.setCategoria(cat);
+                            transaccionRepository.save(tx);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                modoContingencia = true;
+                mensajeEstado = "Falló la clasificación con la IA de Python. Mostrando datos de BD.";
+                System.err.println("⚠️ Error al clasificar con Python: " + e.getMessage());
+            }
         }
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> clasificados = (List<Map<String, Object>>) response.get("clasificados");
+        // 4. Consultar todas las transacciones del usuario (persistidas en BD) y calcular la distribución
+        List<Transaccion> todas = transaccionRepository.findByUsuarioId(usuarioId);
+        if (todas.isEmpty()) {
+            Map<String, Object> respuestaVacia = new HashMap<>();
+            respuestaVacia.put("modoContingencia", modoContingencia);
+            respuestaVacia.put("mensajeEstado", mensajeEstado);
+            respuestaVacia.put("distribucion", List.of());
+            return respuestaVacia;
+        }
 
-        // Patrón de Auto-Registro en BD y agrupación
         BigDecimal montoTotalGeneral = BigDecimal.ZERO;
         Map<String, BigDecimal> montosPorCategoria = new HashMap<>();
         Map<String, Categoria> detallesCategoria = new HashMap<>();
 
-        for (Map<String, Object> item : clasificados) {
-            String nombreCategoria = (String) item.get("categoriaPredicha");
-            BigDecimal monto = new BigDecimal(item.get("monto").toString());
+        for (Transaccion t : todas) {
+            if ("INGRESO".equalsIgnoreCase(t.getTipo())) continue;
+
+            String nombreCategory = t.getCategoria() != null ? t.getCategoria().getNombre() : "Sin clasificar";
+            BigDecimal monto = t.getMonto() != null ? t.getMonto() : BigDecimal.ZERO;
 
             montoTotalGeneral = montoTotalGeneral.add(monto);
-            montosPorCategoria.put(nombreCategoria, montosPorCategoria.getOrDefault(nombreCategoria, BigDecimal.ZERO).add(monto));
+            montosPorCategoria.put(nombreCategory, montosPorCategoria.getOrDefault(nombreCategory, BigDecimal.ZERO).add(monto));
 
-            // Auto-registro si la categoría no existe en BD
-            if (!detallesCategoria.containsKey(nombreCategoria)) {
-                Categoria categoria = categoriaRepository.findFirstByNombre(nombreCategoria)
-                        .orElseGet(() -> {
-                            Categoria nuevaCat = new Categoria();
-                            nuevaCat.setNombre(nombreCategoria);
-                            nuevaCat.setTipo("Gasto");
-                            nuevaCat.setColor("#3357FF");
-                            nuevaCat.setIcono("shopping-cart");
-                            return categoriaRepository.save(nuevaCat);
-                        });
-                detallesCategoria.put(nombreCategoria, categoria);
+            if (t.getCategoria() != null && !detallesCategoria.containsKey(nombreCategory)) {
+                detallesCategoria.put(nombreCategory, t.getCategoria());
             }
         }
 
-        // Construir la respuesta final agrupada con porcentajes para Angular
-        List<Map<String, Object>> resultadoFinal = new ArrayList<>();
+        List<Map<String, Object>> listaDistribucion = new ArrayList<>();
         final BigDecimal totalFinal = montoTotalGeneral;
 
         montosPorCategoria.forEach((categoriaNombre, montoTotal) -> {
@@ -181,13 +230,63 @@ public class TransaccionService {
             dto.put("porcentaje", porcentaje);
 
             Categoria catInfo = detallesCategoria.get(categoriaNombre);
-            dto.put("color", catInfo.getColor() != null ? catInfo.getColor() : "#3357FF");
-            dto.put("icono", catInfo.getIcono() != null ? catInfo.getIcono() : "shopping-cart");
+            String[] estiloDefecto = obtenerEstiloCategoria(categoriaNombre);
+            
+            String color = (catInfo != null && catInfo.getColor() != null && !"#3357FF".equals(catInfo.getColor())) 
+                    ? catInfo.getColor() : estiloDefecto[0];
+            String icono = (catInfo != null && catInfo.getIcono() != null && !"shopping-cart".equals(catInfo.getIcono())) 
+                    ? catInfo.getIcono() : estiloDefecto[1];
 
-            resultadoFinal.add(dto);
+            dto.put("color", color);
+            dto.put("icono", icono);
+
+            listaDistribucion.add(dto);
         });
 
-        return resultadoFinal;
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("modoContingencia", modoContingencia);
+        respuesta.put("mensajeEstado", mensajeEstado);
+        respuesta.put("distribucion", listaDistribucion);
+
+        return respuesta;
+    }
+
+    private String[] obtenerEstiloCategoria(String nombre) {
+        if (nombre == null) return new String[]{"#64748b", "tag"};
+        String n = nombre.toLowerCase().trim();
+        if (n.contains("vivienda") || n.contains("alquiler") || n.contains("renta")) {
+            return new String[]{"#f59e0b", "home"}; // Amber
+        } else if (n.contains("alimentacion") || n.contains("comida") || n.contains("super") || n.contains("mercado")) {
+            return new String[]{"#3b82f6", "shopping-cart"}; // Blue
+        } else if (n.contains("transporte") || n.contains("gasolina") || n.contains("uber") || n.contains("combustible")) {
+            return new String[]{"#10b981", "bus"}; // Emerald
+        } else if (n.contains("entretenimiento") || n.contains("ocio") || n.contains("netflix") || n.contains("cine")) {
+            return new String[]{"#ec4899", "film"}; // Pink
+        } else if (n.contains("salud") || n.contains("farmacia") || n.contains("medico")) {
+            return new String[]{"#ef4444", "heart"}; // Red
+        } else if (n.contains("servicio") || n.contains("luz") || n.contains("agua") || n.contains("internet")) {
+            return new String[]{"#8b5cf6", "bolt"}; // Purple
+        } else if (n.contains("educacion") || n.contains("curso") || n.contains("libro")) {
+            return new String[]{"#06b6d4", "academic-cap"}; // Cyan
+        } else if (n.contains("ingreso")) {
+            return new String[]{"#22c55e", "arrow-trending-up"}; // Green
+        }
+        return new String[]{"#64748b", "tag"};
+    }
+
+    private boolean checkPythonHealth() {
+        try {
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(800); // Max 800ms health check timeout
+            factory.setReadTimeout(800);
+            RestTemplate restTemplate = new RestTemplate(factory);
+
+            String healthUrl = pythonFastApiUrl + "/health";
+            Map<?, ?> res = restTemplate.getForObject(healthUrl, Map.class);
+            return res != null && "ok".equalsIgnoreCase(String.valueOf(res.get("status")));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public NuevaTransaccionResponseDTO registrarTransaccion(TransaccionRequestDto dto ) {

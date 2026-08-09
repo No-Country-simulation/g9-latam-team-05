@@ -247,3 +247,5 @@ En las grandes empresas de tecnología (Google, Amazon, bancos y startups intern
 ## 🔮 Visión General de las Próximas Semanas (Semanas 3 a 6)
 
 > **Resumen General del Flujo Futuro:** Una vez concluidos los desarrollos independientes de la Semana 2, la **Semana 3** se destinará a las pruebas unitarias y acoplamiento total de Angular con Java. La **Semana 4** añadirá el cálculo de alertas del 80% y 100% de presupuestos. La **Semana 5** ejecutará la migración a la nube de Oracle (OCI Compute, Autonomous DB y Object Storage), culminando en la **Semana 6** con la estabilización, pruebas de carga y la demostración final del proyecto.
+
+

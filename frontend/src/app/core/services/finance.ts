@@ -1,4 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface Transaction {
   id: string;
@@ -6,46 +9,95 @@ export interface Transaction {
   valor: number;
   categoria: string;
   fecha: string;
+  tipo: string;
+}
+
+export interface DashboardResumen {
+  ingresosMensuales: number;
+  gastosTotales: number;
+  balanceNeto: number;
+  tasaAhorro: number;
+}
+
+export interface CategoriaDistribucion {
+  categoria: string;
+  montoTotal: number;
+  porcentaje: number;
+  color: string;
+  icono: string;
+}
+
+export interface DistribucionResponse {
+  modoContingencia: boolean;
+  mensajeEstado: string;
+  distribucion: CategoriaDistribucion[];
+}
+
+export interface AnalisisIaResponse {
+  perfil_financiero: string;
+  probabilidad: number;
+  resumen_gastos?: Record<string, number>;
+  recomendaciones: string[];
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class FinanceService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = environment.apiUrl;
+
+  // Real State Signals from API
+  readonly kpiResumen = signal<DashboardResumen>({
+    ingresosMensuales: 0,
+    gastosTotales: 0,
+    balanceNeto: 0,
+    tasaAhorro: 0
+  });
+
+  readonly distribucionGastos = signal<CategoriaDistribucion[]>([]);
+  readonly modoContingenciaIA = signal<boolean>(false);
+  readonly mensajeEstadoIA = signal<string>('Servicio de IA Python Online');
+  readonly analisisIaResult = signal<AnalisisIaResponse | null>(null);
+
   // Global State (Signals)
-  readonly income = signal<number>(4500);
-  readonly debtRatio = signal<number>(25);
-  readonly savingFrequency = signal<string>('Media');
+  readonly income = signal<number>(0);
+  readonly debtRatio = signal<number>(0);
+  readonly savingFrequency = signal<string>('');
   
-  readonly transactions = signal<Transaction[]>([
-    { id: '1', descripcion: 'Supermercado Plaza', valor: 420, categoria: 'Alimentación', fecha: '2026-07-10' },
-    { id: '2', descripcion: 'Combustible Puma', valor: 300, categoria: 'Transporte', fecha: '2026-07-11' },
-    { id: '3', descripcion: 'Suscripción Streaming', valor: 40, categoria: 'Ocio', fecha: '2026-07-12' },
-    { id: '4', descripcion: 'Alquiler Residencia', valor: 1200, categoria: 'Vivienda', fecha: '2026-07-01' },
-    { id: '5', descripcion: 'Farmacia Ahorro', valor: 150, categoria: 'Salud', fecha: '2026-07-05' },
-    { id: '6', descripcion: 'Electricidad y Luz', valor: 110, categoria: 'Servicios', fecha: '2026-07-08' },
-    { id: '7', descripcion: 'Curso Angular', valor: 250, categoria: 'Educación', fecha: '2026-07-09' }
-  ]);
+  readonly transactions = signal<Transaction[]>([]);
 
   // Computed Values
   readonly totalExpenses = computed(() => {
-    return this.transactions().reduce((acc, t) => acc + t.valor, 0);
+    return this.transactions()
+      .filter(t => t.tipo !== 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
   });
 
   readonly balance = computed(() => {
-    return this.income() - this.totalExpenses();
+    // Total income from profile + any INGRESO transactions registered
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    return totalIncomes - this.totalExpenses();
   });
 
   readonly savingsRate = computed(() => {
     const left = this.balance();
-    if (this.income() <= 0) return 0;
-    return Math.max(0, Math.round((left / this.income()) * 100));
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    if (totalIncomes <= 0) return 0;
+    return Math.max(0, Math.round((left / totalIncomes) * 100));
   });
 
   readonly riskProfile = computed(() => {
     const debt = this.debtRatio();
     const rate = this.savingsRate();
-    const ratioExpenses = (this.totalExpenses() / this.income()) * 100;
+    const totalIncomes = this.income() + this.transactions()
+      .filter(t => t.tipo === 'INGRESO')
+      .reduce((acc, t) => acc + t.valor, 0);
+    const ratioExpenses = totalIncomes > 0 ? (this.totalExpenses() / totalIncomes) * 100 : 100;
 
     if (ratioExpenses > 95 || debt > 50 || rate < 0) {
       return 'En riesgo';
@@ -65,10 +117,12 @@ export class FinanceService {
 
   readonly categoryExpenses = computed(() => {
     const map: Record<string, number> = {};
-    this.transactions().forEach(t => {
-      const cat = t.categoria || 'Otros';
-      map[cat] = (map[cat] || 0) + t.valor;
-    });
+    this.transactions()
+      .filter(t => t.tipo !== 'INGRESO')
+      .forEach(t => {
+        const cat = t.categoria || 'Otros';
+        map[cat] = (map[cat] || 0) + t.valor;
+      });
     return map;
   });
 
@@ -77,6 +131,7 @@ export class FinanceService {
     const debt = this.debtRatio();
     const rate = this.savingsRate();
     const catMap = this.categoryExpenses();
+    const currentIncome = this.income();
 
     if (rate < 10) {
       list.push('Tu tasa de ahorro es crítica. Intenta recortar al menos un 10% en gastos de Ocio.');
@@ -87,10 +142,10 @@ export class FinanceService {
     if (this.savingFrequency() === 'Baja') {
       list.push('Aumenta tu frecuencia de ahorro programando transferencias automáticas el día de pago.');
     }
-    if (catMap['Ocio'] && catMap['Ocio'] > this.income() * 0.15) {
+    if (catMap['Ocio'] && catMap['Ocio'] > currentIncome * 0.15) {
       list.push('Detectamos gastos elevados en Ocio y Entretenimiento. Monitorea suscripciones mensuales duplicadas.');
     }
-    if (catMap['Alimentación'] && catMap['Alimentación'] > this.income() * 0.25) {
+    if (catMap['Alimentación'] && catMap['Alimentación'] > currentIncome * 0.25) {
       list.push('Tus gastos en Alimentación superan el 25% de tu presupuesto. Planifica compras semanales en supermercado.');
     }
 
@@ -102,12 +157,24 @@ export class FinanceService {
   });
 
   // Action Methods
-  addTransaction(descripcion: string, valor: number, categoryOverride?: string): Promise<Transaction> {
+  updateProfile(income: number, debtRatio: number, savingFrequency: string): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Simple mock NLP logic to predict category
+        this.income.set(income);
+        this.debtRatio.set(debtRatio);
+        this.savingFrequency.set(savingFrequency);
+        resolve();
+      }, 300);
+    });
+  }
+
+  addTransaction(descripcion: string, valor: number, tipo: string = 'GASTO', categoryOverride?: string): Promise<Transaction> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
         let categoria = categoryOverride || 'Otros';
-        if (!categoryOverride) {
+        if (tipo === 'INGRESO') {
+          categoria = 'Ingresos';
+        } else if (!categoryOverride) {
           const desc = descripcion.toLowerCase();
           if (desc.includes('super') || desc.includes('comida') || desc.includes('cena') || desc.includes('restaurante') || desc.includes('mercado') || desc.includes('pizza')) {
             categoria = 'Alimentación';
@@ -131,12 +198,13 @@ export class FinanceService {
           descripcion,
           valor,
           categoria,
-          fecha: new Date().toISOString().split('T')[0]
+          fecha: new Date().toISOString().split('T')[0],
+          tipo
         };
 
         this.transactions.update(txs => [newTx, ...txs]);
         resolve(newTx);
-      }, 500); // simulate API latency
+      }, 500);
     });
   }
 
@@ -173,7 +241,8 @@ export class FinanceService {
                 descripcion,
                 valor,
                 categoria,
-                fecha: new Date().toISOString().split('T')[0]
+                fecha: new Date().toISOString().split('T')[0],
+                tipo: 'GASTO'
               });
               importedCount++;
             }
@@ -186,5 +255,58 @@ export class FinanceService {
         resolve(importedCount);
       }, 1000);
     });
+  }
+
+  // Real HTTP API Methods
+  getDashboardResumen(usuarioId: number = 1): Observable<DashboardResumen> {
+    return this.http.get<DashboardResumen>(`${this.apiUrl}/dashboard/resumen/${usuarioId}`).pipe(
+      tap(res => this.kpiResumen.set(res))
+    );
+  }
+
+  getDistribucionGastos(usuarioId: number = 1): Observable<DistribucionResponse> {
+    return this.http.get<DistribucionResponse>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/distribucion`).pipe(
+      tap(res => {
+        if (res && res.distribucion) {
+          this.distribucionGastos.set(res.distribucion);
+          this.modoContingenciaIA.set(res.modoContingencia);
+          this.mensajeEstadoIA.set(res.mensajeEstado);
+        }
+      })
+    );
+  }
+
+  calcularAnalisisIa(userId: number = 1): Observable<AnalisisIaResponse> {
+    return this.http.post<AnalisisIaResponse>(`${this.apiUrl}/analisis-financiero`, { userId }).pipe(
+      tap(res => {
+        if (res) {
+          this.analisisIaResult.set(res);
+        }
+      })
+    );
+  }
+
+  getTransaccionesRecientes(usuarioId: number = 1, limit: number = 5): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/recientes?limit=${limit}`).pipe(
+      tap(res => {
+        let content: any[] = [];
+        if (Array.isArray(res)) {
+          content = res;
+        } else if (res && Array.isArray(res.content)) {
+          content = res.content;
+        }
+
+        const mapped: Transaction[] = content.map((item: any) => ({
+          id: String(item.id),
+          descripcion: item.descripcion,
+          valor: item.monto,
+          categoria: item.categoriaNombre || 'Sin clasificar',
+          fecha: item.fecha ? String(item.fecha).split('T')[0] : new Date().toISOString().split('T')[0],
+          tipo: item.tipo || 'GASTO'
+        }));
+
+        this.transactions.set(mapped);
+      })
+    );
   }
 }

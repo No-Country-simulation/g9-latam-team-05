@@ -43,9 +43,9 @@ public class TransaccionController {
     }
 
     @GetMapping("/usuario/{usuarioId}/distribucion")
-    public ResponseEntity<List<Map<String, Object>>> obtenerDistribucion(@PathVariable Long usuarioId) {
-        List<Map<String, Object>> distribucion = transaccionService.obtenerDistribucionPorUsuario(usuarioId);
-        return ResponseEntity.ok(distribucion);
+    public ResponseEntity<Map<String, Object>> obtenerDistribucion(@PathVariable Long usuarioId) {
+        Map<String, Object> respuesta = transaccionService.obtenerDistribucionPorUsuario(usuarioId);
+        return ResponseEntity.ok(respuesta);
     }
 
 }

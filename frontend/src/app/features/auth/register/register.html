@@ -17,6 +17,18 @@
         <p>Completa los detalles para comenzar</p>
       </div>
 
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-4" style="color: #ff4d4d; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 6px; font-size: 14px; margin-bottom: 12px;">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success mb-4" style="color: #28a745; background: rgba(40,167,69,0.1); padding: 10px; border-radius: 6px; font-size: 14px; margin-bottom: 12px;">
+          {{ successMessage() }}
+        </div>
+      }
+
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
         <div class="form-group">
           <label for="name">Nombre Completo</label>
@@ -33,8 +45,12 @@
           <input type="password" id="password" formControlName="password" placeholder="Mínimo 6 caracteres">
         </div>
 
-        <button type="submit" class="btn btn-primary w-full" [disabled]="registerForm.invalid">
-          Crear Cuenta
+        <button type="submit" class="btn btn-primary w-full" [disabled]="registerForm.invalid || isLoading()">
+          @if (isLoading()) {
+            Registrando...
+          } @else {
+            Crear Cuenta
+          }
         </button>
       </form>
 
