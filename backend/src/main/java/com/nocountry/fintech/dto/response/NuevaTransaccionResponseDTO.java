@@ -1,9 +1,11 @@
 package com.nocountry.fintech.dto.response;
 
-import java.time.LocalDateTime;
-import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
-public record TransaccionResponseDto (
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record NuevaTransaccionResponseDTO(
         Long id,
         BigDecimal monto,
         LocalDateTime fecha,

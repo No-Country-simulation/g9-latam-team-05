@@ -1,6 +1,7 @@
 package com.nocountry.fintech.controller;
 
 import com.nocountry.fintech.dto.request.TransaccionRequestDto;
+import com.nocountry.fintech.dto.response.NuevaTransaccionResponseDTO;
 import com.nocountry.fintech.dto.response.TransaccionResponseDto;
 import com.nocountry.fintech.service.TransaccionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,10 @@ public class TransaccionController {
         return ResponseEntity.ok(transaccionService.transaccionesRecientes(usuarioId, limit));
     }
 
-    @PostMapping
-    public ResponseEntity<TransaccionResponseDto> crear(@RequestBody TransaccionRequestDto tDto) {
-        TransaccionResponseDto nueva = transaccionService.guardar(tDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    @PostMapping("/registrar")
+    public ResponseEntity<NuevaTransaccionResponseDTO> registrar(@RequestBody TransaccionRequestDto dto) {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(transaccionService.registrarTransaccion(dto));
     }
 
     @DeleteMapping("/{id}")

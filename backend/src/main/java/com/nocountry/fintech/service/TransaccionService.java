@@ -1,6 +1,7 @@
 package com.nocountry.fintech.service;
 
 import com.nocountry.fintech.dto.request.TransaccionRequestDto;
+import com.nocountry.fintech.dto.response.NuevaTransaccionResponseDTO;
 import com.nocountry.fintech.dto.response.TransaccionResponseDto;
 import com.nocountry.fintech.exception.ResourceNotFoundException;
 import com.nocountry.fintech.model.Categoria;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,55 +50,41 @@ public class TransaccionService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    @Transactional
-    public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
-        // Validaciones obligatorias
-        if (dto.getUsuarioId() == null || dto.getMonto() == null || dto.getDescripcion() == null) {
-            throw new IllegalArgumentException("Faltan datos obligatorios para registrar la transacción.");
-        }
-
-        //  Buscar entidades en BD
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + dto.getUsuarioId()));
-
-        Categoria categoria = null;
-        if (dto.getCategoriaId() != null) {
-            categoria = categoriaRepository.findById(dto.getCategoriaId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + dto.getCategoriaId()));
-        } else if ("INGRESO".equalsIgnoreCase(dto.getTipo()) || "ingreso".equalsIgnoreCase(dto.getTipo())) {
-            // Auto-assign "Ingresos" category
-            categoria = categoriaRepository.findFirstByNombre("Ingresos")
-                    .orElseGet(() -> {
-                        Categoria nueva = new Categoria();
-                        nueva.setNombre("Ingresos");
-                        nueva.setTipo("Ingreso");
-                        nueva.setColor("#10b981");
-                        nueva.setIcono("arrow-trending-up");
-                        return categoriaRepository.save(nueva);
-                    });
-        }
-
-        // Crear y guardar transacción
-        Transaccion transaccion = new Transaccion();
-        transaccion.setUsuario(usuario);
-        transaccion.setCategoria(categoria);
-        transaccion.setMonto(dto.getMonto());
-        transaccion.setDescripcion(dto.getDescripcion());
-        transaccion.setFecha(dto.getFecha() != null ? dto.getFecha() : LocalDateTime.now());
-        transaccion.setTipo(dto.getTipo());
-
-        Transaccion guardada = transaccionRepository.save(transaccion);
-
-        // Mapear a DTO de respuesta
-        return new TransaccionResponseDto(
-                guardada.getId(),
-                guardada.getMonto(),
-                guardada.getFecha(),
-                guardada.getDescripcion(),
-                guardada.getTipo(),
-                guardada.getCategoria() != null ? guardada.getCategoria().getNombre() : "Sin clasificar"
-        );
-    }
+//    @Transactional
+//    public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
+//        // Validaciones obligatorias
+//        if (dto.getUsuarioId() == null || dto.getCategoriaId() == null ||
+//                dto.getMonto() == null || dto.getDescripcion() == null) {
+//            throw new IllegalArgumentException("Faltan datos obligatorios para registrar la transacción.");
+//        }
+//
+//        //  Buscar entidades en BD
+//        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + dto.getUsuarioId()));
+//
+//        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + dto.getCategoriaId()));
+//
+//        // Crear y guardar transacción
+//        Transaccion transaccion = new Transaccion();
+//        transaccion.setUsuario(usuario);
+//        transaccion.setCategoria(categoria);
+//        transaccion.setMonto(dto.getMonto());
+//        transaccion.setDescripcion(dto.getDescripcion());
+//        transaccion.setFecha(dto.getFecha() != null ? dto.getFecha() : LocalDateTime.now());
+//        transaccion.setTipo(dto.getTipo());
+//
+//        Transaccion guardada = transaccionRepository.save(transaccion);
+//
+//        // Mapear a DTO de respuesta
+//        return new TransaccionResponseDto(
+//                guardada.getId(),
+//                guardada.getMonto(),
+//                guardada.getFecha(),
+//                guardada.getDescripcion(),
+//                guardada.getTipo()
+//        );
+//    }
 
     public Page<TransaccionResponseDto> transaccionesRecientes(Long usuarioId, int size) {
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
@@ -298,5 +287,35 @@ public class TransaccionService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public NuevaTransaccionResponseDTO registrarTransaccion(TransaccionRequestDto dto ) {
+        //Extraemos usuario
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String emailUsuario = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        //Crear registro
+        Transaccion transaccion = new Transaccion();
+        transaccion.setMonto(dto.monto());
+        transaccion.setDescripcion(dto.descripcion());
+        transaccion.setTipo(dto.tipo());
+        transaccion.setFecha(LocalDateTime.now());
+        transaccion.setUsuario(usuario);
+        transaccion.setCategoria(null);
+
+
+        Transaccion guardada = transaccionRepository.save(transaccion);
+
+        return new NuevaTransaccionResponseDTO(
+                usuario.getId(),
+                transaccion.getMonto(),
+                LocalDateTime.now(),
+                dto.descripcion(),
+                dto.tipo(),
+                "Sin clasificar");
     }
 }
