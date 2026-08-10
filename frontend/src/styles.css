@@ -133,6 +133,12 @@ input:focus, select:focus, textarea:focus {
   background: rgba(255, 255, 255, 0.06);
 }
 
+option {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 10px;
+}
+
 label {
   display: block;
   font-size: 0.85rem;

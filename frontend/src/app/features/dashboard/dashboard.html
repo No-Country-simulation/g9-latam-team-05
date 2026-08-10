@@ -63,12 +63,37 @@
   <!-- Charts & Analysis Grid -->
   <div class="charts-grid">
     <div class="glass-card chart-container-card">
-      <div class="card-title-wrap">
-        <h2>Distribución de Gastos</h2>
-        <span class="subtitle">Análisis por categorías con IA NLP</span>
+      <div class="card-title-wrap flex-between" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2>Distribución de Gastos</h2>
+          <span class="subtitle">Análisis por categorías con IA NLP</span>
+        </div>
+        @if (financeService.modoContingenciaIA()) {
+          <span class="badge badge-warning" style="font-size: 11px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px;">Contingencia local</span>
+        } @else {
+          <span class="badge badge-success" style="font-size: 11px; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 8px; border-radius: 6px;">IA Python Online</span>
+        }
       </div>
-      <div class="chart-wrapper">
+
+      <div class="chart-wrapper" style="position: relative; height: 220px; width: 100%;">
         <canvas #chartCanvas></canvas>
+      </div>
+
+      <!-- Leyenda Dinámica de Categorías por IA -->
+      <div class="category-legend-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        @for (item of financeService.distribucionGastos(); track item.categoria; let i = $index) {
+          <div class="legend-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; background: rgba(255, 255, 255, 0.03); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <span class="legend-color-dot" [style.background]="item.color || getDistribucionColor(i)" style="width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;"></span>
+            <div style="display: flex; flex-direction: column; overflow: hidden; width: 100%;">
+              <span style="color: #f8fafc; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.categoria }}</span>
+              <span style="color: #94a3b8; font-size: 11px;">${{ item.montoTotal | number:'1.2-2' }} ({{ item.porcentaje }}%)</span>
+            </div>
+          </div>
+        } @empty {
+          <div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 13px; padding: 12px;">
+            No hay gastos clasificados aún.
+          </div>
+        }
       </div>
     </div>
 

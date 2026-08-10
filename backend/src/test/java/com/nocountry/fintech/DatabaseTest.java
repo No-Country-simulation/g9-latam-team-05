@@ -5,7 +5,11 @@ import com.nocountry.fintech.dto.request.UsuarioRequestDto;
 import com.nocountry.fintech.dto.response.TransaccionResponseDto;
 import com.nocountry.fintech.dto.response.UsuarioResponseDto;
 import com.nocountry.fintech.model.Categoria;
+import com.nocountry.fintech.model.Transaccion;
+import com.nocountry.fintech.model.Usuario;
 import com.nocountry.fintech.repository.CategoriaRepository;
+import com.nocountry.fintech.repository.TransaccionRepository;
+import com.nocountry.fintech.repository.UsuarioRepository;
 import com.nocountry.fintech.service.TransaccionService;
 import com.nocountry.fintech.service.UsuarioService;
 import com.nocountry.fintech.util.SchemaInspector;
@@ -16,12 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-
-// ====================================================================================================
-// NOTA DE ARQUITECTURA: 
-// Se añadió @SpringBootTest.
-// Se eliminó implements CommandLineRunner para evitar que se ejecute al iniciar la app de producción.
-// ====================================================================================================
 
 @Disabled("Inhabilitado hasta la integración con Oracle Cloud")
 @SpringBootTest
@@ -35,6 +33,12 @@ public class DatabaseTest {
 
     @Autowired
     private TransaccionService transaccionService;
+
+    @Autowired
+    private TransaccionRepository transaccionRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -82,18 +86,19 @@ public class DatabaseTest {
         schemaInspector.listarColumnasDeTabla("USUARIOS");
 
         // Crear y asociar transacción
-        TransaccionRequestDto transaccionDto = new TransaccionRequestDto();
-        transaccionDto.setUsuarioId(usuarioCreado.getId());
-        transaccionDto.setCategoriaId(categoriaGuardada.getId());
-        transaccionDto.setDescripcion("Gasto de prueba integridad");
-        transaccionDto.setMonto(BigDecimal.valueOf(150.00));
-        transaccionDto.setTipo("GASTO");
-        transaccionDto.setFecha(LocalDateTime.now());
+        Usuario usuarioEntidad = usuarioRepository.findById(usuarioCreado.getId()).orElse(null);
+        Transaccion transaccion = new Transaccion();
+        transaccion.setUsuario(usuarioEntidad);
+        transaccion.setCategoria(categoriaGuardada);
+        transaccion.setDescripcion("Gasto de prueba integridad");
+        transaccion.setMonto(BigDecimal.valueOf(150.00));
+        transaccion.setTipo("GASTO");
+        transaccion.setFecha(LocalDateTime.now());
 
-        TransaccionResponseDto transaccionCreada = transaccionService.guardar(transaccionDto);
+        Transaccion transaccionCreada = transaccionRepository.save(transaccion);
 
         Assertions.assertNotNull(transaccionCreada, "La transacción no pudo ser guardada.");
-        Assertions.assertNotNull(transaccionCreada.id(), "El ID de la transacción no debe ser nulo.");
+        Assertions.assertNotNull(transaccionCreada.getId(), "El ID de la transacción no debe ser nulo.");
 
         System.out.println("Transacción creada y vinculada al usuario ID: " + usuarioCreado.getId());
 

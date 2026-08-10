@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class TransaccionService {
 
-    @Value("${python.fastapi.url:http://localhost:8000}")
+    @Value("${python.fastapi.url}")
     private String pythonFastApiUrl;
 
     private final TransaccionRepository transaccionRepository;
@@ -49,42 +49,6 @@ public class TransaccionService {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
     }
-
-//    @Transactional
-//    public TransaccionResponseDto guardar(TransaccionRequestDto dto) {
-//        // Validaciones obligatorias
-//        if (dto.getUsuarioId() == null || dto.getCategoriaId() == null ||
-//                dto.getMonto() == null || dto.getDescripcion() == null) {
-//            throw new IllegalArgumentException("Faltan datos obligatorios para registrar la transacción.");
-//        }
-//
-//        //  Buscar entidades en BD
-//        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + dto.getUsuarioId()));
-//
-//        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + dto.getCategoriaId()));
-//
-//        // Crear y guardar transacción
-//        Transaccion transaccion = new Transaccion();
-//        transaccion.setUsuario(usuario);
-//        transaccion.setCategoria(categoria);
-//        transaccion.setMonto(dto.getMonto());
-//        transaccion.setDescripcion(dto.getDescripcion());
-//        transaccion.setFecha(dto.getFecha() != null ? dto.getFecha() : LocalDateTime.now());
-//        transaccion.setTipo(dto.getTipo());
-//
-//        Transaccion guardada = transaccionRepository.save(transaccion);
-//
-//        // Mapear a DTO de respuesta
-//        return new TransaccionResponseDto(
-//                guardada.getId(),
-//                guardada.getMonto(),
-//                guardada.getFecha(),
-//                guardada.getDescripcion(),
-//                guardada.getTipo()
-//        );
-//    }
 
     public Page<TransaccionResponseDto> transaccionesRecientes(Long usuarioId, int size) {
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());

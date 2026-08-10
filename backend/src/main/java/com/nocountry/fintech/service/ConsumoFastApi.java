@@ -12,7 +12,7 @@ public class ConsumoFastApi {
 
     private final RestClient restClient;
 
-    public ConsumoFastApi(@Value("${python.fastapi.url:http://localhost:8000}") String baseUrl){
+    public ConsumoFastApi(@Value("${python.fastapi.url}") String baseUrl){
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl)
                 .build();

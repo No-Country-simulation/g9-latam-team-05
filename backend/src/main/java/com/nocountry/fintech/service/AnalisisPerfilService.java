@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Service
 public class AnalisisPerfilService {
 
-    @Value("${python.fastapi.url:http://localhost:8000}")
+    @Value("${python.fastapi.url}")
     private String pythonFastApiUrl;
 
     private final ConsumoFastApi consumoFastApi;
@@ -315,5 +315,27 @@ public class AnalisisPerfilService {
             }
             return usuarioRepository.findAll().stream().findFirst().orElse(null);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<com.nocountry.fintech.dto.response.AnalisisHisResponseDTO> obtenerHistorialPorUsuario(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+
+        return analisisHistorialRepository.findByUsuarioId(usuario.getId())
+                .stream()
+                .map(h -> new com.nocountry.fintech.dto.response.AnalisisHisResponseDTO(
+                        h.getId(),
+                        usuario.getId(),
+                        h.getIngresoMensual(),
+                        h.getNivelEndeudamiento(),
+                        h.getFrecuenciaAhorro(),
+                        h.getPerfilResultado(),
+                        h.getProbabilidad(),
+                        h.getFechaAnalisis(),
+                        h.getRecomendaciones() != null ? 
+                                h.getRecomendaciones().stream().map(RecomendacionesHistorial::getRecomendacionTexto).toList() : List.of()
+                ))
+                .toList();
     }
 }

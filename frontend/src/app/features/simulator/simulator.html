@@ -33,55 +33,7 @@
       </div>
     </div>
 
-    <!-- Hypothetical Expenses List Form -->
-    <div class="glass-card simulated-expenses-card">
-      <div class="card-title-wrap">
-        <h2>Simular Gastos Extra</h2>
-        <p class="subtitle">Añade transacciones hipotéticas al escenario</p>
-      </div>
 
-      <form [formGroup]="simulatorForm" (ngSubmit)="addSimulatedExpense()" class="sim-expense-form">
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <input type="text" formControlName="descripcion" placeholder="Descripción (Ej: Comprar Laptop)">
-          </div>
-          <div class="form-group width-sm">
-            <input type="number" formControlName="valor" placeholder="Monto ($)">
-          </div>
-          <div class="form-group width-sm">
-            <select formControlName="categoria">
-              <option value="Alimentación">Alimentación</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Vivienda">Vivienda</option>
-              <option value="Ocio">Ocio</option>
-              <option value="Salud">Salud</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Educación">Educación</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary add-sim-btn" [disabled]="simulatorForm.invalid">+</button>
-        </div>
-      </form>
-
-      <!-- List of simulated items -->
-      <div class="simulated-items">
-        @for (item of simulatedExpensesList(); track $index) {
-          <div class="sim-item-row animate-fade-in">
-            <div class="sim-item-left">
-              <span class="badge-dot"></span>
-              <span class="sim-desc">{{ item.descripcion }}</span>
-            </div>
-            <div class="sim-item-right">
-              <span class="sim-cat">{{ item.categoria }}</span>
-              <span class="sim-val">${{ item.valor | number:'1.2-2' }}</span>
-              <button class="remove-btn" (click)="removeSimulatedExpense($index)">×</button>
-            </div>
-          </div>
-        } @empty {
-          <div class="empty-list">No hay gastos simulados añadidos.</div>
-        }
-      </div>
-    </div>
 
   </div>
 
@@ -141,7 +93,7 @@
       <!-- Action items -->
       <div class="simulation-actions">
         <button class="btn btn-secondary" (click)="resetSimulation()">Restaurar</button>
-        <button class="btn btn-primary" (click)="applySimulation()" [disabled]="simulatedExpensesList().length === 0 && simulatedIncome() === financeService.income() && simulatedDebt() === financeService.debtRatio()">
+        <button class="btn btn-primary" (click)="applySimulation()" [disabled]="simulatedIncome() === financeService.income() && simulatedDebt() === financeService.debtRatio()">
           Aplicar Cambios
         </button>
       </div>
