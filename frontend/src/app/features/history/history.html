@@ -1,57 +1,60 @@
 <div class="history-container">
   
+  <!-- Line Chart Card -->
   <div class="glass-card timeline-card animate-fade-in">
     <div class="card-title-wrap flex-between">
       <div>
         <h2>Evolución de Comportamiento</h2>
-        <p class="subtitle">Evolución de tus ingresos vs gastos mensuales</p>
+        <p class="subtitle">Serie temporal de tus ingresos vs gastos en tiempo real</p>
       </div>
       <div class="dropdown-filter">
-        <select class="select-sm">
-          <option>Últimos 6 meses</option>
-          <option>Año Completo</option>
-        </select>
+        <span class="badge badge-success" style="font-size: 11px; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px;">Consolidado BD Activo</span>
       </div>
     </div>
 
-    <div class="chart-wrapper">
+    <div class="chart-wrapper" style="position: relative; height: 300px; width: 100%;">
       <canvas #historyCanvas></canvas>
     </div>
   </div>
 
-  <!-- Historical timeline milestones -->
-  <div class="glass-card mil-timeline-card animate-fade-in">
+  <!-- Historical timeline milestones from ANALISIS_HISTORIAL BD -->
+  <div class="glass-card mil-timeline-card animate-fade-in" style="margin-top: 24px;">
     <div class="card-title-wrap">
-      <h2>Línea de Evolución del Perfil</h2>
-      <p class="subtitle">Historial de cambios calculados en tu diagnóstico financiero</p>
+      <h2>Línea de Evolución del Perfil (Snapshots de Auditoría BD)</h2>
+      <p class="subtitle">Historial cronológico de diagnósticos de IA registrados en PostgreSQL/Oracle</p>
     </div>
 
     <div class="timeline-trail">
-      
-      <div class="timeline-milestone">
-        <div class="mil-badge profile-badge-healthy">Julio</div>
-        <div class="mil-content">
-          <h3>Perfil Actual: {{ financeService.riskProfile() }}</h3>
-          <p>Tasa de ahorro estable en {{ financeService.savingsRate() }}% con un balance total de ${{ financeService.balance() | number:'1.2-2' }}.</p>
+      @for (item of financeService.historialIaList(); track item.id) {
+        <div class="timeline-milestone">
+          <div class="mil-badge"
+               [class.profile-badge-healthy]="item.perfilResultado === 'Saludable'"
+               [class.profile-badge-observation]="item.perfilResultado === 'En observación'"
+               [class.profile-badge-risk]="item.perfilResultado === 'En riesgo'">
+            {{ item.fechaAnalisis | date:'mediumDate' }}
+          </div>
+          <div class="mil-content">
+            <h3>Perfil Registrado: <strong>{{ item.perfilResultado }}</strong> (Confianza: {{ item.probabilidad * 100 | number:'1.0-0' }}%)</h3>
+            <p>Ingreso declarado: <strong>${{ item.ingresoMensual | number:'1.2-2' }}</strong> | Endeudamiento: <strong>{{ item.nivelEndeudamiento }}%</strong> | Frecuencia: <strong>{{ item.frecuenciaAhorro }}</strong></p>
+            @if (item.recomendaciones && item.recomendaciones.length > 0) {
+              <ul style="margin-top: 6px; padding-left: 18px; font-size: 12px; color: #94a3b8;">
+                @for (rec of item.recomendaciones; track rec) {
+                  <li>{{ rec }}</li>
+                }
+              </ul>
+            }
+          </div>
         </div>
-      </div>
-
-      <div class="timeline-milestone">
-        <div class="mil-badge profile-badge-observation">Junio</div>
-        <div class="mil-content">
-          <h3>Perfil: En observación</h3>
-          <p>Los gastos ascendieron a un 86% de los ingresos debido a sobrecostos puntuales en la categoría de Vivienda y Servicios.</p>
+      } @empty {
+        <!-- Fallback Milestone if no history records exist yet in fresh DB -->
+        <div class="timeline-milestone">
+          <div class="mil-badge profile-badge-healthy">Diagnóstico Actual</div>
+          <div class="mil-content">
+            <h3>Perfil Actual: <strong>{{ financeService.riskProfile() }}</strong> (Confianza: {{ (financeService.analisisIaResult()?.probabilidad || financeService.probability()) * 100 | number:'1.0-0' }}%)</h3>
+            <p>Tasa de ahorro calculada en <strong>{{ (financeService.kpiResumen().tasaAhorro || financeService.savingsRate()) | number:'1.2-2' }}%</strong> con un balance neto real de <strong>${{ (financeService.kpiResumen().balanceNeto || financeService.balance()) | number:'1.2-2' }}</strong>.</p>
+          </div>
         </div>
-      </div>
-
-      <div class="timeline-milestone">
-        <div class="mil-badge profile-badge-healthy">Mayo</div>
-        <div class="mil-content">
-          <h3>Perfil: Saludable</h3>
-          <p>Ahorro regular de un 24%. Los gastos en Ocio se mantuvieron controlados por debajo de los límites indicados por el motor de IA.</p>
-        </div>
-      </div>
-
+      }
     </div>
   </div>
 

@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     const userId = this.authService.currentUser()?.id || 1;
     this.financeService.getDashboardResumen(userId).subscribe();
-    this.financeService.calcularAnalisisIa(userId).subscribe();
+    this.financeService.calcularAnalisisIa().subscribe();
     this.financeService.getDistribucionGastos(userId).subscribe();
   }
 }
