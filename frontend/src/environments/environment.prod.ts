@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://140.238.0.1:8080/api', // IP / Dominio de Producción en Oracle Cloud Infrastructure (OCI)
-  fastApiUrl: 'http://140.238.0.1:8000/api/v1'
+  apiUrl: 'http://163.176.240.128/api', // Servidor de Producción OCI (Reverse Proxy Nginx a Spring Boot)
+  fastApiUrl: 'http://163.176.240.128/api/v1' // Reverse Proxy Nginx a Python FastAPI ML
 };

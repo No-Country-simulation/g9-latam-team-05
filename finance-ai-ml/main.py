@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.adapters.inbound.api.routers.classifier_router import router as classifier_router
 from app.adapters.inbound.api.routers.health_predictor import router as health_router
@@ -24,6 +25,15 @@ app = FastAPI(
     description="API para clasificación de transacciones, análisis de perfil y recomendaciones.",
     version="0.1.0",
     lifespan=lifespan
+)
+
+# Configurar middleware de CORS para permitir consumo cross-origin desde Spring Boot / Angular / Nginx
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Registrar routers de la capa Inbound (Adaptadores de entrada)
