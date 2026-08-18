@@ -1,53 +1,72 @@
+# -*- coding: utf-8 -*-
 import os
 import joblib
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
 def train_and_save_model():
-    print("🚀 Iniciando el entrenamiento del modelo de Salud Financiera...")
+    print("[INFO] Generando dataset sintetico de perfiles financieros con distribucion balanceada...")
+    np.random.seed(42)
+    n_samples = 4500
 
-    # 1. Dataset de entrenamiento (Features: [ingreso_mensual, nivel_endeudamiento_%])
-    X_train = np.array([
-        # Perfil: Saludable / Excelente
-        [8000.0, 10.0],
-        [6000.0, 15.0],
-        [5000.0, 18.0],
-        [4500.0, 12.0],
-        
-        # Perfil: En observación
-        [4500.0, 25.0],
-        [3500.0, 30.0],
-        [2800.0, 35.0],
-        [5000.0, 40.0],
-        
-        # Perfil: En riesgo
-        [3000.0, 55.0],
-        [2000.0, 60.0],
-        [1500.0, 75.0],
-        [1200.0, 80.0]
-    ])
+    # 1. Generacion de perfiles realistas
+    ingreso = np.random.uniform(1200, 15000, n_samples)
+    endeudamiento = np.random.uniform(0, 90, n_samples)
+    frec_map = {'Baja': 0, 'Media': 1, 'Alta': 2}
+    frecuencias = np.random.choice(['Baja', 'Media', 'Alta'], size=n_samples, p=[0.33, 0.34, 0.33])
+    frecuencia_num = np.array([frec_map[f] for f in frecuencias])
 
-    # Etiquetas correspondientes
-    y_train = np.array([
-        "Excelente", "Excelente", "Excelente", "Excelente",
-        "En observación", "En observación", "En observación", "En observación",
-        "En riesgo", "En riesgo", "En riesgo", "En riesgo"
-    ])
+    ratio_gasto = np.random.uniform(0.30, 1.20, n_samples)
+    gasto_total = ingreso * ratio_gasto
+    ahorro_neto = ingreso - gasto_total
 
-    # 2. Entrenar el clasificador Random Forest
-    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    labels = []
+    for i in range(n_samples):
+        deuda = endeudamiento[i]
+        rg = ratio_gasto[i]
+        frec = frecuencia_num[i]
+        ahorro = ahorro_neto[i]
+
+        # Criterios bancarios y de riesgo financiero
+        if deuda > 45 or rg > 0.95 or ahorro < 0:
+            labels.append("En riesgo")
+        elif deuda <= 25 and rg <= 0.70 and frec >= 1 and ahorro > 0:
+            labels.append("Saludable")
+        else:
+            labels.append("En observación")
+
+    df = pd.DataFrame({
+        'ingreso_mensual': ingreso,
+        'nivel_endeudamiento': endeudamiento,
+        'frecuencia_ahorro': frecuencia_num,
+        'gasto_total': gasto_total,
+        'ratio_gasto_ingreso': ratio_gasto,
+        'ahorro_neto': ahorro_neto,
+        'perfil': labels
+    })
+
+    X = df[['ingreso_mensual', 'nivel_endeudamiento', 'frecuencia_ahorro', 'gasto_total', 'ratio_gasto_ingreso', 'ahorro_neto']]
+    y = df['perfil']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+    print("[INFO] Entrenando Random Forest Classifier (150 arboles)...")
+    clf = RandomForestClassifier(n_estimators=150, max_depth=12, random_state=42, class_weight='balanced')
     clf.fit(X_train, y_train)
 
-    # 3. Definir la ruta de salida (app/outbound/model_storage/)
-    output_dir = os.path.join("app", "outbound", "model_storage")
+    y_pred = clf.predict(X_test)
+    print("\n--- Metricas de Rendimiento del Modelo de Perfil Financiero ---")
+    print(classification_report(y_test, y_pred))
+
+    output_dir = os.path.join(os.path.dirname(__file__), "app", "models")
     os.makedirs(output_dir, exist_ok=True)
     model_path = os.path.join(output_dir, "health_model.joblib")
 
-    # 4. Serializar y guardar el archivo binario .joblib
     joblib.dump(clf, model_path)
-    print(f"✅ ¡Modelo ML entrenado y guardado exitosamente en: {model_path}!")
-
+    print(f"[OK] Modelo serializado y guardado exitosamente en: {model_path}\n")
 
 if __name__ == "__main__":
     train_and_save_model()

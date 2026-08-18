@@ -15,9 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -25,10 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,9 +47,12 @@ public class TransaccionService {
         this.categoriaRepository = categoriaRepository;
     }
 
+    /**
+     * Obtiene las transacciones recientes paginadas para un usuario.
+     */
+    @Transactional(readOnly = true)
     public Page<TransaccionResponseDto> transaccionesRecientes(Long usuarioId, int size) {
         Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
-
         Page<Transaccion> paginaTransacciones = transaccionRepository.findByUsuarioIdOrderByFechaDesc(usuarioId, pageable);
 
         return paginaTransacciones.map(t -> new TransaccionResponseDto(
@@ -65,6 +65,9 @@ public class TransaccionService {
         ));
     }
 
+    /**
+     * Elimina una transacción por su ID.
+     */
     public void eliminar(Long id) {
         if (transaccionRepository.existsById(id)) {
             transaccionRepository.deleteById(id);
@@ -73,41 +76,134 @@ public class TransaccionService {
         }
     }
 
-    public Map<String, Object> obtenerDistribucionPorUsuario(Long usuarioId) {
-        // 1. Verificar estado REAL del microservicio de IA Python a través de un Health Check ultra-rápido (800ms max)
-        boolean pythonOnline = checkPythonHealth();
-        boolean modoContingencia = !pythonOnline;
-        String mensajeEstado;
+    /**
+     * Registra una nueva transacción e infiere inmediatamente su categoría mediante IA (FastAPI ML).
+     */
+    public NuevaTransaccionResponseDTO registrarTransaccion(TransaccionRequestDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String emailUsuario = authentication != null ? authentication.getName() : null;
 
-        if (pythonOnline) {
-            mensajeEstado = "Servicio de IA Python Online";
+        Usuario usuario;
+        if (emailUsuario != null && !emailUsuario.equalsIgnoreCase("anonymousUser")) {
+            usuario = usuarioRepository.findByEmail(emailUsuario)
+                    .orElseGet(() -> usuarioRepository.findById(1L).orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
         } else {
-            mensajeEstado = "Servicio de IA no disponible (Python Offline). Mostrando datos de BD.";
-            System.err.println("⚠️ Contingencia activada: Microservicio Python en " + pythonFastApiUrl + " está Offline.");
+            usuario = usuarioRepository.findById(1L).orElseThrow(() -> new RuntimeException("Usuario por defecto no encontrado"));
         }
 
-        // 2. Filtrar únicamente las transacciones del usuario que faltan clasificar (categoria == null)
-        List<Transaccion> pendientes = transaccionRepository.findByUsuarioIdAndCategoriaIsNull(usuarioId);
+        // 1. Clasificación inmediata mediante IA (o regla de ingreso)
+        Categoria categoriaAsignada = inferirYObtenerCategoria(dto.descripcion(), dto.tipo(), dto.monto());
 
-        // 3. Si hay transacciones pendientes y Python está Online, procesarlas con la IA
-        if (!pendientes.isEmpty() && pythonOnline) {
+        // 2. Persistir transacción ya clasificada
+        Transaccion transaccion = new Transaccion();
+        transaccion.setMonto(dto.monto());
+        transaccion.setDescripcion(dto.descripcion());
+        transaccion.setTipo(dto.tipo() != null ? dto.tipo().toUpperCase() : "GASTO");
+        transaccion.setFecha(LocalDateTime.now());
+        transaccion.setUsuario(usuario);
+        transaccion.setCategoria(categoriaAsignada);
+
+        Transaccion guardada = transaccionRepository.save(transaccion);
+
+        return new NuevaTransaccionResponseDTO(
+                guardada.getId(),
+                guardada.getMonto(),
+                guardada.getFecha(),
+                guardada.getDescripcion(),
+                guardada.getTipo(),
+                categoriaAsignada != null ? categoriaAsignada.getNombre() : "Sin clasificar"
+        );
+    }
+
+    /**
+     * Infiere la categoría de una transacción usando el microservicio FastAPI NLP o asigna 'Ingresos'.
+     */
+    private Categoria inferirYObtenerCategoria(String descripcion, String tipo, BigDecimal monto) {
+        if (tipo != null && "INGRESO".equalsIgnoreCase(tipo.trim())) {
+            String[] estilo = obtenerEstiloCategoria("Ingresos");
+            return categoriaRepository.findFirstByNombre("Ingresos")
+                    .orElseGet(() -> {
+                        Categoria cat = new Categoria();
+                        cat.setNombre("Ingresos");
+                        cat.setTipo("Ingreso");
+                        cat.setColor(estilo[0]);
+                        cat.setIcono(estilo[1]);
+                        return categoriaRepository.save(cat);
+                    });
+        }
+
+        // Si es Gasto, consultar al clasificador de IA en Python
+        String categoriaPredicha = "Sin clasificar";
+        try {
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(2000);
+            factory.setReadTimeout(3000);
+            RestTemplate restTemplate = new RestTemplate(factory);
+
             String pythonUrl = pythonFastApiUrl + "/api/v1/classify-transactions";
-
-            List<Map<String, Object>> payloadTransacciones = pendientes.stream().map(t -> {
-                Map<String, Object> item = new HashMap<>();
-                item.put("id", t.getId());
-                item.put("text", t.getDescripcion());
-                item.put("monto", t.getMonto());
-                return item;
-            }).collect(Collectors.toList());
+            Map<String, Object> txPayload = new HashMap<>();
+            txPayload.put("id", 1);
+            txPayload.put("text", descripcion != null ? descripcion : "");
+            txPayload.put("monto", monto != null ? monto : BigDecimal.ZERO);
 
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("transacciones", payloadTransacciones);
+            requestBody.put("transacciones", List.of(txPayload));
 
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restTemplate.postForObject(pythonUrl, requestBody, Map.class);
+
+            if (response != null && response.containsKey("clasificados")) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> clasificados = (List<Map<String, Object>>) response.get("clasificados");
+                if (!clasificados.isEmpty() && clasificados.get(0).get("categoriaPredicha") != null) {
+                    categoriaPredicha = String.valueOf(clasificados.get(0).get("categoriaPredicha"));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ [TransaccionService] Aviso: Clasificación en vivo no disponible: " + e.getMessage());
+        }
+
+        final String nombreFinal = categoriaPredicha;
+        String[] estilo = obtenerEstiloCategoria(nombreFinal);
+
+        return categoriaRepository.findFirstByNombre(nombreFinal)
+                .orElseGet(() -> {
+                    Categoria cat = new Categoria();
+                    cat.setNombre(nombreFinal);
+                    cat.setTipo("Gasto");
+                    cat.setColor(estilo[0]);
+                    cat.setIcono(estilo[1]);
+                    return categoriaRepository.save(cat);
+                });
+    }
+
+    /**
+     * Calcula la distribución porcentual y por montos de gastos de un usuario.
+     */
+    public Map<String, Object> obtenerDistribucionPorUsuario(Long usuarioId) {
+        boolean pythonOnline = checkPythonHealth();
+        boolean modoContingencia = !pythonOnline;
+        String mensajeEstado = pythonOnline ? "Servicio de IA Python Online" : "Servicio de IA no disponible (Python Offline).";
+
+        // Proceso de respaldo: Si quedaron transacciones históricas sin clasificar, procesarlas
+        List<Transaccion> pendientes = transaccionRepository.findByUsuarioIdAndCategoriaIsNull(usuarioId);
+        if (!pendientes.isEmpty() && pythonOnline) {
             try {
+                String pythonUrl = pythonFastApiUrl + "/api/v1/classify-transactions";
+                List<Map<String, Object>> payloadTransacciones = pendientes.stream().map(t -> {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("id", t.getId());
+                    item.put("text", t.getDescripcion());
+                    item.put("monto", t.getMonto());
+                    return item;
+                }).collect(Collectors.toList());
+
+                Map<String, Object> requestBody = new HashMap<>();
+                requestBody.put("transacciones", payloadTransacciones);
+
                 SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-                factory.setConnectTimeout(3000);
-                factory.setReadTimeout(5000);
+                factory.setConnectTimeout(2500);
+                factory.setReadTimeout(4000);
                 RestTemplate restTemplate = new RestTemplate(factory);
 
                 @SuppressWarnings("unchecked")
@@ -143,13 +239,10 @@ public class TransaccionService {
                     }
                 }
             } catch (Exception e) {
-                modoContingencia = true;
-                mensajeEstado = "Falló la clasificación con la IA de Python. Mostrando datos de BD.";
-                System.err.println("⚠️ Error al clasificar con Python: " + e.getMessage());
+                System.err.println("⚠️ Error en clasificación batch de respaldo: " + e.getMessage());
             }
         }
 
-        // 4. Consultar todas las transacciones del usuario (persistidas en BD) y calcular la distribución
         List<Transaccion> todas = transaccionRepository.findByUsuarioId(usuarioId);
         if (todas.isEmpty()) {
             Map<String, Object> respuestaVacia = new HashMap<>();
@@ -195,10 +288,10 @@ public class TransaccionService {
 
             Categoria catInfo = detallesCategoria.get(categoriaNombre);
             String[] estiloDefecto = obtenerEstiloCategoria(categoriaNombre);
-            
-            String color = (catInfo != null && catInfo.getColor() != null && !"#3357FF".equals(catInfo.getColor())) 
+
+            String color = (catInfo != null && catInfo.getColor() != null && !"#3357FF".equals(catInfo.getColor()))
                     ? catInfo.getColor() : estiloDefecto[0];
-            String icono = (catInfo != null && catInfo.getIcono() != null && !"shopping-cart".equals(catInfo.getIcono())) 
+            String icono = (catInfo != null && catInfo.getIcono() != null && !"shopping-cart".equals(catInfo.getIcono()))
                     ? catInfo.getIcono() : estiloDefecto[1];
 
             dto.put("color", color);
@@ -215,25 +308,28 @@ public class TransaccionService {
         return respuesta;
     }
 
+    /**
+     * Mapeo de estilos visuales para colores e iconos en UI.
+     */
     private String[] obtenerEstiloCategoria(String nombre) {
         if (nombre == null) return new String[]{"#64748b", "tag"};
         String n = nombre.toLowerCase().trim();
-        if (n.contains("vivienda") || n.contains("alquiler") || n.contains("renta")) {
-            return new String[]{"#f59e0b", "home"}; // Amber
-        } else if (n.contains("alimentacion") || n.contains("comida") || n.contains("super") || n.contains("mercado")) {
-            return new String[]{"#3b82f6", "shopping-cart"}; // Blue
-        } else if (n.contains("transporte") || n.contains("gasolina") || n.contains("uber") || n.contains("combustible")) {
-            return new String[]{"#10b981", "bus"}; // Emerald
+        if (n.contains("vivienda") || n.contains("alquiler") || n.contains("renta") || n.contains("hogar")) {
+            return new String[]{"#f59e0b", "home"};
+        } else if (n.contains("alimentacion") || n.contains("comida") || n.contains("super") || n.contains("restaurante")) {
+            return new String[]{"#3b82f6", "shopping-cart"};
+        } else if (n.contains("transporte") || n.contains("gasolina") || n.contains("uber") || n.contains("viaje")) {
+            return new String[]{"#10b981", "bus"};
         } else if (n.contains("entretenimiento") || n.contains("ocio") || n.contains("netflix") || n.contains("cine")) {
-            return new String[]{"#ec4899", "film"}; // Pink
-        } else if (n.contains("salud") || n.contains("farmacia") || n.contains("medico")) {
-            return new String[]{"#ef4444", "heart"}; // Red
+            return new String[]{"#ec4899", "film"};
+        } else if (n.contains("salud") || n.contains("farmacia") || n.contains("medico") || n.contains("clinica")) {
+            return new String[]{"#ef4444", "heart"};
         } else if (n.contains("servicio") || n.contains("luz") || n.contains("agua") || n.contains("internet")) {
-            return new String[]{"#8b5cf6", "bolt"}; // Purple
-        } else if (n.contains("educacion") || n.contains("curso") || n.contains("libro")) {
-            return new String[]{"#06b6d4", "academic-cap"}; // Cyan
+            return new String[]{"#8b5cf6", "bolt"};
+        } else if (n.contains("educacion") || n.contains("curso") || n.contains("libro") || n.contains("universidad")) {
+            return new String[]{"#06b6d4", "academic-cap"};
         } else if (n.contains("ingreso")) {
-            return new String[]{"#22c55e", "arrow-trending-up"}; // Green
+            return new String[]{"#22c55e", "arrow-trending-up"};
         }
         return new String[]{"#64748b", "tag"};
     }
@@ -241,7 +337,7 @@ public class TransaccionService {
     private boolean checkPythonHealth() {
         try {
             SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-            factory.setConnectTimeout(800); // Max 800ms health check timeout
+            factory.setConnectTimeout(800);
             factory.setReadTimeout(800);
             RestTemplate restTemplate = new RestTemplate(factory);
 
@@ -251,35 +347,5 @@ public class TransaccionService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public NuevaTransaccionResponseDTO registrarTransaccion(TransaccionRequestDto dto ) {
-        //Extraemos usuario
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String emailUsuario = authentication.getName();
-
-        Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        //Crear registro
-        Transaccion transaccion = new Transaccion();
-        transaccion.setMonto(dto.monto());
-        transaccion.setDescripcion(dto.descripcion());
-        transaccion.setTipo(dto.tipo());
-        transaccion.setFecha(LocalDateTime.now());
-        transaccion.setUsuario(usuario);
-        transaccion.setCategoria(null);
-
-
-        Transaccion guardada = transaccionRepository.save(transaccion);
-
-        return new NuevaTransaccionResponseDTO(
-                usuario.getId(),
-                transaccion.getMonto(),
-                LocalDateTime.now(),
-                dto.descripcion(),
-                dto.tipo(),
-                "Sin clasificar");
     }
 }
