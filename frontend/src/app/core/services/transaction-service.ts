@@ -16,6 +16,9 @@ export class TransactionService {
   readonly modoContingenciaIA = signal<boolean>(false);
   readonly mensajeEstadoIA = signal<string>('Servicio de IA Python Online');
 
+  /**
+   * Consulta las transacciones recientes paginadas desde el backend.
+   */
   getTransaccionesRecientes(usuarioId: number = 1, limit: number = 20): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/recientes?limit=${limit}`).pipe(
       tap(res => {
@@ -30,7 +33,7 @@ export class TransactionService {
           id: String(item.id),
           descripcion: item.descripcion,
           valor: item.monto,
-          categoria: item.categoriaNombre || 'Sin clasificar',
+          categoria: item.categoriaNombre || item.categoria || 'Sin clasificar',
           fecha: item.fecha ? String(item.fecha).split('T')[0] : new Date().toISOString().split('T')[0],
           tipo: item.tipo || 'GASTO'
         }));
@@ -40,16 +43,35 @@ export class TransactionService {
     );
   }
 
+  /**
+   * Registra una transacción y la clasifica inmediatamente con IA.
+   */
   registrarTransaccion(descripcion: string, monto: number, tipo: string, usuarioId: number = 1): Observable<any> {
     const body = { descripcion, monto, tipo };
     return this.http.post<any>(`${this.apiUrl}/transacciones/registrar`, body).pipe(
-      tap(() => {
+      tap((res: any) => {
+        if (res) {
+          const newTx: Transaction = {
+            id: String(res.id || Date.now()),
+            descripcion: res.descripcion || descripcion,
+            valor: res.monto || monto,
+            categoria: res.categoriaNombre || res.categoria || 'Sin clasificar',
+            fecha: res.fecha ? String(res.fecha).split('T')[0] : new Date().toISOString().split('T')[0],
+            tipo: res.tipo || tipo
+          };
+          // Actualización reactiva inmediata en la UI (Optimistic UI)
+          this.transactions.update(current => [newTx, ...current.filter(t => t.id !== newTx.id)]);
+        }
+        // Sincronización completa de transacciones y distribución de gráficos
         this.getTransaccionesRecientes(usuarioId, 20).subscribe();
         this.getDistribucionGastos(usuarioId).subscribe();
       })
     );
   }
 
+  /**
+   * Obtiene la distribución agrupada por categorías calculada por el backend.
+   */
   getDistribucionGastos(usuarioId: number = 1): Observable<DistribucionResponse> {
     return this.http.get<DistribucionResponse>(`${this.apiUrl}/transacciones/usuario/${usuarioId}/distribucion`).pipe(
       tap(res => {
@@ -62,9 +84,13 @@ export class TransactionService {
     );
   }
 
+  /**
+   * Elimina una transacción y sincroniza el estado.
+   */
   eliminarTransaccion(id: number, usuarioId: number = 1): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/transacciones/${id}`).pipe(
       tap(() => {
+        this.transactions.update(current => current.filter(t => t.id !== String(id)));
         this.getTransaccionesRecientes(usuarioId, 20).subscribe();
         this.getDistribucionGastos(usuarioId).subscribe();
       })
