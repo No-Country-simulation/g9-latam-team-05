@@ -1,10 +1,10 @@
 from fastapi import APIRouter
-from app.adapters.inbound.api.dtos.classifier_dto import (
+from app.schemas.classifier_dto import (
     ClassificationRequestDTO, 
     ClassificationResponseDTO, 
     ClassifiedItemDTO
 )
-from app.domain.services.classifier_service import TransactionClassifierService
+from app.services.classifier_service import TransactionClassifierService
 
 router = APIRouter(prefix="/api/v1", tags=["Clasificador NLP"])
 classifier_service = TransactionClassifierService()
