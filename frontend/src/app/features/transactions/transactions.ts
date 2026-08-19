@@ -103,6 +103,12 @@ export class TransactionsComponent implements OnInit {
             descripcion: '',
             valor: 0
           });
+
+          // Se esperan 2.5 segundos a que el backend reciba la respuesta de FastAPI/Python 
+          // y actualice el registro en Oracle, luego re-ejecuta la consulta silenciosamente.
+          setTimeout(() => {
+            this.transactionService.getTransaccionesRecientes(userId, 20).subscribe();
+          }, 2500);
         },
         error: (err) => {
           this.isSubmitting.set(false);
