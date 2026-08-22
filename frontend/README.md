@@ -66,4 +66,4 @@ El sistema **no utiliza NGRX ni librerías pesadas de estado**. En su lugar, uti
 
 1.  **Estado Global Centralizado:** El ingreso mensual, deuda, transacciones y recomendaciones son Signals reactivos (`signal()`).
 2.  **Cálculos Automáticos:** El perfil de riesgo, la tasa de ahorro y los gráficos se recalculan en tiempo real usando selectores derivados (`computed()`).
-3.  **Fácil Reemplazo por API Real:** Cuando el backend esté listo, las promesas y retardos simulados en `FinanceService` se podrán reemplazar directamente por peticiones `HttpClient.post` o `HttpClient.get` hacia los endpoints del backend en Java Spring Boot sin alterar el código de las pantallas.
+3.  **Fácil Reemplazo por API Real:** Cuando el backend esté listo, las promesas y retardos simulados en `FinanceService` se podrán reemplazar directamente por peticiones `HttpClient.post` o `HttpClient.get` hacia los endpoints del backend en Java Spring Boot sin alterar el código de las pantallas..
